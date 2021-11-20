@@ -1,6 +1,6 @@
 import nextConnect from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
-import User from '../../../models/User'
+import User, { IUserDocument } from '../../../models/User'
 import database from '../../../middlewares/database'
 
 const handler = nextConnect()
@@ -8,10 +8,11 @@ const handler = nextConnect()
 handler.use(database)
 handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const user = new User(req.body)
-    await user.save()
+    const user: IUserDocument = await User.findOne({ email: req.body.email })
+    user.comparePassword(req.body.password)
+    const loginUser = await user.generateToken()
 
-    res.status(200).json({ success: true })
+    res.status(200).json({ success: true, id: loginUser._id })
   } catch (error) {
     console.log(error.message)
     res.status(500).json({ success: false, error })

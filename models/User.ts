@@ -1,17 +1,17 @@
-import mongoose, { Document } from 'mongoose'
+import mongoose, { Document, Model, Schema } from 'mongoose'
 import bcrypt from 'bcrypt'
-// import jwt from 'jsonwebtoken'
-// import dayjs from 'dayjs'
+import jwt from 'jsonwebtoken'
+import dayjs from 'dayjs'
 
 const saltRounds = 10
 
-interface IUserCart {
+export interface IUserCart {
   id: string
   quantity: number
   date: number
 }
 
-interface IUserHistory {
+export interface IUserHistory {
   dateOfPurchase: number
   name: string
   id: string
@@ -20,7 +20,7 @@ interface IUserHistory {
   paymentId: string
 }
 
-interface IUser {
+export interface IUser {
   name: string
   email: string
   password: string
@@ -32,12 +32,16 @@ interface IUser {
   tokenExp?: number
 }
 
-interface IUserMoel extends Document, IUser {
-  // comparePassword: (password: string) => Promise<void>
-  // generateToken: () => Promise<void>
+export interface IUserDocument extends Document, IUser {
+  comparePassword: (password: string) => void
+  generateToken: () => Promise<IUserDocument>
 }
 
-const userSchema = new mongoose.Schema<IUserMoel>({
+export interface IUserModel extends Model<IUserDocument> {
+  findByToken: (token: string, callback) => Promise<IUserDocument>
+}
+
+const userSchema = new Schema<IUserDocument>({
   name: {
     type: String,
     maxlength: 50,
@@ -91,69 +95,52 @@ const userSchema = new mongoose.Schema<IUserMoel>({
 
 userSchema.pre(
   'save',
-  function (this: IUserMoel, next: (err?: Error | undefined) => void) {
-    // if (this.isModified('password')) {
-    //   bcrypt.genSalt(saltRounds, function (err, salt) {
-    //     if (err) return next(err)
+  function (this: IUserDocument, next: (err?: Error | undefined) => void) {
+    const user = this
 
-    //     bcrypt.hash(this.password, salt, function (err, hash) {
-    //       if (err) return next(err)
-    //       this.password = hash
-    //       next()
-    //     })
-    //   })
-    // } else {
-    //   next()
-    // }
-
-    if (!this.isModified('password')) {
-      return next()
-    }
-    bcrypt.genSalt(saltRounds, (err: Error, salt: string) => {
-      if (err) return next(err)
-
-      bcrypt.hash(this.password, salt, (err: Error, hash: string) => {
+    if (user.isModified('password')) {
+      bcrypt.genSalt(saltRounds, function (err: Error, salt: string) {
         if (err) return next(err)
-        this.password = hash
+
+        bcrypt.hash(user.password, salt, function (err: Error, hash: string) {
+          if (err) return next(err)
+          user.password = hash
+          next()
+        })
       })
-    })
+    } else {
+      next()
+    }
   }
 )
 
-// https://www.youtube.com/watch?v=ePC_jwL4phg
+userSchema.methods.comparePassword = function (plainPassword: string) {
+  bcrypt.compare(plainPassword, this.password)
+}
 
-// userSchema.methods.comparePassword = function (plainPassword : string, cb) {
-//   bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
-//     if (err) return cb(err)
-//     cb(null, isMatch)
-//   })
-// }
+userSchema.methods.generateToken = async function () {
+  const token = jwt.sign(this._id.toHexString(), 'secret')
+  const oneHour = dayjs().add(1, 'hour').valueOf()
 
-// userSchema.methods.generateToken = function (cb) {
-//   const user = this
-//   console.log('user', user)
-//   console.log('userSchema', userSchema)
-//   const token = jwt.sign(user._id.toHexString(), 'secret')
-//   const oneHour = dayjs().add(1, 'hour').valueOf()
+  this.tokenExp = oneHour
+  this.token = token
+  try {
+    const user = await this.save()
+    return Promise.resolve(user)
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
 
-//   user.tokenExp = oneHour
-//   user.token = token
-//   user.save(function (err, user) {
-//     if (err) return cb(err)
-//     cb(null, user)
-//   })
-// }
-
-// userSchema.statics.findByToken = function (token, cb) {
-//   const user = this
-
-//   jwt.verify(token, 'secret', function (err, decode) {
-//     user.findOne({ _id: decode, token: token }, function (err, user) {
-//       if (err) return cb(err)
-//       cb(null, user)
-//     })
-//   })
-// }
+userSchema.statics.findByToken = async function (token: string) {
+  try {
+    const decode = await jwt.verify(token, 'secret')
+    const user = this.findOne({ _id: decode, token: token })
+    return Promise.resolve(user)
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
 
 export default mongoose.models.User ||
-  mongoose.model<IUserMoel>('User', userSchema)
+  mongoose.model<IUserDocument, IUserModel>('User', userSchema)

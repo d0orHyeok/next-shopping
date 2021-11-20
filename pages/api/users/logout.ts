@@ -6,11 +6,9 @@ import database from '../../../middlewares/database'
 const handler = nextConnect()
 
 handler.use(database)
-handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
+handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const user = new User(req.body)
-    await user.save()
-
+    await User.findOneAndUpdate({ name: 'd0oR' }, { token: '', tokenExp: 0 })
     res.status(200).json({ success: true })
   } catch (error) {
     console.log(error.message)
