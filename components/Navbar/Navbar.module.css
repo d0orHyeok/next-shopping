@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Keania+One&display=swap');
+
+.header {
+  box-sizing: border-box;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 4rem;
+  border-bottom: 1px solid rgba(200, 200, 200, 0.7);
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo a {
+  font-family: 'Keania One', cursive;
+  font-size: 3.5rem;
+  text-decoration: none;
+  color: black;
+}
+
+.member ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.member ul li {
+  margin: 5px;
+}

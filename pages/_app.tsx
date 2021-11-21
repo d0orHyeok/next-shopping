@@ -1,19 +1,20 @@
 // import App from "next/app";
 import type { AppProps /*, AppContext */ } from 'next/app'
 import Head from 'next/head'
+import Navbar from '@components/Navbar/Navbar'
+
+import '@styles/global.css'
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Head>
         <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Shopping" />
         <meta name="keywords" content="nextjs,static,website" />
       </Head>
+      <Navbar />
       <Component {...pageProps} />
     </>
   )
