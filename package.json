@@ -23,13 +23,20 @@
     ]
   },
   "dependencies": {
+    "@emotion/react": "^11.6.0",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.1.1",
+    "@mui/material": "^5.1.1",
+    "antd": "^4.16.13",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
+    "classnames": "^2.3.1",
     "dayjs": "^1.10.7",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.13",
     "multer": "^1.4.3",
     "next": "latest",
+    "next-auth": "^3.29.0",
     "next-connect": "^0.11.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
@@ -42,6 +49,7 @@
     "@typescript-eslint/eslint-plugin": "^4.14.2",
     "@typescript-eslint/parser": "^4.14.2",
     "babel-jest": "^27.0.2",
+    "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^7.19.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-react": "^7.19.0",
