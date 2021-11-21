@@ -1,4 +1,4 @@
-import dbConnect from '../libs/connectDB'
+import dbConnect from '@libs/connectDB'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
 

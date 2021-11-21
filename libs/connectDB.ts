@@ -1,8 +1,14 @@
 import mongoose from 'mongoose'
 
+const uri: string = process.env.MONGO_URI
+
+if (!uri) {
+  throw new Error(
+    'Please define the MONGO_URI environment variable inside .env.local'
+  )
+}
+
 async function dbConnect() {
-  // check if we have a connection to the database or if it's currently
-  // connecting or disconnecting (readyState 1, 2 and 3)
   if (mongoose.connection.readyState >= 1) {
     console.log('DB connected')
     return
@@ -14,7 +20,7 @@ async function dbConnect() {
   //     console.log(`db connection problem`, err.message)
   //   })
 
-  return mongoose.connect(process.env.MONGO_URI)
+  return mongoose.connect(uri)
 }
 
 export default dbConnect

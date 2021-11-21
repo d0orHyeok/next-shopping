@@ -33,65 +33,68 @@ export interface IUser {
 }
 
 export interface IUserDocument extends Document, IUser {
-  comparePassword: (password: string) => void
+  comparePassword: (password: string) => boolean
   generateToken: () => Promise<IUserDocument>
 }
 
-export interface IUserModel extends Model<IUserDocument> {
+interface IUserModel extends Model<IUserDocument> {
   findByToken: (token: string, callback) => Promise<IUserDocument>
 }
 
-const userSchema = new Schema<IUserDocument>({
-  name: {
-    type: String,
-    maxlength: 50,
+const userSchema: Schema = new Schema(
+  {
+    name: {
+      type: String,
+      maxlength: 50,
+    },
+    email: {
+      type: String,
+      trim: true,
+      unique: 1,
+    },
+    password: {
+      type: String,
+      minglength: 5,
+    },
+    role: {
+      type: Number,
+      default: 0,
+    },
+    image: String,
+    cart: {
+      type: [
+        {
+          id: String,
+          quantity: Number,
+          date: Number,
+        },
+      ],
+      default: [],
+    },
+    history: {
+      type: [
+        {
+          dateOfPurchase: Number,
+          name: String,
+          id: String,
+          price: Number,
+          quantity: Number,
+          paymentId: String,
+        },
+      ],
+      default: [],
+    },
+    token: {
+      type: String,
+      default: '',
+    },
+    tokenExp: {
+      type: Number,
+      default: 0,
+    },
   },
-  email: {
-    type: String,
-    trim: true,
-    unique: 1,
-  },
-  password: {
-    type: String,
-    minglength: 5,
-  },
-  role: {
-    type: Number,
-    default: 0,
-  },
-  image: String,
-  cart: {
-    type: [
-      {
-        id: String,
-        quantity: Number,
-        date: Number,
-      },
-    ],
-    default: [],
-  },
-  history: {
-    type: [
-      {
-        dateOfPurchase: Number,
-        name: String,
-        id: String,
-        price: Number,
-        quantity: Number,
-        paymentId: String,
-      },
-    ],
-    default: [],
-  },
-  token: {
-    type: String,
-    default: '',
-  },
-  tokenExp: {
-    type: Number,
-    default: 0,
-  },
-})
+  { timestamps: true }
+)
 
 userSchema.pre(
   'save',
@@ -114,32 +117,27 @@ userSchema.pre(
   }
 )
 
-userSchema.methods.comparePassword = function (plainPassword: string) {
-  bcrypt.compare(plainPassword, this.password)
+userSchema.methods.comparePassword = function (plainPassword: string): boolean {
+  return bcrypt.compare(plainPassword, this.password)
 }
 
-userSchema.methods.generateToken = async function () {
+userSchema.methods.generateToken = async function (): Promise<IUserDocument> {
   const token = jwt.sign(this._id.toHexString(), 'secret')
   const oneHour = dayjs().add(1, 'hour').valueOf()
 
   this.tokenExp = oneHour
   this.token = token
-  try {
-    const user = await this.save()
-    return Promise.resolve(user)
-  } catch (error) {
-    return Promise.reject(error)
-  }
+  const user = await this.save()
+  return user
 }
 
-userSchema.statics.findByToken = async function (token: string) {
-  try {
-    const decode = await jwt.verify(token, 'secret')
-    const user = this.findOne({ _id: decode, token: token })
-    return Promise.resolve(user)
-  } catch (error) {
-    return Promise.reject(error)
-  }
+userSchema.statics.findByToken = async function (
+  token: string
+): Promise<IUserDocument> {
+  const decode = await jwt.verify(token, 'secret')
+  const user = this.findOne({ _id: decode, token: token })
+
+  return user
 }
 
 export default mongoose.models.User ||

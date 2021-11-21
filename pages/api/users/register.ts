@@ -1,7 +1,7 @@
 import nextConnect from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
-import User from '../../../models/User'
-import database from '../../../middlewares/database'
+import User from '@models/User'
+import database from '@middlewares/database'
 
 const handler = nextConnect()
 
