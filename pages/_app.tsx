@@ -2,6 +2,7 @@
 import type { AppProps /*, AppContext */ } from 'next/app'
 import Head from 'next/head'
 import Navbar from '@components/Navbar/Navbar'
+import Bottom from '@components/Bottom/Bottom'
 
 import '@styles/global.css'
 
@@ -16,6 +17,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       </Head>
       <Navbar />
       <Component {...pageProps} />
+      <Bottom></Bottom>
     </>
   )
 }

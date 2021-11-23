@@ -7,7 +7,7 @@ export const Home = (): JSX.Element => {
         <title>Home | Shopping</title>
       </Head>
 
-      <main>
+      <main style={{ height: '100vh' }}>
         <h1 className="title">
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>

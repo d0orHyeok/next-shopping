@@ -1,0 +1,109 @@
+.footer {
+  --borderColor: rgba(255, 255, 255, 0.3);
+  --fontColor: rgba(255, 255, 255, 0.9);
+  --list-fontColor: rgba(255, 255, 255, 0.6);
+  --list-fontSize: 0.8rem;
+  margin-top: auto;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.container {
+  background-color: black;
+  color: var(--fontColor);
+  display: flex;
+  flex-direction: column;
+}
+
+.container section {
+  padding: 1rem 0;
+}
+
+.nav {
+  margin: auto;
+  width: 100%;
+  max-width: 900px;
+  padding: 0 20px;
+}
+
+.nav .nav-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.nav ul li {
+  margin: 0.5rem 0;
+  color: var(--list-fontColor);
+  font-size: var(--list-fontSize);
+}
+
+.nav ul li:hover {
+  cursor: pointer;
+  color: var(--fontColor);
+}
+
+.nav .nav-title {
+  color: var(--fontColor);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.nav .social ul {
+  display: flex;
+  align-items: center;
+}
+
+.nav .social ul li {
+  margin: 0 1rem 0 0px;
+}
+
+.nav .social a {
+  text-decoration: none;
+  color: var(--list-fontColor);
+}
+
+.nav .social a:hover {
+  color: var(--fontColor);
+}
+
+.copy {
+  font-size: var(--list-fontSize);
+  color: var(--list-fontColor);
+  text-align: center;
+  border-top: 1px solid var(--borderColor);
+  border-bottom: 1px solid var(--borderColor);
+}
+
+.info {
+  font-size: var(--list-fontSize);
+  color: var(--list-fontColor);
+  line-height: 1.1rem;
+}
+
+.info .info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.info .info-container span {
+  text-align: center;
+}
+
+/* 모바일 가로, 테블릿 세로 (해상도 480px ~ 767px)*/
+@media all and (max-width: 767px) {
+  .nav {
+    max-width: 320px;
+  }
+
+  .nav .nav-container {
+    flex-direction: column;
+  }
+
+  .nav .nav-container > div {
+    margin: 1rem 0;
+  }
+}
