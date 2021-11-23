@@ -79,7 +79,10 @@ const Bottom = () => {
           </div>
         </section>
         <section className={cx('copy')}>
-          <h3>Copyright by PIIC All Right Reserved.</h3>
+          <h3>
+            Copyright by PIIC All Right Reserved.
+            <span>JangHyeok Kim</span>
+          </h3>
         </section>
         <section className={cx('info')}>
           <div className={cx('info-container')}>

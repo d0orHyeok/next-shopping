@@ -76,6 +76,14 @@
   border-bottom: 1px solid var(--borderColor);
 }
 
+.copy h3 {
+  line-height: 1.1rem;
+}
+
+.copy h3 span {
+  margin-left: 0.5rem;
+}
+
 .info {
   font-size: var(--list-fontSize);
   color: var(--list-fontColor);
@@ -105,5 +113,10 @@
 
   .nav .nav-container > div {
     margin: 1rem 0;
+  }
+
+  .copy h3 span {
+    margin: 0;
+    display: block;
   }
 }
