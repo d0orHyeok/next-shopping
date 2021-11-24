@@ -1,8 +1,7 @@
 // import App from "next/app";
 import type { AppProps /*, AppContext */ } from 'next/app'
 import Head from 'next/head'
-import Navbar from '@components/Navbar/Navbar'
-import Bottom from '@components/Bottom/Bottom'
+import Layout from '@components/Layout'
 
 import '@styles/global.css'
 
@@ -15,9 +14,9 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         <meta name="description" content="Shopping" />
         <meta name="keywords" content="nextjs,static,website" />
       </Head>
-      <Navbar />
-      <Component {...pageProps} />
-      <Bottom></Bottom>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </>
   )
 }

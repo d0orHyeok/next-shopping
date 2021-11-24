@@ -1,18 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Keania+One&display=swap');
 
 .header {
-  box-sizing: border-box;
+  --maxWidth: 1400px;
+
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 2rem;
+  height: 100px;
+  z-index: 10;
+  background-color: white;
   border-bottom: 1px solid rgba(200, 200, 200, 0.7);
 }
 
-.container {
+.pre-header {
   width: 100%;
-  max-width: 1400px;
+  height: 30px;
+  line-height: 30px;
+  background-color: rgb(245, 245, 245);
+}
+
+.pre-header ul {
+  max-width: var(--maxWidth);
+  width: 100%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.pre-header ul li a {
+  text-decoration: none;
+  color: black;
+}
+
+.pre-header ul li a:hover {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.container {
+  margin: auto;
+  margin-top: 6px;
+  width: 100%;
+  max-width: var(--maxWidth);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -25,6 +55,22 @@
   color: black;
 }
 
+.menu {
+  max-width: 850px;
+  width: 100%;
+}
+
+.menu ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0 1rem;
+}
+
+.member {
+  color: rgba(0, 0, 0, 0.75);
+}
+
 .member ul {
   display: flex;
   align-items: center;
@@ -32,9 +78,19 @@
 }
 
 .member ul li {
-  margin: 5px;
+  margin: 0 0.5rem;
 }
 
 .member ul li:hover {
   cursor: pointer;
+}
+
+.member ul li svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.member .search-wrapper {
+  background-color: rgb(245, 245, 245);
+  border-radius: 21px;
 }

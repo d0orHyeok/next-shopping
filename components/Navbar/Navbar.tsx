@@ -1,43 +1,51 @@
 import Link from 'next/link'
-// import { signIn } from 'next-auth/client'
+import { signIn } from 'next-auth/client'
 import styles from './Navbar.module.css'
 import classnames from 'classnames/bind'
-import React, { useState } from 'react'
 
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import Tooltip from '@mui/material/Tooltip'
 import Badge from '@mui/material/Badge'
 import { styled } from '@mui/material/styles'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
+import InputBase from '@mui/material/InputBase'
+import IconButton from '@mui/material/IconButton'
 
 const cx = classnames.bind(styles)
 
 const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
-    top: 13,
-    border: `1px solid white`,
-    padding: '0 4px',
-    background: 'rgb(252, 37, 37)',
+    top: 5,
+    right: 5,
+    padding: '10px 5px',
+    fontSize: '14px',
+    background: 'rgba(67, 67, 245, 1)',
     color: 'white',
+    fontWeight: '600',
   },
 }))
 
 const Navbar = (): JSX.Element => {
-  const [anchorEl, setAnchorEl] = useState<HTMLInputElement | null>(null)
-  const open = Boolean(anchorEl)
-  const handleClick = (event: React.MouseEvent<HTMLInputElement>): void => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = (): void => {
-    setAnchorEl(null)
-  }
-
   return (
     <header className={cx('header')}>
+      {/* Account Menu */}
+      <div className={cx('pre-header')}>
+        <ul>
+          <li>
+            <Link href="/api/auth/login">
+              <a
+                onClick={(e) => {
+                  e.preventDefault()
+                  signIn()
+                }}
+              >
+                Sign In
+              </a>
+            </Link>
+          </li>
+        </ul>
+      </div>
       <div className={cx('container')}>
         {/* Logo for Shopping mall */}
         <div className={cx('logo')}>
@@ -49,6 +57,8 @@ const Navbar = (): JSX.Element => {
         <nav className={cx('menu')}>
           <ul>
             <li>Best</li>
+            <li>Men</li>
+            <li>Women</li>
           </ul>
         </nav>
 
@@ -57,59 +67,35 @@ const Navbar = (): JSX.Element => {
           <ul>
             {/* Search */}
             <li>
-              <Tooltip title="Search" placeholder="bottom">
-                <SearchOutlinedIcon
-                  style={{ width: '2.4rem', height: '2.4rem' }}
-                />
-              </Tooltip>
-            </li>
-
-            {/* Account */}
-            <li>
-              <div onClick={handleClick}>
-                <Tooltip title="Account" placeholder="bottom">
-                  <PersonOutlineOutlinedIcon
-                    style={{ width: '2.6rem', height: '2.6rem' }}
-                  />
-                </Tooltip>
+              <div className={cx('search-wrapper')}>
+                <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
+                  <SearchOutlinedIcon />
+                </IconButton>
+                <InputBase sx={{ width: '150px' }} placeholder="Search" />
               </div>
-              <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-              >
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Ordered</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
-              </Menu>
             </li>
-
             {/* Like, 찜 */}
             <li>
-              <Tooltip title="Like" placeholder="bottom">
-                <FavoriteBorderOutlinedIcon
-                  style={{ width: '2.2rem', height: '2.2rem' }}
-                />
-              </Tooltip>
+              <Link href="/user/wishlist">
+                <Tooltip title="위시리스트" placeholder="bottom">
+                  <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
+                    <FavoriteBorderOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+              </Link>
             </li>
 
             {/* Cart, 장바구니 */}
             <li>
-              <Tooltip title="Cart" placeholder="bottom">
-                <StyledBadge badgeContent={3}>
-                  <ShoppingCartOutlinedIcon
-                    style={{ width: '2.2rem', height: '2.2rem' }}
-                  />
-                </StyledBadge>
-              </Tooltip>
+              <Link href="/user/cart">
+                <Tooltip title="장바구니" placeholder="bottom">
+                  <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
+                    <StyledBadge badgeContent={2}>
+                      <ShoppingCartOutlinedIcon />
+                    </StyledBadge>
+                  </IconButton>
+                </Tooltip>
+              </Link>
             </li>
           </ul>
         </div>
