@@ -6,21 +6,52 @@ import database from '@middlewares/database'
 const handler = nextConnect()
 
 handler.use(database)
-handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const user: IUserDocument = await User.findOne({ email: req.body.email })
-    await user.comparePassword(req.body.password)
-    const loginUser = await user.generateToken()
 
-    res.setHeader(
-      'Set-Cookie',
-      `w_auth=${loginUser.token}; Max-Age=3600; HttpOnly; Secure`
-    )
-    res.status(200).json({ success: true, id: loginUser._id })
-  } catch (error) {
-    console.log(error.message)
-    res.status(500).json({ success: false, error })
-  }
+handler.post((req: NextApiRequest, res: NextApiResponse) => {
+  const body = JSON.parse(req.body)
+
+  User.findOne({ email: body.email }, (err: Error, user: IUserDocument) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        err,
+      })
+    }
+    if (!user) {
+      return res.status(422).json({
+        success: false,
+        message: 'Email not found',
+      })
+    }
+    user.comparePassword(body.password, (err, isMatch) => {
+      if (err) {
+        return res.status(400).json({
+          success: false,
+          err,
+        })
+      }
+      if (!isMatch) {
+        return res.status(422).json({
+          success: false,
+          message: 'Wrong password!',
+        })
+      }
+
+      user.generateToken((err, user: IUserDocument) => {
+        if (err) {
+          return res.status(400).json({
+            success: false,
+            err,
+          })
+        }
+        res.setHeader(
+          'Set-Cookie',
+          `w_auth=${user.token}; Max-Age=3600; HttpOnly; Secure`
+        )
+        res.status(200).json({ success: true, userId: user._id })
+      })
+    })
+  })
 })
 
 export default handler

@@ -33,12 +33,17 @@ export interface IUser {
 }
 
 export interface IUserDocument extends Document, IUser {
-  comparePassword: (password: string) => boolean
-  generateToken: () => Promise<IUserDocument>
+  comparePassword: (
+    password: string,
+    callback: (err: Error | null, isMatch: boolean | null) => void
+  ) => void
+  generateToken: (
+    callback: (err: Error | null, user?: IUserDocument | null) => void
+  ) => void
 }
 
 interface IUserModel extends Model<IUserDocument> {
-  findByToken: (token: string, callback) => Promise<IUserDocument>
+  findByToken: (token: string, callback: () => void) => Promise<IUserDocument>
 }
 
 const userSchema: Schema = new Schema(
@@ -117,18 +122,28 @@ userSchema.pre(
   }
 )
 
-userSchema.methods.comparePassword = function (plainPassword: string): boolean {
-  return bcrypt.compare(plainPassword, this.password)
+userSchema.methods.comparePassword = function (
+  plainPassword: string,
+  callback: (err: Error | null, isMatch: boolean | null) => void
+) {
+  bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
+    if (err) return callback(err, null)
+    callback(null, isMatch)
+  })
 }
 
-userSchema.methods.generateToken = async function (): Promise<IUserDocument> {
+userSchema.methods.generateToken = function (
+  callback: (err: Error | null, user?: IUserDocument) => void
+) {
   const token = jwt.sign(this._id.toHexString(), 'secret')
   const oneHour = dayjs().add(1, 'hour').valueOf()
 
   this.tokenExp = oneHour
   this.token = token
-  const user = await this.save()
-  return user
+  this.save(function (err: Error | null, user: IUserDocument) {
+    if (err) return callback(err)
+    callback(null, user)
+  })
 }
 
 userSchema.statics.findByToken = async function (
