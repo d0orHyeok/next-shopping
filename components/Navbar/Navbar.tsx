@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { signIn } from 'next-auth/client'
+
 import styles from './Navbar.module.css'
 import classnames from 'classnames/bind'
 
@@ -33,16 +33,7 @@ const Navbar = (): JSX.Element => {
       <div className={cx('pre-header')}>
         <ul>
           <li>
-            <Link href="/api/auth/login">
-              <a
-                onClick={(e) => {
-                  e.preventDefault()
-                  signIn()
-                }}
-              >
-                Sign In
-              </a>
-            </Link>
+            <Link href="#">Sign In</Link>
           </li>
         </ul>
       </div>

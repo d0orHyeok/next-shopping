@@ -9,7 +9,7 @@ handler.use(database)
 
 handler.post((req: NextApiRequest, res: NextApiResponse) => {
   const body = JSON.parse(req.body)
-
+  // Email에 해당하는 유저가 있는지 확인
   User.findOne({ email: body.email }, (err: Error, user: IUserDocument) => {
     if (err) {
       return res.status(400).json({
@@ -23,6 +23,7 @@ handler.post((req: NextApiRequest, res: NextApiResponse) => {
         message: 'Email not found',
       })
     }
+    // 비밀번호 확인
     user.comparePassword(body.password, (err, isMatch) => {
       if (err) {
         return res.status(400).json({
@@ -36,7 +37,7 @@ handler.post((req: NextApiRequest, res: NextApiResponse) => {
           message: 'Wrong password!',
         })
       }
-
+      // 토큰 생성
       user.generateToken((err, user: IUserDocument) => {
         if (err) {
           return res.status(400).json({
