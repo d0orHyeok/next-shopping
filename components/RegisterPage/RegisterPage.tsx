@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import Axios from 'axios'
+import Link from 'next/link'
+// import Axios from 'axios'
 
 import styles from './RegisterPage.module.css'
 import classnames from 'classnames/bind'
@@ -14,12 +15,12 @@ interface inputValue {
   confirmPassword: string
 }
 
-interface isValidate {
-  isName: 0 | 1 | 2
-  isEmail: 0 | 1 | 2
-  isPassword: 0 | 1 | 2
-  isConfirmPassword: 0 | 1 | 2
-}
+// interface isValidate {
+//   isName: 0 | 1 | 2
+//   isEmail: 0 | 1 | 2
+//   isPassword: 0 | 1 | 2
+//   isConfirmPassword: 0 | 1 | 2
+// }
 
 const cx = classnames.bind(styles)
 
@@ -68,6 +69,7 @@ const RegisterPage = () => {
           <Divider className={cx('divider')}>Register</Divider>
           <form className={cx('form')}>
             <TextField
+              className={cx('input')}
               required
               id="email"
               label="Email"
@@ -76,6 +78,7 @@ const RegisterPage = () => {
               value={email}
             />
             <TextField
+              className={cx('input')}
               required
               id="password"
               label="Password"
@@ -84,6 +87,7 @@ const RegisterPage = () => {
               value={password}
             />
             <TextField
+              className={cx('input')}
               required
               error
               id="confirmPassword"
@@ -93,6 +97,7 @@ const RegisterPage = () => {
               value={confirmPassword}
             />
             <TextField
+              className={cx('input')}
               required
               id="name"
               label="name"
@@ -100,31 +105,46 @@ const RegisterPage = () => {
               onChange={onChangeValue}
               value={name}
             />
-            <div className={cx('')}>
-              <div>
-                <h2>이용약관</h2>
-                <div>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Asperiores illum obcaecati necessitatibus accusantium natus
-                  aperiam deserunt ex aut voluptas ea, saepe optio in placeat,
-                  odio recusandae nesciunt dolor! Veniam, deleniti!
+            <div className={cx('terms')}>
+              <div className={cx('terms-item')}>
+                <h2 className={cx('terms-title')}>
+                  이용약관
+                  <Link href="#">전문보기</Link>
+                </h2>
+                <div className={cx('terms-content')}>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Et
+                  odit sed labore praesentium dolore amet, iure, debitis laborum
+                  animi incidunt dignissimos ullam a consequuntur tempore,
+                  repellat illo! Accusantium illo magnam facere dolor placeat
+                  quasi inventore laborum magni adipisci repudiandae modi
+                  doloremque fugiat maxime odit assumenda neque veniam ipsa
+                  consequuntur, tempore aspernatur quos sequi id non nulla.
+                  Porro, necessitatibus quam ipsam ea, nulla animi minima
+                  commodi nesciunt voluptatem vitae consequatur harum enim
+                  maxime. Et modi dicta nisi facere quibusdam officiis nobis
+                  ipsam, dolorem asperiores adipisci reiciendis laudantium
+                  veniam ullam officia? Omnis ullam praesentium alias ut ea
+                  magni tempore ipsam cumque ad.
                 </div>
-                <div>
-                  <input id="check" type="checkbox" />
-                  <label htmlFor="check">[필수] 약관에 동의 합니다.</label>
+                <div className={cx('terms-checkfield')}>
+                  <input id="check1" type="checkbox" />
+                  <label htmlFor="check1">[필수] 약관에 동의 합니다.</label>
                 </div>
               </div>
-              <div>
-                <h2>개인정보처리방침</h2>
-                <div>
+              <div className={cx('terms-item')}>
+                <h2 className={cx('terms-title')}>
+                  개인정보처리방침
+                  <Link href="#">전문보기</Link>
+                </h2>
+                <div className={cx('terms-content')}>
                   Lorem, ipsum dolor sit amet consectetur adipisicing elit.
                   Asperiores illum obcaecati necessitatibus accusantium natus
                   aperiam deserunt ex aut voluptas ea, saepe optio in placeat,
                   odio recusandae nesciunt dolor! Veniam, deleniti!
                 </div>
-                <div>
-                  <input id="check" type="checkbox" />
-                  <label htmlFor="check">[필수] 개인정보 수집.이용동의</label>
+                <div className={cx('terms-checkfield')}>
+                  <input id="check2" type="checkbox" />
+                  <label htmlFor="check2">[필수] 개인정보 수집.이용동의</label>
                 </div>
               </div>
             </div>
