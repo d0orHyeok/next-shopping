@@ -1,0 +1,90 @@
+.wrapper {
+  width: 320px;
+  padding: 2rem;
+}
+
+.wrapper a {
+  text-decoration: none;
+}
+
+/* Product Menu Group */
+.menu {
+}
+
+.menu ul {
+  display: flex;
+  flex-direction: column;
+}
+
+/* User Group */
+.user {
+  margin: 2rem 0;
+}
+
+.user .user-desc {
+  padding: 1rem 0;
+  color: rgb(80, 80, 80);
+}
+
+/* User Button */
+.user .userBtn-wrapper .userBtn {
+  border: 1px solid lightgray;
+  width: 100px;
+  height: 40px;
+  border-radius: 20px;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.userBtn:first-child {
+  margin-right: 1rem;
+}
+
+.userBtn:hover {
+  cursor: pointer;
+}
+
+.registerBtn {
+  background-color: rgb(5, 5, 5);
+  color: white;
+}
+
+.registerBtn:hover {
+  opacity: 0.75;
+}
+
+.loginBtn {
+  color: black;
+  background-color: white;
+}
+
+.loginBtn:hover {
+  background-color: rgba(245, 245, 245);
+}
+
+/* Member Group */
+.member {
+  text-decoration: none;
+  color: rgb(80, 80, 80);
+  font-weight: 600;
+  padding: 1rem 0;
+}
+
+.memberBtn {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.memberBtn:last-child {
+  margin-bottom: none;
+}
+
+.memberBtn:hover {
+  cursor: pointer;
+}
+
+.memberBtn span {
+  margin-left: 1rem;
+  font-size: 1.1rem;
+}

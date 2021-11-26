@@ -1,6 +1,7 @@
 import { NextPage } from 'next'
 import Navbar from './Navbar/Navbar'
 import Bottom from './Bottom/Bottom'
+import styles from './Navbar/Navbar.module.css'
 
 const Layout: NextPage = (props): JSX.Element => {
   const { children } = props
@@ -8,7 +9,7 @@ const Layout: NextPage = (props): JSX.Element => {
     <>
       <Navbar />
       {/* paddingTop: Navbar의 높이와 같은 크기로 지정할 것 */}
-      <main style={{ paddingTop: '100px' }}>{children}</main>
+      <main className={styles.main}>{children}</main>
       <Bottom />
     </>
   )
