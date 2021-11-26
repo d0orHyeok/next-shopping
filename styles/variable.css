@@ -1,0 +1,16 @@
+:root {
+  --header-maxWidth: 1400px;
+  --header-background: white;
+  --preHeader-background: rgb(245, 245, 245);
+  --header-mainColor: black;
+  --header-subColor: rgba(0, 0, 0, 0.75);
+  --header-height: 90px;
+  --preHeader-height: 30px;
+}
+
+/* Medium Devices, Desktops : ~ 992px */
+@media only screen and (max-width: 992px) {
+  :root {
+    --header-height: 60px;
+  }
+}

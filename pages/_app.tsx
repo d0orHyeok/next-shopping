@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Layout from '@components/Layout'
 
 import '@styles/global.css'
+import '@styles/variable.css'
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (

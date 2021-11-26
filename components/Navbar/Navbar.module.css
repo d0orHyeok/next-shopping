@@ -1,20 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Keania+One&display=swap');
 .main {
-  padding-top: 90px;
+  padding-top: var(--header-height);
 }
 
 .header {
-  --maxWidth: 1400px;
-  --header-background: white;
-  --preHeader-background: rgb(245, 245, 245);
-  --main-color: black;
-  --sub-color: rgba(0, 0, 0, 0.75);
-
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 90px;
+  height: var(--header-height);
   z-index: 10;
   background-color: var(--header-background);
   border-bottom: 1px solid rgba(200, 200, 200, 0.7);
@@ -25,13 +19,13 @@
   font-size: 0.9rem;
   box-sizing: border-box;
   width: 100%;
-  height: 30px;
+  height: var(--preHeader-height);
   line-height: 30px;
   background-color: var(--preHeader-background);
 }
 
 .pre-header ul {
-  max-width: var(--maxWidth);
+  max-width: var(--header-maxWidth);
   width: 100%;
   margin: auto;
   display: flex;
@@ -49,11 +43,11 @@
 
 .pre-header ul li a {
   text-decoration: none;
-  color: var(--main-color);
+  color: var(--header-mainColor);
 }
 
 .pre-header ul li a:hover {
-  color: var(--sub-color);
+  color: var(--header-subColor);
 }
 
 .container {
@@ -61,7 +55,7 @@
   margin-top: 6px;
   margin: 0 auto;
   width: 100%;
-  max-width: var(--maxWidth);
+  max-width: var(--header-maxWidth);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -71,7 +65,7 @@
   font-family: 'Keania One', cursive;
   font-size: 3.5rem;
   text-decoration: none;
-  color: var(--main-color);
+  color: var(--header-mainColor);
 }
 
 .menu {
@@ -87,7 +81,7 @@
 }
 
 .member {
-  color: var(--sub-color);
+  color: var(--header-subColor);
 }
 
 .member ul {
@@ -114,16 +108,6 @@
   height: 2rem;
 }
 
-.member .search-wrapper {
-  background-color: var(--preHeader-background);
-  border-radius: 21px;
-  min-width: 150px;
-}
-
-.member .search-wrapper .search-input {
-  width: 100px;
-}
-
 .member .drawer {
   display: none;
 }
@@ -138,11 +122,11 @@
 /* Medium Devices, Desktops : ~ 992px */
 @media only screen and (max-width: 992px) {
   .main {
-    padding-top: 60px;
+    padding-top: var(--header-height);
   }
 
   .header {
-    height: 60px;
+    height: var(--header-height);
   }
 
   .pre-header {

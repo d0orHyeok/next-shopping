@@ -7,16 +7,7 @@ const cx = classnames.bind(styles)
 
 import Link from 'next/link'
 
-interface DrawPageProps {
-  refreshFunction: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const DrawPage = ({ refreshFunction }: DrawPageProps) => {
-  const toggleDrawer = (e: React.MouseEvent): void => {
-    console.log(e.type)
-    refreshFunction(false)
-  }
-
+const DrawPage = () => {
   return (
     <>
       <div className={cx('wrapper')}>
@@ -33,12 +24,7 @@ const DrawPage = ({ refreshFunction }: DrawPageProps) => {
           </p>
           <div className={cx('userBtn-wrapper')}>
             <Link href="/register">
-              <button
-                onClick={toggleDrawer}
-                className={cx('registerBtn', 'userBtn')}
-              >
-                회원가입
-              </button>
+              <button className={cx('registerBtn', 'userBtn')}>회원가입</button>
             </Link>
             <Link href="/login">
               <button className={cx('loginBtn', 'userBtn')}>로그인</button>

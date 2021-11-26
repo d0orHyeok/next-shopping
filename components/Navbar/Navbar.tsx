@@ -4,7 +4,6 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import Tooltip from '@mui/material/Tooltip'
 import Badge from '@mui/material/Badge'
 import { styled } from '@mui/material/styles'
-import InputBase from '@mui/material/InputBase'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import Drawer from '@mui/material/Drawer'
@@ -13,9 +12,22 @@ import styles from './Navbar.module.css'
 import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
 import DrawPage from './sections/DrawPage'
+import SearchBox from './sections/SearchBox'
 
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/dist/client/router'
+
+type Anchor = 'menu' | 'search'
+
+const StyledDrawer = styled(Drawer)(() => ({
+  '& .MuiBackdrop-root': {
+    top: 'var(--header-height)',
+  },
+  '& .MuiPaper-root': {
+    top: 'var(--header-height)',
+  },
+}))
 
 const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
@@ -30,122 +42,140 @@ const StyledBadge = styled(Badge)(() => ({
 }))
 
 const Navbar = (): JSX.Element => {
-  const [draw, setDraw] = useState(false)
-  const [btnClick, setBtnClick] = useState(false)
+  const router = useRouter()
+  const [draw, setDraw] = useState({
+    menu: false,
+    search: false,
+  })
+
+  useEffect(() => {
+    setDraw({
+      menu: false,
+      search: false,
+    })
+  }, [router])
 
   const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+    (anchor: Anchor, open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
         event.type === 'keydown' &&
         ((event as React.KeyboardEvent).key === 'Tab' ||
           (event as React.KeyboardEvent).key === 'Shift')
       ) {
-        console.log(event.type)
         return
       }
 
-      setDraw(open)
+      setDraw({ ...draw, [anchor]: open })
     }
-
-  const watchDrawer = (): void => {
-    if (btnClick) {
-      toggleDrawer(true)
-    }
-  }
 
   return (
-    <header className={cx('header')}>
-      {/* Account Menu */}
-      <div className={cx('pre-header')}>
-        <ul>
-          <li>
-            <Link href="/register">회원가입</Link>
-          </li>
-          <span></span>
-          <li>
-            <Link href="/login">로그인</Link>
-          </li>
-        </ul>
-      </div>
-      <div className={cx('container')}>
-        {/* Logo for Shopping mall */}
-        <div className={cx('logo')}>
-          {/* PIIC = Preaty & Comportable */}
-          <Link href="/">PIIC</Link>
-        </div>
-
-        {/* Navigation: Menu for search products */}
-        <nav className={cx('menu')}>
+    <>
+      <header className={cx('header')}>
+        {/* Account Menu */}
+        <div className={cx('pre-header')}>
           <ul>
-            <li>Best</li>
-            <li>Men</li>
-            <li>Women</li>
-          </ul>
-        </nav>
-
-        {/* User Menu */}
-        <div className={cx('member')}>
-          <ul>
-            {/* Search */}
-            <li className={cx('search')}>
-              <div className={cx('search-wrapper')}>
-                <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
-                  <SearchOutlinedIcon />
-                </IconButton>
-                <InputBase
-                  className={cx('search-input')}
-                  placeholder="Search"
-                />
-              </div>
+            <li>
+              <Link href="/register">회원가입</Link>
             </li>
-            {/* Like, 찜 */}
-            <li className={cx('wishlist')}>
-              <Link href="/user/wishlist">
-                <Tooltip title="위시리스트" placeholder="bottom">
-                  <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
-                    <FavoriteBorderOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
-              </Link>
-            </li>
-
-            {/* Cart, 장바구니 */}
-            <li className={cx('cart')}>
-              <Link href="/user/cart">
-                <Tooltip title="장바구니" placeholder="bottom">
-                  <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
-                    <StyledBadge badgeContent={2}>
-                      <ShoppingBagOutlinedIcon />
-                    </StyledBadge>
-                  </IconButton>
-                </Tooltip>
-              </Link>
-            </li>
-            {/* Drawer */}
-            <li className={cx('drawer')}>
-              <div className={cx('drawer-wrapper')}>
-                <IconButton
-                  type="button"
-                  color="inherit"
-                  sx={{ p: '5px' }}
-                  onClick={toggleDrawer(true)}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Drawer
-                  anchor="right"
-                  open={draw}
-                  onClose={toggleDrawer(false)}
-                  onClick={watchDrawer()}
-                >
-                  <DrawPage refreshFunction={setBtnClick} />
-                </Drawer>
-              </div>
+            <span></span>
+            <li>
+              <Link href="/login">로그인</Link>
             </li>
           </ul>
         </div>
-      </div>
-    </header>
+        <div className={cx('container')}>
+          {/* Logo for Shopping mall */}
+          <div className={cx('logo')}>
+            {/* PIIC = Preaty & Comportable */}
+            <Link href="/">PIIC</Link>
+          </div>
+
+          {/* Navigation: Menu for search products */}
+          <nav className={cx('menu')}>
+            <ul>
+              <li>Best</li>
+              <li>Men</li>
+              <li>Women</li>
+            </ul>
+          </nav>
+
+          {/* User Menu */}
+          <div className={cx('member')}>
+            <ul>
+              {/* Search */}
+              <li className={cx('search')}>
+                <Tooltip title="검색" placeholder="bottom">
+                  <IconButton
+                    onClick={toggleDrawer('search', true)}
+                    type="button"
+                    color="inherit"
+                    sx={{ p: '5px' }}
+                  >
+                    <SearchOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+                <StyledDrawer
+                  style={{ zIndex: 5 }}
+                  anchor="top"
+                  open={draw['search']}
+                  onClose={toggleDrawer('search', false)}
+                  ModalProps={{
+                    keepMounted: true,
+                    disableScrollLock: true,
+                  }}
+                >
+                  <SearchBox />
+                </StyledDrawer>
+              </li>
+              {/* Like, 찜 */}
+              <li className={cx('wishlist')}>
+                <Link href="/user/wishlist">
+                  <Tooltip title="위시리스트" placeholder="bottom">
+                    <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
+                      <FavoriteBorderOutlinedIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Link>
+              </li>
+
+              {/* Cart, 장바구니 */}
+              <li className={cx('cart')}>
+                <Link href="/user/cart">
+                  <Tooltip title="장바구니" placeholder="bottom">
+                    <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
+                      <StyledBadge badgeContent={2}>
+                        <ShoppingBagOutlinedIcon />
+                      </StyledBadge>
+                    </IconButton>
+                  </Tooltip>
+                </Link>
+              </li>
+              {/* Drawer */}
+              <li className={cx('drawer')}>
+                <div className={cx('drawer-wrapper')}>
+                  <IconButton
+                    type="button"
+                    color="inherit"
+                    sx={{ p: '5px' }}
+                    onClick={toggleDrawer('menu', true)}
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  <Drawer
+                    anchor="right"
+                    open={draw['menu']}
+                    onClose={toggleDrawer('menu', false)}
+                  >
+                    <DrawPage />
+                  </Drawer>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+    </>
   )
 }
 

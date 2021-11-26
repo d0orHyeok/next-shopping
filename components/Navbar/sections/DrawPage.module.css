@@ -59,7 +59,7 @@
 }
 
 .loginBtn:hover {
-  background-color: rgba(245, 245, 245);
+  background-color: var(--preHeader-background);
 }
 
 /* Member Group */
