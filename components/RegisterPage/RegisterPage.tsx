@@ -15,12 +15,13 @@ interface inputValue {
   confirmPassword: string
 }
 
-// interface isValidate {
-//   isName: 0 | 1 | 2
-//   isEmail: 0 | 1 | 2
-//   isPassword: 0 | 1 | 2
-//   isConfirmPassword: 0 | 1 | 2
-// }
+interface isValidate {
+  //  0: empty string | 1: valid | 2: invalid
+  name: 0 | 1 | 2
+  email: 0 | 1 | 2
+  password: 0 | 1 | 2
+  confirmPassword: 0 | 1 | 2
+}
 
 const cx = classnames.bind(styles)
 
@@ -31,25 +32,57 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
   })
-  //   const [isValidate, setIsValidate] = useState<isValidate>({
-  //     isName: 0,
-  //     isEmail: 0,
-  //     isPassword: 0,
-  //     isConfirmPassword: 0,
-  //   })
+  const [isValidate, setIsValidate] = useState<isValidate>({
+    name: 0,
+    email: 0,
+    password: 0,
+    confirmPassword: 0,
+  })
 
   const { name, email, password, confirmPassword } = inputValue
+  const {
+    name: v_name,
+    email: v_email,
+    password: v_password,
+    confirmPassword: v_confirmPassword,
+  } = isValidate
 
-  //   const checkValidate = (id: string, value: string): void => {
-  //     console.log(id, value)
-  //   }
+  const checkValidate = (id: string, value: string): void => {
+    let validation = 0
+
+    const regex_email =
+      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
+    const regex_password = /^(?=.*[a-zA-Z])((?=.*\d)).{6,20}$/
+    const regex_name = /^[가-힣|a-z|A-Z|\s]+$/
+    switch (id) {
+      case 'email':
+        regex_email.test(value) ? (validation = 1) : (validation = 2)
+        break
+      case 'password':
+        regex_password.test(value) ? (validation = 1) : (validation = 2)
+        break
+      case 'confirmPassword':
+        v_password === 1 && password === value
+          ? (validation = 1)
+          : (validation = 2)
+        break
+      case 'name':
+        value.trim().length > 1 && regex_name.test(value.trim())
+          ? (validation = 1)
+          : (validation = 2)
+        break
+    }
+
+    setIsValidate({ ...isValidate, [id]: validation })
+  }
 
   const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.currentTarget
     setInputValue({
       ...inputValue,
-      [id]: value,
+      [id]: value.trim(),
     })
+    checkValidate(id, value)
   }
 
   //   const onClickRegister = (): void => {}
@@ -73,7 +106,8 @@ const RegisterPage = () => {
               required
               id="email"
               label="Email"
-              helperText="Incorrect entry."
+              error={v_email !== 0 && v_email === 2 ? true : false}
+              helperText={v_email === 2 ? '알 수 없는 이메일 형식입니다.' : ''}
               onChange={onChangeValue}
               value={email}
             />
@@ -82,17 +116,28 @@ const RegisterPage = () => {
               required
               id="password"
               label="Password"
-              helperText="Incorrect entry."
+              type="password"
+              error={v_password !== 0 && v_password === 2 ? true : false}
+              helperText={
+                v_password === 2 ? '영문과 숫자를 포함한 6 ~ 20 자리' : ''
+              }
               onChange={onChangeValue}
               value={password}
             />
             <TextField
               className={cx('input')}
               required
-              error
               id="confirmPassword"
               label="Comfirm Password"
-              helperText="Passwords do not match."
+              type="password"
+              error={
+                v_confirmPassword !== 0 && v_confirmPassword === 2
+                  ? true
+                  : false
+              }
+              helperText={
+                v_confirmPassword === 2 ? '비밀번호가 일치하지 않습니다' : ''
+              }
               onChange={onChangeValue}
               value={confirmPassword}
             />
@@ -101,7 +146,8 @@ const RegisterPage = () => {
               required
               id="name"
               label="name"
-              helperText="Name must be string"
+              error={v_name !== 0 && v_name === 2 ? true : false}
+              helperText={v_name === 2 ? '이름은 문자여야 합니다.' : ''}
               onChange={onChangeValue}
               value={name}
             />
@@ -109,7 +155,7 @@ const RegisterPage = () => {
               <div className={cx('terms-item')}>
                 <h2 className={cx('terms-title')}>
                   이용약관
-                  <Link href="#">전문보기</Link>
+                  <Link href="/scenter/policy">전문보기</Link>
                 </h2>
                 <div className={cx('terms-content')}>
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Et
@@ -127,14 +173,14 @@ const RegisterPage = () => {
                   magni tempore ipsam cumque ad.
                 </div>
                 <div className={cx('terms-checkfield')}>
-                  <input id="check1" type="checkbox" />
+                  <input required id="check1" type="checkbox" />
                   <label htmlFor="check1">[필수] 약관에 동의 합니다.</label>
                 </div>
               </div>
               <div className={cx('terms-item')}>
                 <h2 className={cx('terms-title')}>
                   개인정보처리방침
-                  <Link href="#">전문보기</Link>
+                  <Link href="/scenter/privacyAndTerms">전문보기</Link>
                 </h2>
                 <div className={cx('terms-content')}>
                   Lorem, ipsum dolor sit amet consectetur adipisicing elit.
@@ -143,7 +189,7 @@ const RegisterPage = () => {
                   odio recusandae nesciunt dolor! Veniam, deleniti!
                 </div>
                 <div className={cx('terms-checkfield')}>
-                  <input id="check2" type="checkbox" />
+                  <input required id="check2" type="checkbox" />
                   <label htmlFor="check2">[필수] 개인정보 수집.이용동의</label>
                 </div>
               </div>
