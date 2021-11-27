@@ -44,10 +44,24 @@
   color: var(--fontColor);
 }
 
+.nav ul li a {
+  color: var(--list-fontColor);
+  text-decoration: none;
+}
+
+.nav ul li a:hover {
+  cursor: pointer;
+  color: var(--fontColor);
+}
+
 .nav .nav-title {
   color: var(--fontColor);
   font-size: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.nav .nav-title a {
+  color: var(--fontColor);
 }
 
 .nav .social ul {
