@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Keania+One&display=swap');
+
 :root {
   --header-maxWidth: 1400px;
   --header-background: white;
@@ -6,6 +8,8 @@
   --header-subColor: rgba(0, 0, 0, 0.75);
   --header-height: 90px;
   --preHeader-height: 30px;
+
+  --logo-font: 'Keania One', cursive;
 }
 
 /* Medium Devices, Desktops : ~ 992px */

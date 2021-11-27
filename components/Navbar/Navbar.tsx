@@ -7,18 +7,20 @@ import { styled } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import Drawer from '@mui/material/Drawer'
+import Modal from '@mui/material/Modal'
 
 import styles from './Navbar.module.css'
 import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
-import DrawPage from './sections/DrawPage'
+import SideNavBox from './sections/SideNavBox'
 import SearchBox from './sections/SearchBox'
+import LoginBox from '@components/LoginBox/LoginBox'
 
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/dist/client/router'
 
-type Anchor = 'menu' | 'search'
+type Anchor = 'menu' | 'search' | 'login'
 
 const StyledDrawer = styled(Drawer)(() => ({
   '& .MuiBackdrop-root': {
@@ -44,17 +46,20 @@ const StyledBadge = styled(Badge)(() => ({
 const Navbar = (): JSX.Element => {
   const router = useRouter()
   const [draw, setDraw] = useState({
+    login: false,
     menu: false,
     search: false,
   })
 
   useEffect(() => {
     setDraw({
+      login: false,
       menu: false,
       search: false,
     })
   }, [router])
 
+  const toggleLogin = (open: boolean) => setDraw({ ...draw, login: open })
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -80,7 +85,11 @@ const Navbar = (): JSX.Element => {
             </li>
             <span></span>
             <li>
-              <Link href="/login">로그인</Link>
+              {/* <Link href="/login">로그인</Link> */}
+              <a onClick={() => toggleLogin(true)}>로그인</a>
+              <Modal open={draw['login']} onClose={() => toggleLogin(false)}>
+                <LoginBox onClose={() => toggleLogin(false)} />
+              </Modal>
             </li>
           </ul>
         </div>
@@ -125,7 +134,11 @@ const Navbar = (): JSX.Element => {
                     disableScrollLock: true,
                   }}
                 >
-                  <SearchBox />
+                  <SearchBox
+                    onClose={(open: boolean): void => {
+                      setDraw({ ...draw, search: open })
+                    }}
+                  />
                 </StyledDrawer>
               </li>
               {/* Like, 찜 */}
@@ -167,7 +180,11 @@ const Navbar = (): JSX.Element => {
                     open={draw['menu']}
                     onClose={toggleDrawer('menu', false)}
                   >
-                    <DrawPage />
+                    <SideNavBox
+                      onClose={(open: boolean): void => {
+                        setDraw({ ...draw, menu: open })
+                      }}
+                    />
                   </Drawer>
                 </div>
               </li>

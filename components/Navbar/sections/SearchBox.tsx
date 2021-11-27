@@ -1,11 +1,15 @@
 import InputBase from '@mui/material/InputBase'
 import IconButton from '@mui/material/IconButton'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import CloseIcon from '@mui/icons-material/Close'
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 
 import styles from './SearchBox.module.css'
 
-const SearchBox = () => {
+interface SearchBoxProops {
+  onClose?: (open: boolean) => void
+}
+
+const SearchBox = ({ onClose }: SearchBoxProops) => {
   return (
     <>
       <div className={styles.wrapper}>
@@ -16,6 +20,7 @@ const SearchBox = () => {
             type="button"
             color="inherit"
             sx={{ p: '5px' }}
+            onClick={() => onClose && onClose(false)}
           >
             <CloseIcon />
           </IconButton>
