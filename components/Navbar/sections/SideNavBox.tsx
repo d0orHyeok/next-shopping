@@ -52,7 +52,9 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
               로그인
             </button>
             <Modal open={open} onClose={handleClose}>
-              <LoginBox onClose={handleClose} />
+              <div>
+                <LoginBox onClose={handleClose} />
+              </div>
             </Modal>
           </div>
         </div>

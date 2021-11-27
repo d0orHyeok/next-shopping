@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
-// import Axios from 'axios'
+import Axios from 'axios'
+import { useRouter } from 'next/router'
 
 import styles from './RegisterPage.module.css'
 import classnames from 'classnames/bind'
@@ -26,25 +27,32 @@ interface isValidate {
 const cx = classnames.bind(styles)
 
 const RegisterPage = () => {
+  const router = useRouter()
+
+  const [check, setCheck] = useState({
+    check1: false,
+    check2: false,
+  })
+
   const [inputValue, setInputValue] = useState<inputValue>({
-    name: '',
     email: '',
     password: '',
     confirmPassword: '',
+    name: '',
   })
   const [isValidate, setIsValidate] = useState<isValidate>({
-    name: 0,
     email: 0,
     password: 0,
     confirmPassword: 0,
+    name: 0,
   })
 
   const { name, email, password, confirmPassword } = inputValue
   const {
-    name: v_name,
     email: v_email,
     password: v_password,
     confirmPassword: v_confirmPassword,
+    name: v_name,
   } = isValidate
 
   const checkValidate = (id: string, value: string): void => {
@@ -85,7 +93,63 @@ const RegisterPage = () => {
     checkValidate(id, value)
   }
 
-  //   const onClickRegister = (): void => {}
+  const onChangeBoolean = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, checked } = e.currentTarget
+    setCheck({
+      ...check,
+      [id]: checked,
+    })
+  }
+
+  const onClickRegister = (): void => {
+    // 유효성을 전부 통과하지 못했다면 return
+    if (Object.values(isValidate).filter((valid) => valid !== 1).length !== 0) {
+      const keys = Object.keys(isValidate)
+      const values = Object.values(isValidate)
+
+      let newValidate = {}
+      let focus = false
+
+      // 유효성을 통과하지 못한 항목을 error 처리
+      values.forEach((value, index) => {
+        if (value !== 1) {
+          newValidate = {
+            ...newValidate,
+            [keys[index]]: 2,
+          }
+          if (focus === false) {
+            // 통과하지못한 첫번째 항목을 focus
+            document.getElementById(keys[index])?.focus()
+            focus = true
+          }
+        }
+      })
+      setIsValidate({ ...isValidate, ...newValidate })
+      return
+    } else if (
+      // 항목을 체크하지 않았다면 리턴
+      Object.values(check).filter((ischecked) => ischecked === false).length !==
+      0
+    ) {
+      alert('항목을 체크해주세요')
+      return
+    }
+
+    // 서버에 회원가입 요청
+    const body = {
+      name,
+      email,
+      password,
+    }
+    Axios.post('/api/users/register', body).then((res) => {
+      if (res.data.success === false) {
+        alert(res.data.message)
+        return
+      }
+      router.push('/')
+      alert('가입되었습니다')
+    })
+  }
 
   return (
     <>
@@ -100,7 +164,10 @@ const RegisterPage = () => {
             </p>
           </div>
           <Divider className={cx('divider')}>Register</Divider>
-          <form className={cx('form')}>
+          <form
+            onSubmit={(e: React.FormEvent<HTMLElement>) => e.preventDefault()}
+            className={cx('form')}
+          >
             <TextField
               className={cx('input')}
               required
@@ -123,6 +190,7 @@ const RegisterPage = () => {
               }
               onChange={onChangeValue}
               value={password}
+              autoComplete="on"
             />
             <TextField
               className={cx('input')}
@@ -140,6 +208,7 @@ const RegisterPage = () => {
               }
               onChange={onChangeValue}
               value={confirmPassword}
+              autoComplete="on"
             />
             <TextField
               className={cx('input')}
@@ -173,7 +242,13 @@ const RegisterPage = () => {
                   magni tempore ipsam cumque ad.
                 </div>
                 <div className={cx('terms-checkfield')}>
-                  <input required id="check1" type="checkbox" />
+                  <input
+                    required
+                    id="check1"
+                    type="checkbox"
+                    checked={check.check1}
+                    onChange={onChangeBoolean}
+                  />
                   <label htmlFor="check1">[필수] 약관에 동의 합니다.</label>
                 </div>
               </div>
@@ -189,12 +264,24 @@ const RegisterPage = () => {
                   odio recusandae nesciunt dolor! Veniam, deleniti!
                 </div>
                 <div className={cx('terms-checkfield')}>
-                  <input required id="check2" type="checkbox" />
+                  <input
+                    required
+                    id="check2"
+                    type="checkbox"
+                    checked={check.check2}
+                    onChange={onChangeBoolean}
+                  />
                   <label htmlFor="check2">[필수] 개인정보 수집.이용동의</label>
                 </div>
               </div>
             </div>
-            <button className={cx('registerBtn')}>Sign Up</button>
+            <button
+              type="button"
+              onClick={onClickRegister}
+              className={cx('registerBtn')}
+            >
+              Sign Up
+            </button>
           </form>
         </div>
       </div>

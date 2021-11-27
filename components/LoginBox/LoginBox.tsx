@@ -78,6 +78,7 @@ const LoginPage = ({ onClose }: LoginPageProops) => {
                 onChange={onChangeValue}
                 id="password"
                 type="password"
+                autoComplete="on"
                 value={password}
               />
             </div>

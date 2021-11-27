@@ -13,8 +13,13 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.status(200).json({ success: true })
   } catch (error) {
-    console.log(error.message)
-    res.status(500).json({ success: false, error })
+    error.code === 11000
+      ? res
+          .status(422)
+          .json({ success: false, message: '이미 존재하는 회원정보입니다.' })
+      : res
+          .status(500)
+          .json({ success: false, message: '회원가입에 실패하였습니다.' })
   }
 })
 

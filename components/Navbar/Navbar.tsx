@@ -86,9 +86,13 @@ const Navbar = (): JSX.Element => {
             <span></span>
             <li>
               {/* <Link href="/login">로그인</Link> */}
-              <a onClick={() => toggleLogin(true)}>로그인</a>
+              <a className={cx('loginBtn')} onClick={() => toggleLogin(true)}>
+                로그인
+              </a>
               <Modal open={draw['login']} onClose={() => toggleLogin(false)}>
-                <LoginBox onClose={() => toggleLogin(false)} />
+                <div>
+                  <LoginBox onClose={() => toggleLogin(false)} />
+                </div>
               </Modal>
             </li>
           </ul>

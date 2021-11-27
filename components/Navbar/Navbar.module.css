@@ -50,6 +50,10 @@
   color: var(--header-subColor);
 }
 
+.pre-header .loginBtn {
+  cursor: pointer;
+}
+
 .container {
   box-sizing: border-box;
   margin-top: 6px;
