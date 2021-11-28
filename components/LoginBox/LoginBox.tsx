@@ -45,9 +45,8 @@ const LoginPage = ({ onClose }: LoginPageProops) => {
     }
 
     Axios.post('/api/users/login', inputValue)
-      .then((res) => {
+      .then(() => {
         router.push('/')
-        console.log(res)
       })
       .catch((error) => {
         !error.response.data

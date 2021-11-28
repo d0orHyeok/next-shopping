@@ -1,14 +1,26 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
-import User from '@models/User'
+import User, { IUserDocument } from '@models/User'
+
+export interface AuthNextApiRequestRequest extends NextApiRequest {
+  token?: string
+  user?: IUserDocument
+}
 
 const auth = async (
-  _0: NextApiRequest,
-  _1: NextApiResponse,
+  req: AuthNextApiRequestRequest,
+  res: NextApiResponse,
   next: NextHandler
 ): Promise<void> => {
   try {
-    User.findByToken
+    const token = req.cookies.w_auth
+    const user = await User.findByToken(token)
+
+    if (!user) {
+      return res.json({ isAuth: false, error: true })
+    }
+    req.token = token
+    req.user = user
   } catch (error) {
     console.log('auth error ', error.message)
   }

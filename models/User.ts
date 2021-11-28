@@ -43,7 +43,7 @@ export interface IUserDocument extends Document, IUser {
 }
 
 export interface IUserModel extends Model<IUserDocument> {
-  findByToken: (token: string, callback: () => void) => Promise<IUserDocument>
+  findByToken: (token: string) => Promise<IUserDocument>
 }
 
 const userSchema: Schema = new Schema(
@@ -150,9 +150,7 @@ userSchema.statics.findByToken = async function (
   token: string
 ): Promise<IUserDocument> {
   const decode = await jwt.verify(token, 'secret')
-  const user = this.findOne({ _id: decode, token: token })
-
-  return user
+  return await this.findOne({ _id: decode, token: token })
 }
 
 export default (mongoose.models.User as IUserModel) ||
