@@ -11,15 +11,14 @@ handler.use(auth)
 
 handler.get(async (req: AuthNextApiRequestRequest, res: NextApiResponse) => {
   try {
-    console.log(req.user?._id)
     await User.findOneAndUpdate(
-      { _id: req.user?._id },
+      { _id: req.user._id },
       { token: '', tokenExp: 0 }
     )
     res.setHeader('Set-Cookie', 'w_auth=""; Max-Age=-1')
-    res.status(200).json({ success: true, message: 'logout success' })
+    res.status(200).json({ success: true, message: '로그아웃 성공' })
   } catch (error) {
-    res.status(500).json({ success: false, error })
+    res.status(500).json({ success: false, message: '로그아웃 실패', error })
   }
 })
 

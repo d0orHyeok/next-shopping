@@ -11,7 +11,8 @@
           "@middlewares/*": "./middlewares",
           "@models/*": "./models",
           "@types/*": "./types",
-          "@styles/*": "./styles"
+          "@styles/*": "./styles",
+          "@redux/*": "./redux"
         }
       }
     ]

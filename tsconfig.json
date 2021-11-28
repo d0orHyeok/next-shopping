@@ -24,7 +24,8 @@
       "@models/*": ["models/*"],
       "@types/*": ["types/*"],
       "@components/*": ["components/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@redux/*": ["redux/*"]
     }
   },
   "exclude": ["node_modules", ".next", "out"],
