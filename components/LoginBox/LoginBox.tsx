@@ -4,6 +4,8 @@ import CloseIcon from '@mui/icons-material/Close'
 import styles from './LoginBox.module.css'
 import Link from 'next/link'
 import { useState } from 'react'
+import Axios from 'axios'
+import { useRouter } from 'next/router'
 
 interface LoginPageProops {
   onClose?: () => void
@@ -15,6 +17,8 @@ interface inputValue {
 }
 
 const LoginPage = ({ onClose }: LoginPageProops) => {
+  const router = useRouter()
+
   const [inputValue, setInputValue] = useState<inputValue>({
     email: '',
     password: '',
@@ -28,6 +32,28 @@ const LoginPage = ({ onClose }: LoginPageProops) => {
       ...inputValue,
       [id]: value,
     })
+  }
+
+  const onClickLogin = () => {
+    if (email.trim().length === 0) {
+      document.getElementById('email')?.focus()
+      return
+    }
+    if (password.trim().length === 0) {
+      document.getElementById('password')?.focus()
+      return
+    }
+
+    Axios.post('/api/users/login', inputValue)
+      .then((res) => {
+        router.push('/')
+        console.log(res)
+      })
+      .catch((error) => {
+        !error.response.data
+          ? alert('실패하였습니다.')
+          : alert(error.response.data.message)
+      })
   }
 
   return (
@@ -46,7 +72,10 @@ const LoginPage = ({ onClose }: LoginPageProops) => {
           <h1 className={styles.title}>
             <span className={styles.logo}>PIIC</span> 로그인
           </h1>
-          <form className={styles.form}>
+          <form
+            className={styles.form}
+            onSubmit={(e: React.FormEvent<HTMLElement>) => e.preventDefault()}
+          >
             <div className={styles.inputWrapper}>
               <label
                 htmlFor="email"
@@ -83,7 +112,12 @@ const LoginPage = ({ onClose }: LoginPageProops) => {
               />
             </div>
             <div className={styles.buttonWrapper}>
-              <input className={styles.button} type="submit" value="로그인" />
+              <input
+                onClick={onClickLogin}
+                className={styles.button}
+                type="button"
+                value="로그인"
+              />
             </div>
           </form>
           <h2 className={styles.subtitle}>

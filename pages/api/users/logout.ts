@@ -9,9 +9,10 @@ handler.use(database)
 
 handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    console.log(req.cookies)
     await User.findOneAndUpdate({ name: 'd0oR' }, { token: '', tokenExp: 0 })
 
-    res.setHeader('Set-Cookie', 'w_auth; Max-Age=-1')
+    res.setHeader('Set-Cookie', 'w_auth=""; Max-Age=-1')
     res.status(200).json({ success: true, message: 'logout success' })
   } catch (error) {
     console.log(error.message)
