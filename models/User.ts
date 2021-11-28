@@ -42,7 +42,7 @@ export interface IUserDocument extends Document, IUser {
   ) => void
 }
 
-interface IUserModel extends Model<IUserDocument> {
+export interface IUserModel extends Model<IUserDocument> {
   findByToken: (token: string, callback: () => void) => Promise<IUserDocument>
 }
 
@@ -155,5 +155,5 @@ userSchema.statics.findByToken = async function (
   return user
 }
 
-export default mongoose.models.User ||
+export default (mongoose.models.User as IUserModel) ||
   mongoose.model<IUserDocument, IUserModel>('User', userSchema)
