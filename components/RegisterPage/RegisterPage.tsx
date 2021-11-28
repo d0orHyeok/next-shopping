@@ -141,14 +141,21 @@ const RegisterPage = () => {
       email,
       password,
     }
-    Axios.post('/api/users/register', body).then((res) => {
-      if (res.data.success === false) {
+    Axios.post('/api/users/register', body)
+      .then((res) => {
+        router.push('/')
         alert(res.data.message)
-        return
-      }
-      router.push('/')
-      alert('가입되었습니다')
-    })
+      })
+      .catch((error) => {
+        if (error.response.status === 422) {
+          setIsValidate({ ...isValidate, email: 0 })
+          setInputValue({ ...inputValue, email: '' })
+          document.getElementById('email')?.focus()
+        }
+        !error.response.data
+          ? alert('실패하였습니다.')
+          : alert(error.response.data.message)
+      })
   }
 
   return (

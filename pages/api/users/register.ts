@@ -11,7 +11,7 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
     const user = new User(req.body)
     await user.save()
 
-    res.status(200).json({ success: true })
+    res.status(200).json({ success: true, message: '회원가입 되었습니다.' })
   } catch (error) {
     error.code === 11000
       ? res
