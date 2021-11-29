@@ -1,26 +1,22 @@
-import Axios from 'axios'
-import { LOGIN_USER, LOGOUT_USER, AUTH_USER } from '@redux/actions/action_types'
+import * as type from '@redux/actions/action_types'
 
-export const loginUserApi = (loginData) => {
-  return Axios.post('/api/users/login', loginData)
-}
-
-export const logoutUser = () => {
-  const req = Axios.get('/api/users/logout').then((res) => res.data)
-
+export const userLogin = (payload) => {
   return {
-    type: LOGOUT_USER,
-    payload: req,
+    type: type.USER_LOGIN,
+    payload: payload,
   }
 }
 
-export const authUser = () => {
-  const req = Axios.get('/api/users/auth').then((res) => res.data)
-
+export const userLoginSuccess = (data) => {
   return {
-    type: AUTH_USER,
-    payload: req,
+    type: type.USER_LOGIN,
+    data: data,
   }
 }
 
-function* loginUser
+export const userLoginFail = (data) => {
+  return {
+    type: type.USER_LOGIN,
+    error: data,
+  }
+}

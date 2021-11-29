@@ -1,14 +1,15 @@
 import nextConnect from 'next-connect'
 import { NextApiResponse } from 'next'
 import database from '@middlewares/database'
-import auth, { AuthNextApiRequestRequest } from '@middlewares/auth'
+import auth from '@middlewares/auth'
+import { iAuthNextApiRequestRequest } from '@interfaces/iMiddlewares/iAuth.interfaces'
 
 const handler = nextConnect()
 
 handler.use(database)
 handler.use(auth)
 
-handler.get((req: AuthNextApiRequestRequest, res: NextApiResponse) => {
+handler.get((req: iAuthNextApiRequestRequest, res: NextApiResponse) => {
   res.status(200).json({
     _id: req.user._id,
     isAdmin: req.user.role === 0 ? false : true,

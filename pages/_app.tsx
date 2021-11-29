@@ -2,6 +2,7 @@
 import type { AppProps /*, AppContext */ } from 'next/app'
 import Head from 'next/head'
 import Layout from '@components/Layout'
+import { wrapper } from '@redux/store'
 
 import '@styles/global.css'
 import '@styles/variable.css'
@@ -34,4 +35,4 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 //   return { ...appProps }
 // }
 
-export default MyApp
+export default wrapper.withRedux(MyApp)

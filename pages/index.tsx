@@ -7,10 +7,9 @@ export const Home = (): JSX.Element => {
       .then((res) => {
         alert(res.data.message)
       })
-      .catch((error) => {
-        !error.response.data
-          ? alert('실패하였습니다.')
-          : alert(error.response.data.message)
+      .catch((err) => {
+        console.log(err.response)
+        alert('실패하였습니다.')
       })
   }
 

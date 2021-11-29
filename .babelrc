@@ -12,7 +12,8 @@
           "@models/*": "./models",
           "@types/*": "./types",
           "@styles/*": "./styles",
-          "@redux/*": "./redux"
+          "@redux/*": "./redux",
+          "@interfaces/*": "./interfaces"
         }
       }
     ]

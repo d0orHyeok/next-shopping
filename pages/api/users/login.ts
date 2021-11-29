@@ -1,6 +1,7 @@
 import nextConnect from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
-import User, { IUserDocument } from '@models/User'
+import User from '@models/User'
+import { IUserDocument } from '@interfaces/iModels/iUser.interfaces'
 import database from '@middlewares/database'
 
 const handler = nextConnect()
@@ -52,7 +53,7 @@ handler.post((req: NextApiRequest, res: NextApiResponse) => {
           'Set-Cookie',
           `w_auth=${user.token}; Max-Age=3600; HttpOnly; Secure`
         )
-        res.status(200).json({ success: true, userId: user._id })
+        res.status(200).json({ success: true })
       })
     })
   })

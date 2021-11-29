@@ -1,13 +1,10 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
-import User, { IUserDocument } from '@models/User'
-
-export interface AuthNextApiRequestRequest extends NextApiRequest {
-  user: IUserDocument
-}
+import User from '@models/User'
+import { iAuthNextApiRequestRequest } from '@interfaces/iMiddlewares/iAuth.interfaces'
 
 const auth = async (
-  req: AuthNextApiRequestRequest,
+  req: iAuthNextApiRequestRequest,
   res: NextApiResponse,
   next: NextHandler
 ): Promise<void> => {

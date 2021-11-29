@@ -1,3 +1,3 @@
-export const LOGIN_USER = 'login_user'
-export const AUTH_USER = 'auth_user'
-export const LOGOUT_USER = 'logout_user'
+export const USER_LOGIN = 'user_login'
+export const USER_LOGIN_SUCCESS = 'user_loginSuccess'
+export const USER_LOGIN_FAIL = 'user_loginFail'

@@ -1,50 +1,10 @@
-import mongoose, { Document, Model, Schema } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dayjs from 'dayjs'
+import { IUserDocument, IUserModel } from '@interfaces/iModels/iUser.interfaces'
 
 const saltRounds = 10
-
-export interface IUserCart {
-  id: string
-  quantity: number
-  date: number
-}
-
-export interface IUserHistory {
-  dateOfPurchase: number
-  name: string
-  id: string
-  price: number
-  quantity: number
-  paymentId: string
-}
-
-export interface IUser {
-  name: string
-  email: string
-  password: string
-  role?: 0 | 1 | 2
-  image?: string
-  cart?: IUserCart[]
-  history?: IUserHistory[]
-  token?: string
-  tokenExp?: number
-}
-
-export interface IUserDocument extends Document, IUser {
-  comparePassword: (
-    password: string,
-    callback: (err: Error | null, isMatch: boolean | null) => void
-  ) => void
-  generateToken: (
-    callback: (err: Error | null, user?: IUserDocument | null) => void
-  ) => void
-}
-
-export interface IUserModel extends Model<IUserDocument> {
-  findByToken: (token: string) => Promise<IUserDocument>
-}
 
 const userSchema: Schema = new Schema(
   {
@@ -59,13 +19,16 @@ const userSchema: Schema = new Schema(
     },
     password: {
       type: String,
-      minglength: 5,
+      minglength: 6,
     },
     role: {
       type: Number,
       default: 0,
     },
-    image: String,
+    image: {
+      type: String,
+      default: '',
+    },
     cart: {
       type: [
         {
@@ -124,10 +87,10 @@ userSchema.pre(
 
 userSchema.methods.comparePassword = function (
   plainPassword: string,
-  callback: (err: Error | null, isMatch: boolean | null) => void
+  callback: (err: Error | null, isMatch?: boolean) => void
 ) {
   bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
-    if (err) return callback(err, null)
+    if (err) return callback(err)
     callback(null, isMatch)
   })
 }
