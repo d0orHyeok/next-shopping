@@ -1,21 +1,24 @@
-import { applyMiddleware, createStore, Middleware, StoreEnhancer } from 'redux'
-import { createWrapper } from 'next-redux-wrapper'
-import ReduxThunk from 'redux-thunk'
+import { configureStore, EnhancedStore } from '@reduxjs/toolkit'
+import { createWrapper, MakeStore } from 'next-redux-wrapper'
+import userReducer from './features/userSlice'
 
-import rootReducer from './reducers/index'
+const store = configureStore({
+  reducer: {
+    user: userReducer,
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+  devTools: process.env.NODE_ENV !== 'production',
+})
 
-const bindMiddleware = (middleware: Middleware[]): StoreEnhancer => {
-  if (process.env.NODE_ENV !== 'production') {
-    const { composeWithDevTools } = require('redux-devtools-extension')
-    return composeWithDevTools(applyMiddleware(...middleware))
-  }
-  return applyMiddleware(...middleware)
-}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const setupStore = (context: any): EnhancedStore => store
+const makeStore: MakeStore<any> = (context) => setupStore(context)
 
-export const makeStore = () => {
-  const store = createStore(rootReducer, bindMiddleware([ReduxThunk]))
+export const wrapper = createWrapper(makeStore, {
+  debug: process.env.NODE_ENV !== 'production',
+})
 
-  return store
-}
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
 
-export const wrapper = createWrapper(makeStore, { debug: true })
+export default wrapper

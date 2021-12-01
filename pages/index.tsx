@@ -1,16 +1,16 @@
 import Head from 'next/head'
-import Axios from 'axios'
+import { useAppDispatch } from '@redux/hooks'
+import { userAuth, userLogout } from '@redux/features/userSlice'
 
 export const Home = (): JSX.Element => {
+  const dispatch = useAppDispatch()
+
   const logout = () => {
-    Axios.get('/api/users/logout')
-      .then((res) => {
-        alert(res.data.message)
-      })
-      .catch((err) => {
-        console.log(err.response)
-        alert('실패하였습니다.')
-      })
+    dispatch(userLogout()).then((res) => console.log(res))
+  }
+
+  const test = () => {
+    dispatch(userAuth())
   }
 
   return (
@@ -22,6 +22,7 @@ export const Home = (): JSX.Element => {
       <main style={{ height: '100vh' }}>
         <h1 className="title">
           <button onClick={logout}>로그아웃 테스트</button>
+          <button onClick={test}>redux test</button>
         </h1>
       </main>
     </>

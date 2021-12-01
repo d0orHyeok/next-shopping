@@ -2,8 +2,7 @@ import nextConnect from 'next-connect'
 import { NextApiResponse } from 'next'
 import User from '@models/User'
 import database from '@middlewares/database'
-import auth from '@middlewares/auth'
-import { iAuthNextApiRequestRequest } from '@interfaces/iMiddlewares/iAuth.interfaces'
+import auth, { iAuthNextApiRequestRequest } from '@middlewares/auth'
 
 const handler = nextConnect()
 
@@ -19,7 +18,7 @@ handler.get(async (req: iAuthNextApiRequestRequest, res: NextApiResponse) => {
     res.setHeader('Set-Cookie', 'w_auth=""; Max-Age=-1')
     res.status(200).json({ success: true, message: '로그아웃 성공' })
   } catch (error) {
-    res.status(500).json({ success: false, message: '로그아웃 실패', error })
+    res.status(500).json({ error })
   }
 })
 

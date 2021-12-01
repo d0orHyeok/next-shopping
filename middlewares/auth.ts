@@ -1,7 +1,10 @@
-import { NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
-import User from '@models/User'
-import { iAuthNextApiRequestRequest } from '@interfaces/iMiddlewares/iAuth.interfaces'
+import User, { IUserDocument } from '@models/User'
+
+export interface iAuthNextApiRequestRequest extends NextApiRequest {
+  user: IUserDocument
+}
 
 const auth = async (
   req: iAuthNextApiRequestRequest,
@@ -12,7 +15,7 @@ const auth = async (
     const token = req.cookies.w_auth
     const user = await User.findByToken(token)
     if (!user) {
-      return res.json({ isAuth: false, error: true })
+      return res.status(400).json({ message: 'User not found' })
     }
     req.user = user
   } catch (error) {

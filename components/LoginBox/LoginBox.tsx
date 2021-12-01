@@ -49,9 +49,9 @@ const LoginPage = ({ onClose }: LoginPageProops) => {
         router.push('/')
       })
       .catch((error) => {
-        !error.response.data
-          ? alert('실패하였습니다.')
-          : alert(error.response.data.message)
+        error.response.status === 400
+          ? alert(error.response.data.message)
+          : alert('로그인에 실패하였습니다.')
       })
   }
 

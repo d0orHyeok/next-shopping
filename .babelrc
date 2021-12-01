@@ -13,7 +13,7 @@
           "@types/*": "./types",
           "@styles/*": "./styles",
           "@redux/*": "./redux",
-          "@interfaces/*": "./interfaces"
+          "@api/*": "./pages/api"
         }
       }
     ]
