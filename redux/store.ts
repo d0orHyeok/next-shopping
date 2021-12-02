@@ -1,11 +1,9 @@
 import { configureStore, EnhancedStore } from '@reduxjs/toolkit'
 import { createWrapper, MakeStore } from 'next-redux-wrapper'
-import userReducer from './features/userSlice'
+import slice from './features/index'
 
 const store = configureStore({
-  reducer: {
-    user: userReducer,
-  },
+  reducer: slice,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
   devTools: process.env.NODE_ENV !== 'production',
 })
