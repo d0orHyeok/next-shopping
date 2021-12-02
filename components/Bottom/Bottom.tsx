@@ -18,10 +18,10 @@ const Bottom = () => {
             <div className={cx('introduce')}>
               <ul>
                 <li className={cx('nav-title')}>
-                  <Link href="/about">브랜드소개</Link>
+                  <Link href="/scenter/about">브랜드소개</Link>
                 </li>
                 <li className={cx('nav-title')}>
-                  <Link href="/store">매장안내</Link>
+                  <Link href="/scenter/store">매장안내</Link>
                 </li>
               </ul>
             </div>
@@ -52,7 +52,7 @@ const Bottom = () => {
               <h2 className={cx('nav-title')}>ABOUT PIIC</h2>
               <ul>
                 <li>
-                  <Link href="/about">PIIC에 대하여</Link>
+                  <Link href="/scenter/about">PIIC에 대하여</Link>
                 </li>
               </ul>
             </div>
