@@ -1,3 +1,5 @@
+import AuthCheck from 'hoc/authCheck'
+
 const cart = () => {
   return (
     <div>
@@ -6,4 +8,4 @@ const cart = () => {
   )
 }
 
-export default cart
+export default AuthCheck(cart, true)

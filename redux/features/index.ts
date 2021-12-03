@@ -5,11 +5,12 @@ import user, { IUserState } from './userSlice'
 export interface State {
   user: IUserState
 }
-const rootReducer = (state: State | undefined, action: AnyAction) => {
+
+const rootReducer = (state: State, action: AnyAction) => {
   switch (action.type) {
     case HYDRATE:
-      // console.log('HYDRATE', action.payload)
-      return state
+      // console.log('hydrate', action)
+      return { ...state, ...action.payload }
     default: {
       const combineReducer = combineReducers({
         user,

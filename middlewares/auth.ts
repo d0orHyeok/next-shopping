@@ -12,7 +12,8 @@ const auth = async (
   next: NextHandler
 ): Promise<void> => {
   try {
-    const token = req.cookies.w_auth
+    const token =
+      req.body && req.body.token ? req.body.token : req.cookies.w_auth
     const user = await User.findByToken(token)
     if (!user) {
       return res.status(400).json({ message: 'User not found' })

@@ -1,9 +1,9 @@
 import { configureStore, EnhancedStore } from '@reduxjs/toolkit'
 import { createWrapper, MakeStore } from 'next-redux-wrapper'
-import slice from './features/index'
+import rootReducer from './features/index'
 
 const store = configureStore({
-  reducer: slice,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
   devTools: process.env.NODE_ENV !== 'production',
 })

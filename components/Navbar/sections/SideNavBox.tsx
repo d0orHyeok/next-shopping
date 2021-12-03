@@ -10,22 +10,28 @@ const cx = classnames.bind(styles)
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { selectUser } from '@redux/features/userSlice'
-import { useAppSelector } from '@redux/hooks'
+import { selectUser, userLogout } from '@redux/features/userSlice'
+import { useAppSelector, useAppDispatch } from '@redux/hooks'
 
 interface DrawPageProops {
   onClose?: (open: boolean) => void
 }
 
 const DrawPage = ({ onClose }: DrawPageProops) => {
+  const dispatch = useAppDispatch()
+
   const user = useAppSelector(selectUser)
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const drawLoginBox = (isLogin: boolean) =>
-    !isLogin ? (
+  const handleLogout = () => {
+    dispatch(userLogout())
+  }
+
+  const drawLoginBox = () =>
+    !user.isLogin ? (
       <>
         <p className={cx('user-desc')}>
           환영합니다! PIIC에 가입하여 다양한 상품들을 둘러보세요
@@ -42,7 +48,18 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
       </>
     ) : (
       <>
-        <p>환영합니다.</p>
+        <p className={cx('user-desc')}>{user.userData?.name}님 환영합니다.</p>
+        <div className={cx('userBtn-wrapper')}>
+          <button
+            onClick={() => {
+              handleLogout()
+              onClose && onClose(false)
+            }}
+            className={cx('userBtn', 'registerBtn')}
+          >
+            로그아웃
+          </button>
+        </div>
       </>
     )
 
@@ -65,7 +82,7 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
             <li>Women</li>
           </ul>
         </nav>
-        <div className={cx('user')}>{drawLoginBox(user.isLogin)}</div>
+        <div className={cx('user')}>{drawLoginBox()}</div>
         <ul className={cx('member')}>
           <li>
             <Link href="/user/cart">

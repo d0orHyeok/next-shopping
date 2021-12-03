@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAppDispatch } from '@redux/hooks'
-import { userLogin } from '@redux/features/userSlice'
+import { userLogin, userAuth } from '@redux/features/userSlice'
 
 interface inputValue {
   email: string
@@ -50,12 +50,12 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
 
     dispatch(userLogin(inputValue))
       .unwrap()
-      .then((res) => {
-        if (res.success) {
-          router.push('/')
-        } else {
-          alert(res.message)
-        }
+      .then(() => {
+        router.push('/')
+        dispatch(userAuth())
+      })
+      .catch((err) => {
+        err.message ? alert(err.message) : alert('로그인에 실패했습니다.')
       })
   }
 

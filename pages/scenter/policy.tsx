@@ -1,4 +1,5 @@
 import Divider from '@mui/material/Divider'
+import AuthCheck from 'hoc/authCheck'
 
 const policy = () => {
   return (
@@ -36,4 +37,4 @@ const policy = () => {
   )
 }
 
-export default policy
+export default AuthCheck(policy, null)

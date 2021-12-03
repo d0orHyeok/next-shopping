@@ -1,4 +1,5 @@
 import RegisterPage from '@components/RegisterPage/RegisterPage'
+import AuthCheck from 'hoc/authCheck'
 
 const register = () => {
   return (
@@ -8,4 +9,4 @@ const register = () => {
   )
 }
 
-export default register
+export default AuthCheck(register, false)

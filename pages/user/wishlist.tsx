@@ -1,3 +1,5 @@
+import AuthCheck from 'hoc/authCheck'
+
 const wishlist = () => {
   return (
     <div>
@@ -6,4 +8,4 @@ const wishlist = () => {
   )
 }
 
-export default wishlist
+export default AuthCheck(wishlist, true)

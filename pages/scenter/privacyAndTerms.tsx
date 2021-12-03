@@ -1,4 +1,5 @@
 import Divider from '@mui/material/Divider'
+import AuthCheck from 'hoc/authCheck'
 
 const privacyAndTerms = () => {
   return (
@@ -38,4 +39,4 @@ const privacyAndTerms = () => {
   )
 }
 
-export default privacyAndTerms
+export default AuthCheck(privacyAndTerms, null)

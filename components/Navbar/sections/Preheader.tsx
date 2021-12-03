@@ -3,20 +3,32 @@ import LoginModal from '@components/utils/LoginModal/LoginModal'
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { selectUser } from '@redux/features/userSlice'
-import { useAppSelector } from '@redux/hooks'
+import { selectUser, userLogout } from '@redux/features/userSlice'
+import { useAppDispatch, useAppSelector } from '@redux/hooks'
 
 const Preheader = () => {
+  const dispatch = useAppDispatch()
+
   const user = useAppSelector(selectUser)
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const drawList = (isLogin: boolean) =>
-    isLogin ? (
+  const handleLogout = () => {
+    dispatch(userLogout())
+  }
+
+  const drawList = () =>
+    user.isLogin ? (
       <ul>
-        <li>환영합니다.</li>
+        <li>{user.userData?.name}</li>
+        <span></span>
+        <li>
+          <a className={styles.loginBtn} onClick={handleLogout}>
+            로그아웃
+          </a>
+        </li>
       </ul>
     ) : (
       <ul>
@@ -36,7 +48,7 @@ const Preheader = () => {
 
   return (
     <>
-      <div className={styles.preheader}>{drawList(user.isLogin)}</div>
+      <div className={styles.preheader}>{drawList()}</div>
     </>
   )
 }

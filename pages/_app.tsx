@@ -3,6 +3,9 @@ import type { AppProps /*, AppContext */ } from 'next/app'
 import Head from 'next/head'
 import Layout from '@components/Layout'
 import { wrapper } from '@redux/store'
+// import { userAuth } from '@redux/features/userSlice'
+// import App from 'next/app'
+// import cookies from 'next-cookies'
 
 import '@styles/global.css'
 import '@styles/variable.css'
@@ -34,5 +37,19 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 
 //   return { ...appProps }
 // }
+
+// MyApp.getInitialProps = wrapper.getInitialAppProps(
+//   (store) => async (context) => {
+//     const { ctx } = context
+//     const { w_auth } = cookies(ctx)
+//     if (w_auth) {
+//       await store.dispatch(userAuth({ token: w_auth }))
+//     }
+
+//     const appProps = await App.getInitialProps(context)
+
+//     return appProps
+//   }
+// )
 
 export default wrapper.withRedux(MyApp)

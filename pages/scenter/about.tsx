@@ -1,4 +1,5 @@
 import Divider from '@mui/material/Divider'
+import AuthCheck from 'hoc/authCheck'
 
 const about = () => {
   return (
@@ -38,4 +39,4 @@ const about = () => {
   )
 }
 
-export default about
+export default AuthCheck(about, null)
