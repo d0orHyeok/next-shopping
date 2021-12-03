@@ -7,20 +7,19 @@ import { styled } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import Drawer from '@mui/material/Drawer'
-import Modal from '@mui/material/Modal'
 
 import styles from './Navbar.module.css'
 import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
 import SideNavBox from './sections/SideNavBox'
 import SearchBox from './sections/SearchBox'
-import LoginBox from '@components/LoginBox/LoginBox'
+import Preheader from './sections/Preheader'
 
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/dist/client/router'
 
-type Anchor = 'menu' | 'search' | 'login'
+type Anchor = 'menu' | 'search'
 
 const StyledDrawer = styled(Drawer)(() => ({
   '& .MuiBackdrop-root': {
@@ -46,20 +45,17 @@ const StyledBadge = styled(Badge)(() => ({
 const Navbar = (): JSX.Element => {
   const router = useRouter()
   const [draw, setDraw] = useState({
-    login: false,
     menu: false,
     search: false,
   })
 
   useEffect(() => {
     setDraw({
-      login: false,
       menu: false,
       search: false,
     })
   }, [router])
 
-  const toggleLogin = (open: boolean) => setDraw({ ...draw, login: open })
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -77,26 +73,9 @@ const Navbar = (): JSX.Element => {
   return (
     <>
       <header className={cx('header')}>
-        {/* Account Menu */}
-        <div className={cx('pre-header')}>
-          <ul>
-            <li>
-              <Link href="/register">회원가입</Link>
-            </li>
-            <span></span>
-            <li>
-              {/* <Link href="/login">로그인</Link> */}
-              <a className={cx('loginBtn')} onClick={() => toggleLogin(true)}>
-                로그인
-              </a>
-              <Modal open={draw['login']} onClose={() => toggleLogin(false)}>
-                <div>
-                  <LoginBox onClose={() => toggleLogin(false)} />
-                </div>
-              </Modal>
-            </li>
-          </ul>
-        </div>
+        {/* PreHeader : Account Menu */}
+        <Preheader />
+        {/* Main Header */}
         <div className={cx('container')}>
           {/* Logo for Shopping mall */}
           <div className={cx('logo')}>

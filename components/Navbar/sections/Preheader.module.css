@@ -1,0 +1,50 @@
+.preheader {
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--preHeader-height);
+  line-height: 30px;
+  background-color: var(--preHeader-background);
+}
+
+.preheader ul {
+  max-width: var(--header-maxWidth);
+  width: 100%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.preheader span {
+  position: relative;
+  width: 2px;
+  height: 0.7rem;
+  background-color: gray;
+  margin: 0 0.5rem;
+}
+
+.preheader ul li a {
+  text-decoration: none;
+  color: var(--header-mainColor);
+}
+
+.preheader ul li a:hover {
+  color: var(--header-subColor);
+}
+
+.preheader .loginBtn {
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 1500px) {
+  .preheader {
+    padding: 0 1rem;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .preheader {
+    display: none;
+  }
+}
