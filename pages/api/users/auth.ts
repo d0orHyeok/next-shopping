@@ -1,14 +1,14 @@
 import nextConnect from 'next-connect'
-import { NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import database from '@middlewares/database'
-import auth, { iAuthNextApiRequestRequest } from '@middlewares/auth'
+import auth, { IAuthExtendedRequest } from '@middlewares/auth'
 import { IUserDocument } from '@models/User'
 import dayjs from 'dayjs'
 
-const handler = nextConnect()
+const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 handler.use(auth)
-handler.post((req: iAuthNextApiRequestRequest, res: NextApiResponse) => {
+handler.post<IAuthExtendedRequest>((req, res) => {
   if (req.user.tokenExp < dayjs(Date.now()).add(10, 'minute').valueOf()) {
     req.user.generateToken((err, user: IUserDocument) => {
       if (err) {

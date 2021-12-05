@@ -3,10 +3,10 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import User from '@models/User'
 import database from '@middlewares/database'
 
-const handler = nextConnect()
-
+const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
-handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
+
+handler.post(async (req, res) => {
   try {
     const user = new User(req.body)
     await user.save()

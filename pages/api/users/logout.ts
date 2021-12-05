@@ -1,15 +1,14 @@
 import nextConnect from 'next-connect'
-import { NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import User from '@models/User'
 import database from '@middlewares/database'
-import auth, { iAuthNextApiRequestRequest } from '@middlewares/auth'
+import auth, { IAuthExtendedRequest } from '@middlewares/auth'
 
-const handler = nextConnect()
-
+const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 handler.use(auth)
 
-handler.get(async (req: iAuthNextApiRequestRequest, res: NextApiResponse) => {
+handler.get<IAuthExtendedRequest>(async (req, res) => {
   try {
     await User.findOneAndUpdate(
       { _id: req.user._id },

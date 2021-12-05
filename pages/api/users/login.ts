@@ -4,11 +4,10 @@ import User from '@models/User'
 import { IUserDocument } from '@models/User'
 import database from '@middlewares/database'
 
-const handler = nextConnect()
-
+const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 
-handler.post((req: NextApiRequest, res: NextApiResponse) => {
+handler.post((req, res) => {
   const body = req.body
   // Email에 해당하는 유저가 있는지 확인
   User.findOne({ email: body.email }, (err: Error, user: IUserDocument) => {
