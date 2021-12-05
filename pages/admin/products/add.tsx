@@ -1,7 +1,8 @@
 import AddProductPage from '@components/AddProductPage/AddProductPage'
+import AuthCheck from 'hoc/authCheck'
 
 const Add = () => {
   return <AddProductPage />
 }
 
-export default Add
+export default AuthCheck(Add, true, true)

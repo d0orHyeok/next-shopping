@@ -9,7 +9,18 @@ import {
   Grid,
 } from '@mui/material'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import UploadImages from '@components/utils/UploadImages/UploadImages'
+
+interface InputValue {
+  image: string
+  subImages: string[]
+  name: string
+  description: string
+  colors: string[]
+  size: string
+  price: number
+}
 
 const currencies = [
   {
@@ -32,12 +43,84 @@ const currencies = [
 
 const AddProductPage = () => {
   const [currency, setCurrency] = useState('men')
+  const [tempValue, setTempValue] = useState({
+    tempColor: '',
+  })
+  const { tempColor } = tempValue
+  const [inputValue, setInputValue] = useState<InputValue>({
+    image: '',
+    subImages: [],
+    name: '',
+    description: '',
+    colors: [],
+    size: '',
+    price: 0,
+  })
+  const { image, subImages, name, description, colors, size, price } =
+    inputValue
 
+  // 이미지 업데이트시 함수들
+  const updateImage = (newImages: any) => {
+    setInputValue({
+      ...inputValue,
+      image: newImages[0] ? newImages[0] : '',
+    })
+  }
+
+  const updateSubImages = (newImages: any) => {
+    setInputValue({
+      ...inputValue,
+      subImages: newImages,
+    })
+  }
+
+  // State 변경시 함수들
+  const onChangeSetTempValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setTempValue({ ...tempValue, [name]: value })
+  }
+
+  const onChangeSetInputValue = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { id, value } = event.target
+    setInputValue({ ...inputValue, [id]: value })
+  }
+
+  const onClickSetInputValue = () => {
+    setInputValue({ ...inputValue, colors: [...colors, tempColor] })
+    setTempValue({ ...tempValue, tempColor: '' })
+  }
+
+  const onClickDeleteColor = (index: number) => {
+    const newColors = [...colors]
+    newColors.splice(index, 1)
+    setInputValue({ ...inputValue, colors: newColors })
+  }
+
+  // 상품 등록시 함수
+  const addProuct = () => {
+    if (
+      !(
+        image.length &&
+        subImages.length &&
+        name.length &&
+        description.length &&
+        colors.length &&
+        size.length &&
+        price
+      )
+    ) {
+      alert('모든 항목을 입력해주세요')
+    }
+  }
+
+  //  임시
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrency(event.target.value)
   }
 
-  const [checked, setChecked] = useState([true, false])
+  const [checked, setChecked] = useState([false, false])
 
   const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([event.target.checked, event.target.checked])
@@ -50,6 +133,8 @@ const AddProductPage = () => {
   const handleChange3 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([checked[0], event.target.checked])
   }
+
+  console.log(inputValue)
 
   const children = (
     <div style={{ display: 'flex', marginLeft: '0.5rem' }}>
@@ -70,24 +155,46 @@ const AddProductPage = () => {
         <h1 className={styles.title}>Upload Product</h1>
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
           {/* 이미지 업로드 */}
-          <div>이미지 업로드</div>
+          <div>
+            <h2 className={styles.subTitle}>대표 이미지 *</h2>
+            <UploadImages onChangeHandler={updateImage} />
+            <h2 className={styles.subTitle}>
+              추가 이미지 {subImages.length} / {5}
+            </h2>
+            <UploadImages onChangeHandler={updateSubImages} maxNum={5} />
+          </div>
 
           {/* 상품명 */}
-          <TextField required id="name" sx={{ width: '100%' }} label="상품명" />
+          <TextField
+            required
+            sx={{ width: '100%' }}
+            label="상품명"
+            id="name"
+            value={name}
+            onChange={onChangeSetInputValue}
+          />
 
           {/* 상품설명 */}
           <TextField
             required
-            id="description"
-            label="상품설명"
             multiline
             rows={4}
             sx={{ width: '100%' }}
+            id="description"
+            label="상품설명"
+            helperText="HTML 형식으로 입력해주세요"
+            value={description}
+            onChange={onChangeSetInputValue}
           />
 
           {/* 카테고리 */}
           <div className={styles.category}>
-            <h2 className={styles.subTitle}>카테고리 *</h2>
+            <h2 className={styles.subTitle}>
+              카테고리 *
+              <IconButton>
+                <AddCircleOutlineIcon />
+              </IconButton>
+            </h2>
             <div className={styles.categoryGroup}>
               <TextField
                 required
@@ -143,32 +250,35 @@ const AddProductPage = () => {
           <div className={styles.color}>
             <h2 className={styles.subTitle}>색상 *</h2>
             <Grid container spacing={2} sx={{ marginBottom: '1rem' }}>
-              <Grid item xs={2} sm={1.5}>
-                <p className={styles.colorItem}>color</p>
-              </Grid>
-              <Grid item xs={2} sm={1.5}>
-                <p className={styles.colorItem}>color</p>
-              </Grid>
-              <Grid item xs={2} sm={1.5}>
-                <p className={styles.colorItem}>color</p>
-              </Grid>
-              <Grid item xs={2} sm={1.5}>
-                <p className={styles.colorItem}>color</p>
-              </Grid>
+              {/* 색상 추가시 표시 */}
+              {colors.map((color, index) => (
+                <Grid
+                  item
+                  xs={2}
+                  sm={1.5}
+                  key={index}
+                  onClick={() => onClickDeleteColor(index)}
+                >
+                  <p className={styles.colorItem}>{color}</p>
+                </Grid>
+              ))}
             </Grid>
             <TextField
               label="추가"
               id="color"
+              name="tempColor"
               sx={{ width: '200px' }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton edge="end">
+                    <IconButton edge="end" onClick={onClickSetInputValue}>
                       <AddCircleOutlineIcon />
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
+              value={tempColor}
+              onChange={onChangeSetTempValue}
             />
           </div>
 
@@ -191,15 +301,19 @@ const AddProductPage = () => {
           {/* 가격 */}
           <TextField
             required
-            label="가격"
-            id="price"
             sx={{ width: '200px' }}
             InputProps={{
               endAdornment: <InputAdornment position="end">₩</InputAdornment>,
             }}
+            label="가격"
+            id="price"
+            value={price === 0 ? '' : price}
+            onChange={onChangeSetInputValue}
           />
 
-          <button className={styles.addBtn}>상품 등록</button>
+          <button type="button" onClick={addProuct} className={styles.addBtn}>
+            상품 등록
+          </button>
         </form>
       </div>
     </>

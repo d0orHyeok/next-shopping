@@ -1,3 +1,4 @@
+import AuthCheck from 'hoc/authCheck'
 import Link from 'next/link'
 
 const ProductIndex = () => {
@@ -10,4 +11,4 @@ const ProductIndex = () => {
   )
 }
 
-export default ProductIndex
+export default AuthCheck(ProductIndex, true, true)
