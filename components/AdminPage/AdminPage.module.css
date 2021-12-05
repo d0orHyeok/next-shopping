@@ -1,0 +1,20 @@
+.container {
+  height: 100vh;
+}
+
+.nav ul {
+  display: flex;
+}
+
+.nav ul li {
+  margin: 0 0.5rem;
+}
+
+.nav a {
+  text-decoration: none;
+  color: black;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
