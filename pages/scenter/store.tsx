@@ -1,16 +1,6 @@
 import Divider from '@mui/material/Divider'
 import React from 'react'
 import AuthCheck from 'hoc/authCheck'
-import authCheckServerSide from 'hoc/authCheckServerSide'
-import { wrapper } from '@redux/store'
-
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (ctx) => {
-    const result = await authCheckServerSide(store, ctx, true, true)
-    console.log('authCheckServerSide : ', result)
-    return { props: {} }
-  }
-)
 
 const store = () => {
   return (
@@ -36,7 +26,3 @@ const store = () => {
 }
 
 export default AuthCheck(store, null)
-// export default store
-
-// you can also use Redux `useSelector` and other hooks instead of `connect()`
-// export default connect((state: RootState) => state)(store)

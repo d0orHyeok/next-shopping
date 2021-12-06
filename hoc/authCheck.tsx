@@ -3,7 +3,10 @@ import { userAuth } from '@redux/features/userSlice'
 import { useAppDispatch } from '@redux/hooks'
 import { useRouter } from 'next/router'
 import Loading from '@components/utils/Loading/Loading'
+import cookies from 'next-cookies'
+import { GetServerSidePropsContext } from 'next'
 
+// CSR에서 auth check를 수행하는 HOC
 export default function AuthCheck(
   SpecificComponent: any,
   option: null | boolean,
@@ -45,4 +48,48 @@ export default function AuthCheck(
     return <>{isLoading ? <Loading /> : <SpecificComponent {...props} />}</>
   }
   return AuthenticationCheck
+}
+
+// SSR AuthCheck | redirect 옵션을 리턴값으로 준다
+interface IRedirectNotAuth {
+  permanent: boolean
+  destination: string
+}
+
+export const authCheckServerSide = async (
+  store: any, // redux store
+  ctx: GetServerSidePropsContext, // ctx
+  // null: all user | false: not login user | true: login user
+  option: null | boolean,
+  adminRoute = false, // default false | false: not admin | true: for admin
+  destination = '/' // default '/' | redirect page path
+): Promise<IRedirectNotAuth | null> => {
+  const redirect = {
+    permanent: false,
+    destination: destination,
+  }
+  const { w_auth } = cookies(ctx)
+  if (w_auth) {
+    await store.dispatch(userAuth({ token: w_auth }))
+  }
+  const user = await store.getState().user
+  if (!user.userData) {
+    // Auth 실패
+    if (option) {
+      // 로그인 필요
+      return redirect
+    }
+  } else {
+    // Auth 성공
+    if (adminRoute && !user.userData.isAdmin) {
+      // admin이 아닌데 adminRoute에 접근한 경우
+      return redirect
+    } else {
+      if (option === false) {
+        return redirect
+      }
+    }
+  }
+
+  return null
 }
