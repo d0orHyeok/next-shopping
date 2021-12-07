@@ -22,8 +22,18 @@ const Preheader = () => {
   const drawList = () =>
     user.isLogin ? (
       <ul>
-        <li>{user.userData?.name}</li>
+        <li>{user.userData?.name}님</li>
         <span></span>
+        {user.userData?.isAdmin && (
+          <>
+            <li>
+              <div className={styles.loginBtn}>
+                <Link href="/admin">관리자</Link>
+              </div>
+            </li>
+            <span></span>
+          </>
+        )}
         <li>
           <a className={styles.loginBtn} onClick={handleLogout}>
             로그아웃

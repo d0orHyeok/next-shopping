@@ -59,6 +59,11 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
           >
             로그아웃
           </button>
+          {user.userData?.isAdmin && (
+            <Link href="/admin">
+              <button className={cx('loginBtn', 'userBtn')}>관리자</button>
+            </Link>
+          )}
         </div>
       </>
     )
