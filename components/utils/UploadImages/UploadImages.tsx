@@ -56,7 +56,7 @@ const UploadImages = ({ maxNum = 1, onChangeHandler }: UploadImageProps) => {
           <section>
             <div className={styles.dropwrap} {...getRootProps()}>
               <input {...getInputProps()} />
-              <AddIcon style={{ fontSize: '3rem' }} />
+              <AddIcon style={{ fontSize: '2.5rem' }} />
             </div>
           </section>
         )}

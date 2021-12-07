@@ -1,35 +1,40 @@
-import mongoose, { Schema, Document } from 'mongoose'
-
-export interface IProductCategory {
-  main: string
-  sub: string
-  kind: string
-}
+import mongoose, { Schema, Document, Model } from 'mongoose'
 
 export interface IProduct {
-  name: string
   image: string
+  subImages: string[]
+  name: string
   description: string
+  category: string[]
   colors: string[]
   sizes: string[]
   price: number
-  category: {}
+  sole: number
   reviews: number
 }
 
 export interface IProuctDocument extends Document, IProduct {}
 
+export type IProductModel = Model<IProuctDocument>
+
 const productSchema: Schema = new Schema(
   {
+    image: {
+      type: String,
+    },
+    subImages: {
+      type: Array,
+      default: [],
+    },
     name: {
       type: String,
       maxlength: 50,
     },
-    image: {
-      type: String,
-    },
     description: {
       type: String,
+    },
+    category: {
+      type: Object,
     },
     colors: {
       type: Array,
@@ -39,9 +44,6 @@ const productSchema: Schema = new Schema(
     },
     price: {
       type: Number,
-    },
-    category: {
-      type: Object,
     },
     sold: {
       type: Number,
@@ -55,4 +57,5 @@ const productSchema: Schema = new Schema(
   { timestamps: true }
 )
 
-export default mongoose.model<IProuctDocument>('Product', productSchema)
+export default (mongoose.models.Product as IProductModel) ||
+  mongoose.model<IProuctDocument, IProductModel>('Product', productSchema)

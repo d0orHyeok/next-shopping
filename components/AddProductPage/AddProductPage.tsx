@@ -1,63 +1,48 @@
 import styles from './AddProductPage.module.css'
-import {
-  MenuItem,
-  TextField,
-  InputAdornment,
-  Checkbox,
-  FormControlLabel,
-  IconButton,
-  Grid,
-} from '@mui/material'
+import { TextField, InputAdornment, IconButton, Grid } from '@mui/material'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import React, { useState } from 'react'
 import UploadImages from '@components/utils/UploadImages/UploadImages'
+import SelectCategory from './section/SelectCategory'
+import SelectSize from './section/SelectSize'
+import Axios from 'axios'
+import { useRouter } from 'next/router'
 
 interface InputValue {
   image: string
   subImages: string[]
   name: string
   description: string
+  category: string[]
   colors: string[]
-  size: string
+  sizes: string[]
   price: number
 }
 
-const currencies = [
-  {
-    value: 'men',
-    label: 'Men',
-  },
-  {
-    value: 'women',
-    label: 'Women',
-  },
-  {
-    value: 'kids',
-    label: 'Kids',
-  },
-  {
-    value: 'inner',
-    label: 'Home/Innerwears',
-  },
-]
-
 const AddProductPage = () => {
-  const [currency, setCurrency] = useState('men')
-  const [tempValue, setTempValue] = useState({
-    tempColor: '',
-  })
-  const { tempColor } = tempValue
+  const router = useRouter()
+
+  const [tempColor, setTempColor] = useState('')
   const [inputValue, setInputValue] = useState<InputValue>({
     image: '',
     subImages: [],
     name: '',
     description: '',
+    category: [],
     colors: [],
-    size: '',
+    sizes: [],
     price: 0,
   })
-  const { image, subImages, name, description, colors, size, price } =
-    inputValue
+  const {
+    image,
+    subImages,
+    name,
+    description,
+    category,
+    colors,
+    sizes,
+    price,
+  } = inputValue
 
   // 이미지 업데이트시 함수들
   const updateImage = (newImages: any) => {
@@ -75,24 +60,33 @@ const AddProductPage = () => {
   }
 
   // State 변경시 함수들
-  const onChangeSetTempValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setTempValue({ ...tempValue, [name]: value })
+  const handleChangeTempColor = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTempColor(event.target.value)
   }
 
-  const onChangeSetInputValue = (
+  const handleChangeInputValue = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { id, value } = event.target
     setInputValue({ ...inputValue, [id]: value })
   }
 
-  const onClickSetInputValue = () => {
-    setInputValue({ ...inputValue, colors: [...colors, tempColor] })
-    setTempValue({ ...tempValue, tempColor: '' })
+  const handleChangeCategory = (categorys: string[]) => {
+    setInputValue({ ...inputValue, category: categorys })
   }
 
-  const onClickDeleteColor = (index: number) => {
+  const onChangeSetSizes = (sizes: string[]) => {
+    setInputValue({ ...inputValue, sizes: sizes })
+  }
+
+  const hamdleSetColor = () => {
+    setInputValue({ ...inputValue, colors: [...colors, tempColor] })
+    setTempColor('')
+  }
+
+  const deleteColor = (index: number) => {
     const newColors = [...colors]
     newColors.splice(index, 1)
     setInputValue({ ...inputValue, colors: newColors })
@@ -103,56 +97,31 @@ const AddProductPage = () => {
     if (
       !(
         image.length &&
-        subImages.length &&
         name.length &&
         description.length &&
+        category.length &&
         colors.length &&
-        size.length &&
+        sizes.length &&
         price
       )
     ) {
       alert('모든 항목을 입력해주세요')
+      return
     }
+    Axios.post('/api/product/add', inputValue)
+      .then((res) => {
+        res.data?.message ? alert(res.data.message) : alert('등록되었습니다.')
+        router.push('/admin/')
+      })
+      .catch(() => {
+        alert('실패하였습니다.')
+      })
   }
-
-  //  임시
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrency(event.target.value)
-  }
-
-  const [checked, setChecked] = useState([false, false])
-
-  const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([event.target.checked, event.target.checked])
-  }
-
-  const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([event.target.checked, checked[1]])
-  }
-
-  const handleChange3 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([checked[0], event.target.checked])
-  }
-
-  console.log(inputValue)
-
-  const children = (
-    <div style={{ display: 'flex', marginLeft: '0.5rem' }}>
-      <FormControlLabel
-        label="사이즈1"
-        control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
-      />
-      <FormControlLabel
-        label="사이즈2"
-        control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
-      />
-    </div>
-  )
 
   return (
     <>
       <div className={styles.wrapper}>
-        <h1 className={styles.title}>Upload Product</h1>
+        <h1 className={styles.title}>상품 등록</h1>
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
           {/* 이미지 업로드 */}
           <div>
@@ -171,7 +140,7 @@ const AddProductPage = () => {
             label="상품명"
             id="name"
             value={name}
-            onChange={onChangeSetInputValue}
+            onChange={handleChangeInputValue}
           />
 
           {/* 상품설명 */}
@@ -184,72 +153,24 @@ const AddProductPage = () => {
             label="상품설명"
             helperText="HTML 형식으로 입력해주세요"
             value={description}
-            onChange={onChangeSetInputValue}
+            onChange={handleChangeInputValue}
           />
 
           {/* 카테고리 */}
-          <div className={styles.category}>
-            <h2 className={styles.subTitle}>
-              카테고리 *
-              <IconButton>
-                <AddCircleOutlineIcon />
-              </IconButton>
-            </h2>
-            <div className={styles.categoryGroup}>
-              <TextField
-                required
-                id="category"
-                select
-                label="대분류"
-                value={currency}
-                onChange={handleChange}
-                helperText="대분류"
-                sx={{ width: '200px' }}
-              >
-                {currencies.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                required
-                id="category"
-                select
-                label="소분류"
-                value={currency}
-                onChange={handleChange}
-                helperText="소분류"
-                sx={{ width: '200px' }}
-              >
-                {currencies.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                id="category"
-                select
-                label="종류"
-                value={currency}
-                onChange={handleChange}
-                helperText="종류"
-                sx={{ width: '200px' }}
-              >
-                {currencies.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </div>
-          </div>
+          <SelectCategory onChangeHandler={handleChangeCategory} />
 
           {/* 색상 */}
           <div className={styles.color}>
             <h2 className={styles.subTitle}>색상 *</h2>
+
             <Grid container spacing={2} sx={{ marginBottom: '1rem' }}>
+              {!colors.length && (
+                <Grid item xs={12}>
+                  <p style={{ fontSize: '0.9rem', color: 'rgb(100,100,100)' }}>
+                    색상을 추가해주세요
+                  </p>
+                </Grid>
+              )}
               {/* 색상 추가시 표시 */}
               {colors.map((color, index) => (
                 <Grid
@@ -257,7 +178,7 @@ const AddProductPage = () => {
                   xs={2}
                   sm={1.5}
                   key={index}
-                  onClick={() => onClickDeleteColor(index)}
+                  onClick={() => deleteColor(index)}
                 >
                   <p className={styles.colorItem}>{color}</p>
                 </Grid>
@@ -271,32 +192,19 @@ const AddProductPage = () => {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton edge="end" onClick={onClickSetInputValue}>
+                    <IconButton edge="end" onClick={hamdleSetColor}>
                       <AddCircleOutlineIcon />
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
               value={tempColor}
-              onChange={onChangeSetTempValue}
+              onChange={handleChangeTempColor}
             />
           </div>
 
           {/* 사이즈 */}
-          <div className={styles.size}>
-            <h2 className={styles.subTitle}>사이즈 *</h2>
-            <FormControlLabel
-              label="All"
-              control={
-                <Checkbox
-                  checked={checked[0] && checked[1]}
-                  indeterminate={checked[0] !== checked[1]}
-                  onChange={handleChange1}
-                />
-              }
-            />
-            {children}
-          </div>
+          <SelectSize category={category} handleChange={onChangeSetSizes} />
 
           {/* 가격 */}
           <TextField
@@ -308,9 +216,8 @@ const AddProductPage = () => {
             label="가격"
             id="price"
             value={price === 0 ? '' : price}
-            onChange={onChangeSetInputValue}
+            onChange={handleChangeInputValue}
           />
-
           <button type="button" onClick={addProuct} className={styles.addBtn}>
             상품 등록
           </button>

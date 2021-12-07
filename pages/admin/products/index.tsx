@@ -4,7 +4,7 @@ import Link from 'next/link'
 const ProductIndex = () => {
   return (
     <>
-      <div>
+      <div style={{ height: '100vh' }}>
         <Link href="/admin/products/add">상품 추가</Link>
       </div>
     </>
