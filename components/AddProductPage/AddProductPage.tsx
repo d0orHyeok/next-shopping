@@ -66,6 +66,12 @@ const AddProductPage = () => {
     setTempColor(event.target.value)
   }
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      hamdleSetColor()
+    }
+  }
+
   const handleChangeInputValue = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -111,7 +117,7 @@ const AddProductPage = () => {
     Axios.post('/api/product/add', inputValue)
       .then((res) => {
         res.data?.message ? alert(res.data.message) : alert('등록되었습니다.')
-        router.push('/admin/')
+        router.push('/admin/products')
       })
       .catch(() => {
         alert('실패하였습니다.')
@@ -200,6 +206,7 @@ const AddProductPage = () => {
               }}
               value={tempColor}
               onChange={handleChangeTempColor}
+              onKeyPress={handleKeyPress}
             />
           </div>
 
