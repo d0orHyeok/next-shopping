@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Keania+One&display=swap');
 .main {
   padding-top: var(--header-height);
+  min-height: 100vh;
 }
 
 .header {

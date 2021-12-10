@@ -1,11 +1,14 @@
 import AuthCheck from 'hoc/authCheck'
 import styles from './AdminPage.module.css'
 import Link from 'next/link'
+import PreNav from '@components/utils/PreNav/PreNav'
 
 const AdminPage = () => {
   return (
     <>
       <div className={styles.container}>
+        <PreNav sx={{ fontSize: '0.9rem', textAlign: 'right' }} />
+
         <div className={styles.nav}>
           <ul>
             <li>
