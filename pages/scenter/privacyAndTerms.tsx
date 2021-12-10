@@ -1,9 +1,13 @@
 import Divider from '@mui/material/Divider'
 import AuthCheck from 'hoc/authCheck'
+import Head from 'next/head'
 
 const privacyAndTerms = () => {
   return (
     <>
+      <Head>
+        <title>개인정보 처리방침 | PIIC</title>
+      </Head>
       <div
         style={{
           display: 'flex',

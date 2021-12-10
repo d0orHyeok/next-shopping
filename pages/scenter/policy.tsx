@@ -1,9 +1,13 @@
 import Divider from '@mui/material/Divider'
 import AuthCheck from 'hoc/authCheck'
+import Head from 'next/head'
 
 const policy = () => {
   return (
     <>
+      <Head>
+        <title>이용약관 | PIIC</title>
+      </Head>
       <div
         style={{
           display: 'flex',

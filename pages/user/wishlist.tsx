@@ -1,10 +1,14 @@
 import AuthCheck from 'hoc/authCheck'
+import Head from 'next/head'
 
 const wishlist = () => {
   return (
-    <div>
+    <>
+      <Head>
+        <title>위시리스트 | PIIC</title>
+      </Head>
       <div>WishListPage</div>
-    </div>
+    </>
   )
 }
 

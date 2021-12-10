@@ -5,10 +5,10 @@ export const Home = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>Home | Shopping</title>
+        <title>Home | PIIC</title>
       </Head>
 
-      <main style={{ height: '100vh' }}></main>
+      <div>main</div>
     </>
   )
 }

@@ -1,9 +1,13 @@
 import Divider from '@mui/material/Divider'
 import AuthCheck from 'hoc/authCheck'
+import Head from 'next/head'
 
 const about = () => {
   return (
     <>
+      <Head>
+        <title>PIIC 소개 | PIIC</title>
+      </Head>
       <div
         style={{
           display: 'flex',

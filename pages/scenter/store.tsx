@@ -1,10 +1,14 @@
 import Divider from '@mui/material/Divider'
 import React from 'react'
 import AuthCheck from 'hoc/authCheck'
+import Head from 'next/head'
 
 const store = () => {
   return (
     <>
+      <Head>
+        <title>매장안내 | PIIC</title>
+      </Head>
       <div
         style={{
           display: 'flex',
