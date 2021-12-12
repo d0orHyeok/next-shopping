@@ -1,23 +1,22 @@
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
-import Tooltip from '@mui/material/Tooltip'
-import Badge from '@mui/material/Badge'
-import { styled } from '@mui/material/styles'
-import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
-import Drawer from '@mui/material/Drawer'
-
+import { Tooltip, Badge, IconButton, Drawer } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import styles from './Navbar.module.css'
 import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
 import SideNavBox from './sections/SideNavBox'
 import SearchBox from './sections/SearchBox'
 import Preheader from './sections/Preheader'
+import Menu from './sections/Menu'
 
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/dist/client/router'
+import { useAppSelector } from '@redux/hooks'
+import { selectUser } from '@redux/features/userSlice'
 
 type Anchor = 'menu' | 'search'
 
@@ -43,6 +42,8 @@ const StyledBadge = styled(Badge)(() => ({
 }))
 
 const Navbar = (): JSX.Element => {
+  const user = useAppSelector(selectUser)
+
   const router = useRouter()
   const [draw, setDraw] = useState({
     menu: false,
@@ -85,11 +86,7 @@ const Navbar = (): JSX.Element => {
 
           {/* Navigation: Menu for search products */}
           <nav className={cx('menu')}>
-            <ul>
-              <li>Best</li>
-              <li>Men</li>
-              <li>Women</li>
-            </ul>
+            <Menu />
           </nav>
 
           {/* User Menu */}
@@ -140,7 +137,7 @@ const Navbar = (): JSX.Element => {
                 <Link href="/user/cart">
                   <Tooltip title="장바구니" placeholder="bottom">
                     <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
-                      <StyledBadge badgeContent={2}>
+                      <StyledBadge badgeContent={user.userData?.cart.length}>
                         <ShoppingBagOutlinedIcon />
                       </StyledBadge>
                     </IconButton>

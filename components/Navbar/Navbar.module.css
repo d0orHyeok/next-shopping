@@ -21,6 +21,7 @@
   margin-top: 6px;
   margin: 0 auto;
   width: 100%;
+  height: 60px;
   max-width: var(--header-maxWidth);
   display: flex;
   align-items: center;
@@ -35,15 +36,19 @@
 }
 
 .menu {
-  min-width: 550px;
-  width: 100%;
-}
-
-.menu ul {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  margin: 0 1rem;
+  justify-content: center;
+  min-width: 550px;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+}
+
+.menu a {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .member {

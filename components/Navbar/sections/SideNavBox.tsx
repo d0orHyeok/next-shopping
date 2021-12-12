@@ -1,7 +1,7 @@
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
-import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
+import IconButton from '@mui/material/IconButton'
 import LoginModal from '@components/utils/LoginModal/LoginModal'
 
 import styles from './SideNavBox.module.css'
@@ -9,9 +9,12 @@ import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
 
 import Link from 'next/link'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { selectUser, userLogout } from '@redux/features/userSlice'
 import { useAppSelector, useAppDispatch } from '@redux/hooks'
+import categoryData from 'public/data/category.json'
+
+const navCategory = ['best', ...categoryData.map((item) => item.name)]
 
 interface DrawPageProops {
   onClose?: (open: boolean) => void
@@ -23,8 +26,28 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
   const user = useAppSelector(selectUser)
 
   const [open, setOpen] = useState(false)
+  const [toggleSubMenu, settoggleSubMenu] = useState(false)
+  const [menuItem, setMenuItem] = useState('')
+  const [subMenuItems, setSubMenuItems] = useState<string[]>([])
+
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+  const handleOpenSubMenu = (name: string) => {
+    setMenuItem(name)
+    if (name !== 'best') {
+      const newSubMenuItems = categoryData
+        .filter((item) => item.name === name)[0]
+        .value.map((item) => item.name)
+      setSubMenuItems(newSubMenuItems)
+    }
+    settoggleSubMenu(true)
+  }
+  const handleCloseSubMenu = () => {
+    setMenuItem('')
+    setSubMenuItems([])
+    settoggleSubMenu(false)
+  }
 
   const handleLogout = () => {
     dispatch(userLogout())
@@ -70,21 +93,23 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
 
   return (
     <>
-      <div className={cx('wrapper')}>
-        <IconButton
-          className={styles.closeBtn}
-          type="button"
-          color="inherit"
-          sx={{ p: '5px' }}
-          onClick={() => onClose && onClose(false)}
-        >
-          <CloseIcon />
-        </IconButton>
+      <IconButton
+        className={styles.closeBtn}
+        type="button"
+        color="inherit"
+        sx={{ p: '5px' }}
+        onClick={() => onClose && onClose(false)}
+      >
+        <CloseIcon />
+      </IconButton>
+      <div className={cx('wrapper', toggleSubMenu && 'hide')}>
         <nav className={cx('menu')}>
           <ul>
-            <li>Best</li>
-            <li>Men</li>
-            <li>Women</li>
+            {navCategory.map((category) => (
+              <li key={category} onClick={() => handleOpenSubMenu(category)}>
+                {category.toUpperCase()}
+              </li>
+            ))}
           </ul>
         </nav>
         <div className={cx('user')}>{drawLoginBox()}</div>
@@ -105,6 +130,30 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
               </div>
             </Link>
           </li>
+        </ul>
+      </div>
+      <div className={cx('subMenu', toggleSubMenu && 'show')}>
+        {menuItem && (
+          <h2 onClick={handleCloseSubMenu}>{menuItem.toUpperCase()}</h2>
+        )}
+        <ul>
+          {menuItem !== 'best' && (
+            <li>
+              <Link href={`/product/${menuItem}/best`}>BEST</Link>
+            </li>
+          )}
+          {menuItem && (
+            <li>
+              <Link href={`/product/${menuItem}/all`}>ALL</Link>
+            </li>
+          )}
+          {subMenuItems.map((item) => (
+            <li key={item}>
+              <Link href={`/product/${menuItem}/${item}`}>
+                {item.toUpperCase()}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </>

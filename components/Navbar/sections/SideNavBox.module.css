@@ -1,6 +1,11 @@
 .wrapper {
   width: 320px;
   padding: 2rem;
+  transition: ease-in-out 0.3s all;
+}
+
+.hide {
+  transform: translateX(-320px);
 }
 
 .wrapper a {
@@ -8,7 +13,7 @@
 }
 
 .closeBtn {
-  position: absolute;
+  position: fixed;
   top: 0.5rem;
   right: 0.5rem;
   transition: all 0.5s ease;
@@ -26,6 +31,22 @@
 .menu ul {
   display: flex;
   flex-direction: column;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.menu ul li {
+  width: 240px;
+  margin: 0.5rem 0;
+}
+
+.menu ul li:after {
+  content: '❯';
+  float: right;
+}
+
+.menu ul li:hover {
+  cursor: pointer;
 }
 
 /* User Group */
@@ -99,4 +120,52 @@
 .memberBtn span {
   margin-left: 1rem;
   font-size: 1.1rem;
+}
+
+.subMenu {
+  padding: 3rem 2rem;
+  width: 320px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(320px);
+  transition: ease-in-out 0.3s all;
+}
+
+.subMenu ul {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+}
+
+.subMenu h2 {
+  margin: 0.5rem 0 1rem 0;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.subMenu h2:hover {
+  cursor: pointer;
+}
+
+.subMenu h2::before {
+  content: '❮';
+  margin-right: 1rem;
+}
+
+.subMenu ul li {
+  margin: 0.5rem 0 0.5rem 2rem;
+}
+
+.subMenu ul li a {
+  color: black;
+  text-decoration: none;
+}
+
+.subMenu ul li:hover {
+  cursor: pointer;
+}
+
+.show {
+  transform: translateX(0);
 }
