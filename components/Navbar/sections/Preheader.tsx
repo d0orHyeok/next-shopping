@@ -1,12 +1,17 @@
 import styles from './Preheader.module.css'
 import LoginModal from '@components/utils/LoginModal/LoginModal'
-
+import classnames from 'classnames/bind'
+const cx = classnames.bind(styles)
 import Link from 'next/link'
 import { useState } from 'react'
 import { selectUser, userLogout } from '@redux/features/userSlice'
 import { useAppDispatch, useAppSelector } from '@redux/hooks'
 
-const Preheader = () => {
+interface PreheaderProps {
+  isHome?: boolean
+}
+
+const Preheader = ({ isHome }: PreheaderProps) => {
   const dispatch = useAppDispatch()
 
   const user = useAppSelector(selectUser)
@@ -58,7 +63,7 @@ const Preheader = () => {
 
   return (
     <>
-      <div className={styles.preheader}>{drawList()}</div>
+      <div className={cx('preheader', isHome && 'isHome')}>{drawList()}</div>
     </>
   )
 }

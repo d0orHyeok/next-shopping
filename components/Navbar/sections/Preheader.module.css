@@ -7,6 +7,12 @@
   background-color: var(--preHeader-background);
 }
 
+.isHome,
+.isHome a {
+  background-color: rgba(0, 0, 0, 0) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
 .preheader ul {
   max-width: var(--header-maxWidth);
   width: 100%;

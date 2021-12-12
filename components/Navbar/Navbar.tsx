@@ -11,14 +11,19 @@ import SideNavBox from './sections/SideNavBox'
 import SearchBox from './sections/SearchBox'
 import Preheader from './sections/Preheader'
 import Menu from './sections/Menu'
-
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/dist/client/router'
 import { useAppSelector } from '@redux/hooks'
 import { selectUser } from '@redux/features/userSlice'
 
-type Anchor = 'menu' | 'search'
+type Anchor = 'menu' | 'search' | 'side'
+
+interface IndexPageNavbarProps {
+  isHome?: boolean
+  isDark?: boolean
+  setIsDark?: (isDark: boolean) => void
+}
 
 const StyledDrawer = styled(Drawer)(() => ({
   '& .MuiBackdrop-root': {
@@ -41,19 +46,25 @@ const StyledBadge = styled(Badge)(() => ({
   },
 }))
 
-const Navbar = (): JSX.Element => {
-  const user = useAppSelector(selectUser)
-
+const Navbar = ({
+  isHome,
+  isDark,
+  setIsDark,
+}: IndexPageNavbarProps): JSX.Element => {
   const router = useRouter()
+
+  const user = useAppSelector(selectUser)
   const [draw, setDraw] = useState({
     menu: false,
     search: false,
+    side: false,
   })
 
   useEffect(() => {
     setDraw({
       menu: false,
       search: false,
+      side: false,
     })
   }, [router])
 
@@ -71,11 +82,30 @@ const Navbar = (): JSX.Element => {
       setDraw({ ...draw, [anchor]: open })
     }
 
+  const passDraw = (open: boolean) => {
+    setDraw({ ...draw, ['menu']: open })
+  }
+
+  // indexpage 에서 navbar 투명하게할지 설정해주는 함수
+  const handleMouseOver = (event: React.MouseEvent<HTMLElement>) => {
+    if (isHome && setIsDark) {
+      if (event.clientY < 91 || draw.menu || draw.search || draw.side) {
+        setIsDark(false)
+      } else {
+        setIsDark(true)
+      }
+    }
+  }
+
   return (
     <>
-      <header className={cx('header')}>
+      <header
+        className={cx('header', isDark && isHome && 'isHome')}
+        onMouseMove={handleMouseOver}
+        onMouseOut={() => setIsDark && setIsDark(true)}
+      >
         {/* PreHeader : Account Menu */}
-        <Preheader />
+        <Preheader isHome={isDark && isHome} />
         {/* Main Header */}
         <div className={cx('container')}>
           {/* Logo for Shopping mall */}
@@ -86,7 +116,7 @@ const Navbar = (): JSX.Element => {
 
           {/* Navigation: Menu for search products */}
           <nav className={cx('menu')}>
-            <Menu />
+            <Menu passDraw={passDraw} />
           </nav>
 
           {/* User Menu */}
@@ -109,10 +139,7 @@ const Navbar = (): JSX.Element => {
                   anchor="top"
                   open={draw['search']}
                   onClose={toggleDrawer('search', false)}
-                  ModalProps={{
-                    keepMounted: true,
-                    disableScrollLock: true,
-                  }}
+                  ModalProps={{ disableScrollLock: true }}
                 >
                   <SearchBox
                     onClose={(open: boolean): void => {
@@ -151,18 +178,18 @@ const Navbar = (): JSX.Element => {
                     type="button"
                     color="inherit"
                     sx={{ p: '5px' }}
-                    onClick={toggleDrawer('menu', true)}
+                    onClick={toggleDrawer('side', true)}
                   >
                     <MenuIcon />
                   </IconButton>
                   <Drawer
                     anchor="right"
-                    open={draw['menu']}
-                    onClose={toggleDrawer('menu', false)}
+                    open={draw['side']}
+                    onClose={toggleDrawer('side', false)}
                   >
                     <SideNavBox
                       onClose={(open: boolean): void => {
-                        setDraw({ ...draw, menu: open })
+                        setDraw({ ...draw, side: open })
                       }}
                     />
                   </Drawer>

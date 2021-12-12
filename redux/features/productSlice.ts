@@ -10,14 +10,14 @@ Axios.defaults.baseURL = backendUrl
 const mainCategorys = categoryData.map((item) => item.name)
 
 // interfaces
-export interface IBestProducts {
+export interface IBestProduct {
   mainCategory: string
   products: IProduct[]
 }
 
 export interface IProductState {
   products: IProduct[]
-  bestProducts: IBestProducts[]
+  bestProducts: IBestProduct[]
 }
 
 // Async Action

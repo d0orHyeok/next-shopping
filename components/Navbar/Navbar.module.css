@@ -1,7 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Keania+One&display=swap');
-.main {
+.empty {
   padding-top: var(--header-height);
-  min-height: 100vh;
+}
+
+.empty + * {
+  min-height: calc(100vh - var(--header-height));
+}
+
+.isHome {
+  background-color: rgba(0, 0, 0, 0) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  border: none !important;
+}
+.isHome .logo a,
+.isHome .member {
+  color: rgba(255, 255, 255, 0.85) !important;
 }
 
 .header {

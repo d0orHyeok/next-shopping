@@ -9,7 +9,8 @@ const Layout: NextPage = (props): JSX.Element => {
     <>
       <Navbar />
       {/* paddingTop: Navbar의 높이와 같은 크기로 지정할 것 */}
-      <main className={styles.main}>{children}</main>
+      <div className={styles.empty}></div>
+      {children}
       <Bottom />
     </>
   )

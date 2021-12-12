@@ -1,11 +1,11 @@
 import { combineReducers, AnyAction } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import user, { IUserState } from './userSlice'
-import porduct, { IProductState } from './productSlice'
+import product, { IProductState } from './productSlice'
 
 export interface State {
   user: IUserState
-  porduct: IProductState
+  product: IProductState
 }
 
 const rootReducer = (state: State, action: AnyAction) => {
@@ -16,7 +16,7 @@ const rootReducer = (state: State, action: AnyAction) => {
     default: {
       const combineReducer = combineReducers({
         user,
-        porduct,
+        product,
       })
       return combineReducer(state, action)
     }
