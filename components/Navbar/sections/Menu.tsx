@@ -7,13 +7,8 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Drawer } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import Axios from 'axios'
-import { IProduct } from '@models/Product'
-
-interface IBestProducts {
-  mainCategory: string
-  products: IProduct[]
-}
+import { useAppDispatch } from '@redux/hooks'
+import { getBestProducts, IBestProducts } from '@redux/features/productSlice'
 
 const navCategory = ['best', ...categoryData.map((item) => item.name)]
 
@@ -28,16 +23,15 @@ const StyledDrawer = styled(Drawer)(() => ({
 
 const Menu = () => {
   const router = useRouter()
+  const dispatch = useAppDispatch()
 
   const [isChange, setIsChange] = useState(-1)
   const [defaultItem, setDefaultItem] = useState(-1)
   const [selectedItem, setSelectedItem] = useState(-1)
   const [draw, setDraw] = useState(false)
-  const [bestProducts, setBestProducts] = useState<IBestProducts>({
-    mainCategory: '',
-    products: [],
-  })
+  const [bestProducts, setBestProducts] = useState<IBestProducts[]>([])
 
+  // URL 변화에 따라 드로워를 초기화하고 url에 맞는 선택표시
   useEffect(() => {
     setDraw(false)
 
@@ -46,27 +40,14 @@ const Menu = () => {
       paths.indexOf('product') === -1 ? -1 : navCategory.indexOf(paths[2])
     setDefaultItem(selected)
     setSelectedItem(selected)
+
+    if (!bestProducts.length) {
+      dispatch(getBestProducts('all'))
+        .unwrap()
+        .then((res) => setBestProducts(res.bestProducts))
+        .catch((err) => console.log(err))
+    }
   }, [router.asPath])
-
-  useEffect(() => {
-    if (selectedItem < 1) {
-      return
-    }
-
-    const mainCategory = navCategory[selectedItem]
-    if (mainCategory === bestProducts.mainCategory) {
-      return
-    }
-
-    Axios.get(`/api/product/bestProducts?limit=3&category=${mainCategory}`)
-      .then((res) =>
-        setBestProducts({
-          mainCategory,
-          products: res.data.products,
-        })
-      )
-      .catch((err) => console.log(err))
-  }, [selectedItem])
 
   const drawCategoryMenu = (index: number) => {
     if (index < 1) {
@@ -102,24 +83,28 @@ const Menu = () => {
           </div>
 
           <ul className={styles.imgBox}>
-            {bestProducts.mainCategory === mainCategory &&
-              bestProducts.products.map((product, index) => (
-                <Link
-                  key={`img${index}`}
-                  href={`/product/detail/${product._id}`}
-                >
-                  <li
-                    data-title={`${
-                      product.name.length < 15
-                        ? product.name
-                        : product.name.slice(0, 16) + '...'
-                    }`}
-                    data-price={`${product.price.toLocaleString('ko-KR')}₩`}
-                  >
-                    <img src={product.image} alt={product.name} />
-                  </li>
-                </Link>
-              ))}
+            {bestProducts
+              .filter((item) => item.mainCategory === mainCategory)[0]
+              .products.map(
+                (product, index) =>
+                  index < 3 && (
+                    <Link
+                      key={`img${index}`}
+                      href={`/product/detail/${product._id}`}
+                    >
+                      <li
+                        data-title={`${
+                          product.name.length < 15
+                            ? product.name
+                            : product.name.slice(0, 16) + '...'
+                        }`}
+                        data-price={`${product.price.toLocaleString('ko-KR')}₩`}
+                      >
+                        <img src={product.image} alt={product.name} />
+                      </li>
+                    </Link>
+                  )
+              )}
           </ul>
         </div>
       </>

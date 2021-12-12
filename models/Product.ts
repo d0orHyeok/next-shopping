@@ -60,5 +60,18 @@ const productSchema: Schema = new Schema(
   { timestamps: true }
 )
 
+productSchema.index(
+  {
+    sold: 'text',
+    createdAt: 'text',
+  },
+  {
+    weights: {
+      sold: 5,
+      createdAt: 3,
+    },
+  }
+)
+
 export default (mongoose.models.Product as IProductModel) ||
   mongoose.model<IProuctDocument, IProductModel>('Product', productSchema)
