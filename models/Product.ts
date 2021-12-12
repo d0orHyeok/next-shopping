@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
-export interface IProduct {
+interface Product {
   image: string
   subImages: string[]
   name: string
@@ -9,11 +9,14 @@ export interface IProduct {
   colors: string[]
   sizes: string[]
   price: number
-  sole: number
+  sold: number
   reviews: number
 }
 
-export interface IProuctDocument extends Document, IProduct {}
+export interface IProduct extends Product {
+  _id: string
+}
+export interface IProuctDocument extends Document, Product {}
 
 export type IProductModel = Model<IProuctDocument>
 
@@ -34,7 +37,7 @@ const productSchema: Schema = new Schema(
       type: String,
     },
     category: {
-      type: Object,
+      type: Array,
     },
     colors: {
       type: Array,
