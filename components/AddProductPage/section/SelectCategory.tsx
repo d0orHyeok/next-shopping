@@ -61,6 +61,8 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
     // 아닐경우 빈 배열로 다시 설정
     lastCategory === '선택'
       ? onChangeHandler([])
+      : lastCategory === '전체보기'
+      ? onChangeHandler([mainCategory, subCategory])
       : onChangeHandler([mainCategory, subCategory, lastCategory])
   }, [lastCategory])
 
@@ -101,9 +103,13 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
         // 빈배열로 설정
         setCategoryItems({ ...categoryItems, lastItems: [] })
       } else {
-        const lastCategoryData = categoryData
+        let lastCategoryData = categoryData
           .filter((mainItem) => mainItem.name === mainCategory)[0]
           .value.filter((subItem) => subItem.name === value)[0].value
+
+        lastCategoryData = !lastCategoryData.length
+          ? ['전체보기']
+          : lastCategoryData
 
         setCategoryItems({ ...categoryItems, lastItems: lastCategoryData })
       }

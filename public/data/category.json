@@ -17,6 +17,10 @@
       {
         "name": "acc",
         "value": ["가방", "모자", "벨트"]
+      },
+      {
+        "name": "homewear",
+        "value": ["잠옷", "내복"]
       }
     ]
   },
@@ -37,11 +41,15 @@
       },
       {
         "name": "원피스",
-        "value": ["전체보기"]
+        "value": []
       },
       {
         "name": "acc",
         "value": ["가방", "모자", "벨트"]
+      },
+      {
+        "name": "homewear",
+        "value": ["잠옷", "내복"]
       }
     ]
   },
@@ -50,24 +58,11 @@
     "value": [
       {
         "name": "boys",
-        "value": ["아우터", "상의", "하의"]
+        "value": ["아우터", "상의", "하의", "homewear"]
       },
       {
         "name": "girls",
-        "value": ["아우터", "상의", "하의", "원피스"]
-      }
-    ]
-  },
-  {
-    "name": "homewear",
-    "value": [
-      {
-        "name": "잠옷",
-        "value": ["men", "women", "kids"]
-      },
-      {
-        "name": "내복",
-        "value": ["men", "women", "kids"]
+        "value": ["아우터", "상의", "하의", "원피스", "homewear"]
       }
     ]
   }

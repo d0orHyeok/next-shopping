@@ -14,11 +14,7 @@ const SelectSize = ({ category, handleChange }: SelectSizeProps) => {
 
   useEffect(() => {
     // 카테고리에 맞는 사이즈 정보를 설정한다
-
-    // 홈웨어인 경우 남성, 여성, 아동 정보가 index2에 있다
-    const filter = category[0] === 'homewear' ? category[2] : category[0]
-    // filter에 맞는 size정보를 가져와 설정
-    const newSizeItems = sizeData.filter((item) => item.name === filter)[0]
+    const newSizeItems = sizeData.filter((item) => item.name === category[0])[0]
     newSizeItems ? setSizeItems(newSizeItems.sizes) : setSizeItems([])
   }, [category])
 

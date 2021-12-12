@@ -137,7 +137,7 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
           <h2 onClick={handleCloseSubMenu}>{menuItem.toUpperCase()}</h2>
         )}
         <ul>
-          {menuItem !== 'best' && (
+          {menuItem && menuItem !== 'best' && (
             <li>
               <Link href={`/product/${menuItem}/best`}>BEST</Link>
             </li>
