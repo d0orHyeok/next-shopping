@@ -7,9 +7,12 @@ import Navbar from '@components/Navbar/Navbar'
 import Bottom from '@components/Bottom/Bottom'
 import { useEffect, useState } from 'react'
 import debounce from 'lodash/debounce'
+import { IProduct } from '@models/Product'
+import Axios from 'axios'
 
 interface HomeProps {
-  bestProducts: IBestProduct[]
+  bestProducts: IProduct[]
+  newProducts: IProduct[]
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
@@ -17,15 +20,22 @@ export const getServerSideProps = wrapper.getServerSideProps(
     await authCheckServerSide(store, ctx, null)
     await store.dispatch(getBestProducts('all'))
 
-    const bestProducts = await store.getState().product.bestProducts
+    const bestProducts = await store
+      .getState()
+      .product.bestProducts.filter(
+        (item: IBestProduct) => item.mainCategory === 'best'
+      )[0].products
 
-    return { props: { bestProducts } }
+    const response = await Axios.get('/api/product/getNewProducts')
+    const newProducts = response.data.newProducts
+
+    return { props: { bestProducts, newProducts } }
   }
 )
 
 // index페이지는 Navbar를 투명하게 설정
 // 스크롤을 했을 경우 Navbar에 배경을 다시 보여준다
-export const Home = ({ bestProducts }: HomeProps): JSX.Element => {
+export const Home = ({ bestProducts, newProducts }: HomeProps): JSX.Element => {
   // 스크롤 변화를 알기위해 이벤트를 등록한다
   const [scrollY, setScrollY] = useState(0)
   const listener = () => {
@@ -49,8 +59,8 @@ export const Home = ({ bestProducts }: HomeProps): JSX.Element => {
       <Head>
         <title>Home | PIIC</title>
       </Head>
-      <Navbar isHome={true} isDark={isDark} setIsDark={setIsDark} />
-      <LandingPage bestProducts={bestProducts} />
+      <Navbar isHome={!scrollY && true} isDark={isDark} setIsDark={setIsDark} />
+      <LandingPage bestProducts={bestProducts} newProducts={newProducts} />
       <Bottom />
     </>
   )
