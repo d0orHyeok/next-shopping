@@ -18,7 +18,7 @@ interface HomeProps {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
     await authCheckServerSide(store, ctx, null)
-    await store.dispatch(getBestProducts('all'))
+    await store.dispatch(getBestProducts())
 
     const bestProducts = await store
       .getState()

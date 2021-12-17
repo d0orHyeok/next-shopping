@@ -58,7 +58,7 @@ const Menu = ({ passDraw }: MenuProps) => {
 
   useEffect(() => {
     if (!bestProducts.length) {
-      dispatch(getBestProducts('all'))
+      dispatch(getBestProducts())
     }
   }, [bestProducts])
 
