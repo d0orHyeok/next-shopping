@@ -65,6 +65,18 @@ const Carousel = ({
     slideRef.current !== null && setSlideWidth(slideRef.current.offsetWidth)
   }, 200)
 
+  const isDisplayThree = useCallback(() => {
+    if (
+      slideRef.current &&
+      itemRef.current &&
+      slideRef.current.offsetWidth <= itemRef.current.offsetWidth * 2 + 1
+    ) {
+      return false
+    } else {
+      return true
+    }
+  }, [itemRef, slideRef])
+
   useEffect(() => {
     if (slideRef.current !== null) {
       window.addEventListener('resize', handleResize)
@@ -98,7 +110,7 @@ const Carousel = ({
         <ul ref={slideRef} className={cx('carousel-wrapper')}>
           {/* dummy for infinite carousel */}
 
-          {items.length > 2 && (
+          {items.length > 2 && isDisplayThree() && (
             <li style={{ padding: m }} className={cx('carousel-item')}>
               {items[items.length - 2]}
             </li>
