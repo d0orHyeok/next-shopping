@@ -25,7 +25,6 @@ export const getSubCateogrys = (mainCategory: string) => {
 export const getItemCategorys = (mainCategory: string, subCategory: string) => {
   const mainItems = findItems(categoryData, mainCategory)
   if (!mainItems.length) return []
-  console.log(mainItems)
   const subItems = findItems(mainItems[0].value, subCategory)
   const itemCategorys = !subItems.length ? [] : subItems[0].value
 

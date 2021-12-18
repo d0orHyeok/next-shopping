@@ -8,6 +8,7 @@ import { getBestProducts, IBestProduct } from '@redux/features/productSlice'
 import { IProduct } from '@models/Product'
 import Axios from 'axios'
 import Head from 'next/head'
+import * as getCategory from '@libs/getCategory'
 
 interface SubCategoryPageParams extends ParsedUrlQuery {
   mainCategory: string
@@ -19,6 +20,32 @@ export const getServerSideProps = wrapper.getServerSideProps(
     await authCheckServerSide(store, ctx, null)
 
     const { mainCategory, subCategory } = ctx.params as SubCategoryPageParams
+
+    if (
+      ['best', ...getCategory.getMainCategorys()].filter(
+        (item) => item === mainCategory
+      ).length === 0
+    ) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: `/404`,
+        },
+      }
+    }
+
+    if (
+      ['all', 'best', ...getCategory.getSubCateogrys(mainCategory)].filter(
+        (item) => item === subCategory
+      ).length === 0
+    ) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: `/404`,
+        },
+      }
+    }
 
     let products: IProduct[] = []
     let category: string[] = []
@@ -38,7 +65,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
         (item) => item.mainCategory === mainCategory
       )[0].products
 
-      category = [mainCategory]
+      category =
+        mainCategory === 'best' ? [mainCategory] : [mainCategory, subCategory]
     } else {
       category =
         subCategory === 'all' ? [mainCategory] : [mainCategory, subCategory]
