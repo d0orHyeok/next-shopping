@@ -3,7 +3,7 @@ import nextConnect from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import Product from '@models/Product'
 import database from '@middlewares/database'
-import categoryData from 'public/data/category.json'
+import { getMainCategorys } from '@libs/getCategory'
 
 const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
@@ -16,7 +16,7 @@ interface BestProduct {
 handler.get(async (req, res) => {
   try {
     const limit = 10
-    const categorys = ['best', ...categoryData.map((item) => item.name)]
+    const categorys = ['best', ...getMainCategorys()]
 
     const results = await Promise.all(
       categorys.map((category) => {
