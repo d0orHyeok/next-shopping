@@ -5,7 +5,8 @@
   padding: 1rem 0;
 }
 
-.wrapper a {
+.wrapper a,
+.drawFilter a {
   color: inherit;
   text-decoration: inherit;
 }
@@ -30,6 +31,53 @@
   margin-right: 4rem;
 }
 
+.drawFilter {
+  padding: 2rem;
+  height: 100vh;
+}
+
+.drawFilter-nav {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.drawFilter-nav-item {
+  padding: 0 15px;
+  height: 30px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  background-color: black;
+  color: white;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.content .title {
+  position: relative;
+}
+
+.content .filter-media {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 80px;
+  height: 30px;
+  border: none;
+  background-color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: ease 0.1s all;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  display: none;
+}
+
+.filter-media:hover {
+  filter: brightness(90%);
+}
+
 .menu {
   border: 1px solid lightgray;
   display: flex;
@@ -40,16 +88,72 @@
 }
 
 .menu-nav {
-  padding: 0 20px;
+  position: relative;
+  padding: 0 30px;
+  height: 100%;
 }
 
 .menu-nav ul {
+  height: 100%;
   display: flex;
+  align-items: center;
+  overflow-x: scroll;
+  overflow-y: hidden;
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.menu-nav ul::-webkit-scrollbar {
+  display: none;
+}
+
+.menuBtn {
+  color: gray;
+  position: absolute;
+  top: 0;
+  width: 30px;
+  height: 60px;
+  border: none;
+  background-color: inherit;
+  cursor: pointer;
+}
+
+.menuBtn:hover {
+  color: black;
+}
+
+.menuBtn svg {
+  color: inherit;
+}
+
+.menuBtn.menuBtn-left {
+  left: 0;
+}
+
+.menuBtn.menuBtn-left svg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+}
+
+.menuBtn.menuBtn-right {
+  right: 0;
+}
+
+.menuBtn.menuBtn-right svg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
 }
 
 .menu-nav-item {
   cursor: pointer;
   margin: 0 10px;
+  flex-shrink: 0;
 }
 
 .menu-nav-item:hover {
@@ -67,7 +171,8 @@
   border-left: 1px solid lightgray;
   height: 100%;
   line-height: 60px;
-  padding: 0 30px;
+  text-align: center;
+  width: 115px;
 }
 
 .menu-normal-item.count::after {
@@ -81,5 +186,19 @@
 @media only screen and (max-width: 1500px) {
   .wrapper {
     padding: 1rem 40px;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .menu,
+  .preMenu,
+  .filter {
+    display: none;
+  }
+  .product-container {
+    margin-top: 1.5rem;
+  }
+  .content .filter-media {
+    display: inline-block;
   }
 }

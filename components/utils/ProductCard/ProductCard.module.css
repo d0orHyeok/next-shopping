@@ -54,3 +54,25 @@
 .card-description .reviewBox::after {
   content: '건';
 }
+
+@media only screen and (max-width: 768px) {
+  .card-description .name {
+    font-size: 0.9rem;
+  }
+
+  .card-description .name svg {
+    font-size: 1.1rem;
+    color: inherit;
+    float: right;
+    cursor: pointer;
+  }
+
+  .card-description .priceBox {
+    font-size: 1.1rem;
+  }
+
+  .card-description .reviewBox {
+    font-size: 0.75rem;
+    color: gray;
+  }
+}

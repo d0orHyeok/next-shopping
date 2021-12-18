@@ -17,10 +17,12 @@ interface SubCategoryPageParams extends ParsedUrlQuery {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
+    // 로그인 여부 확인
     await authCheckServerSide(store, ctx, null)
 
     const { mainCategory, subCategory } = ctx.params as SubCategoryPageParams
 
+    // 잘못된 링크 접속일 경우 404페이지로 Redirect
     if (
       ['best', ...getCategory.getMainCategorys()].filter(
         (item) => item === mainCategory
@@ -33,7 +35,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
         },
       }
     }
-
     if (
       ['all', 'best', ...getCategory.getSubCateogrys(mainCategory)].filter(
         (item) => item === subCategory
@@ -47,8 +48,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
       }
     }
 
-    let products: IProduct[] = []
-    let category: string[] = []
+    let category: string[] = [] // 서버에 요청할 카테고리 목록
+    let products: IProduct[] = [] // props로 전달할 상품 목록
 
     // best 상품조회할 경우 redux state 사용
     if (mainCategory === 'best' || subCategory === 'best') {
@@ -68,8 +69,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
       category =
         mainCategory === 'best' ? [mainCategory] : [mainCategory, subCategory]
     } else {
+      // 전체상품 조회 하는지에 따라 category 설정
       category =
         subCategory === 'all' ? [mainCategory] : [mainCategory, subCategory]
+      if (ctx.query.itemCategory !== undefined) {
+        // query로 마지막 카테고리 목록을 요청하는 경우
+        category.push(ctx.query.itemCategory.toString())
+      }
       const response = await Axios.post('/api/product/findProducts', {
         category,
       })
