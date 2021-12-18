@@ -111,6 +111,7 @@
   width: 100%;
   display: flex;
   justify-content: right;
+  transition: ease 0.2s all;
 }
 
 .imgBox li {

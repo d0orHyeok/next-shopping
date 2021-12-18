@@ -1,0 +1,56 @@
+.card-wrapper {
+}
+
+.card-wrapper a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card-wrapper .thumbnail {
+  cursor: pointer;
+  transition: ease 0.2s all;
+}
+
+.card-wrapper .thumbnail:hover {
+  opacity: 0.75;
+}
+
+.card-wrapper .thumbnail img {
+  width: 100%;
+}
+
+.card-description {
+  font-family: var(--product-font);
+}
+
+.card-description > * {
+  margin-top: 1rem;
+}
+
+.card-description .name {
+  color: rgb(45, 45, 45);
+}
+
+.card-description .name svg {
+  font-size: 1.2rem;
+  color: inherit;
+  float: right;
+  cursor: pointer;
+}
+
+.card-description .priceBox {
+  font-size: 1.25rem;
+}
+
+.card-description .reviewBox {
+  font-size: 0.8rem;
+  color: gray;
+}
+
+.card-description .reviewBox::before {
+  content: '리뷰 ';
+}
+
+.card-description .reviewBox::after {
+  content: '건';
+}

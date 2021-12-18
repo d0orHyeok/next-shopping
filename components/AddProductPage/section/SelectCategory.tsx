@@ -1,17 +1,12 @@
 import { MenuItem, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
 import styles from '../AddProductPage.module.css'
-import categoryData from 'public/data/category.json'
+import * as getCategorys from '@libs/getCategory'
 
-interface Category {
-  value: string
-  label: string
-}
-
-interface CategoryItems {
-  mainItems: Category[]
-  subItems: Category[]
-  lastItems: string[]
+interface Categorys {
+  mainCategorys: string[]
+  subCategorys: string[]
+  itemCategorys: string[]
 }
 
 interface SelectCategoryProps {
@@ -24,35 +19,20 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
     subCategory: '선택',
     lastCategory: '선택',
   })
-  const [categoryItems, setCategoryItems] = useState<CategoryItems>({
-    mainItems: [],
-    subItems: [],
-    lastItems: [],
+
+  const [categorys, setCategorys] = useState<Categorys>({
+    mainCategorys: [],
+    subCategorys: [],
+    itemCategorys: [],
   })
   const { mainCategory, subCategory, lastCategory } = category
-  const { mainItems, subItems, lastItems } = categoryItems
-
-  // json파일로 부터 분류를 선택받아 카테고리를 배열로 리턴
-  const getChangeCategoryItems = (data: any) => {
-    let changedCategoryItems: Category[] = []
-
-    data.map((item: { name: string }) => {
-      changedCategoryItems = [
-        ...changedCategoryItems,
-        {
-          value: item.name,
-          label: item.name.toUpperCase(),
-        },
-      ]
-    })
-    return changedCategoryItems
-  }
+  const { mainCategorys, subCategorys, itemCategorys } = categorys
 
   useEffect(() => {
     // 처음 로드시 json데이터를 state에 저장
-    setCategoryItems({
-      ...categoryItems,
-      mainItems: getChangeCategoryItems(categoryData),
+    setCategorys({
+      ...categorys,
+      mainCategorys: getCategorys.getMainCategorys(),
     })
   }, [])
 
@@ -76,21 +56,13 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
         subCategory: '선택',
         lastCategory: '선택',
       })
-      if (value === '선택') {
-        // 메인카테고리가 선택되지 않았으므로 서브카테고리를 알 수 없음
-        // 빈배열로 설정
-        setCategoryItems({ ...categoryItems, subItems: [], lastItems: [] })
-      } else {
-        const subCategoryData = categoryData.filter(
-          (mainItem) => mainItem.name === value
-        )[0].value
 
-        setCategoryItems({
-          ...categoryItems,
-          subItems: getChangeCategoryItems(subCategoryData),
-          lastItems: [],
-        })
-      }
+      const newSubCategorys = getCategorys.getSubCateogrys(value)
+      setCategorys({
+        ...categorys,
+        subCategorys: newSubCategorys,
+        itemCategorys: [],
+      })
     } else if (name === 'subCategory') {
       // 서브카테고리 선택 시
       setCategory({
@@ -98,21 +70,12 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
         subCategory: value,
         lastCategory: '선택',
       })
-      if (value === '선택') {
-        // 서브카테고리가 선택되지 않았으므로 마지막카테고리를 알 수 없음
-        // 빈배열로 설정
-        setCategoryItems({ ...categoryItems, lastItems: [] })
-      } else {
-        let lastCategoryData = categoryData
-          .filter((mainItem) => mainItem.name === mainCategory)[0]
-          .value.filter((subItem) => subItem.name === value)[0].value
 
-        lastCategoryData = !lastCategoryData.length
-          ? ['전체보기']
-          : lastCategoryData
-
-        setCategoryItems({ ...categoryItems, lastItems: lastCategoryData })
-      }
+      const newItemCategorys = getCategorys.getItemCategorys(
+        mainCategory,
+        value
+      )
+      setCategorys({ ...categorys, itemCategorys: newItemCategorys })
     } else {
       // 마지막 카테고리 선택 시
       setCategory({ ...category, [name]: value })
@@ -137,10 +100,10 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
             sx={{ width: '200px' }}
           >
             <MenuItem value={'선택'}>선택</MenuItem>
-            {mainItems &&
-              mainItems.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+            {mainCategorys &&
+              mainCategorys.map((category, index) => (
+                <MenuItem key={index} value={category}>
+                  {category.toUpperCase()}
                 </MenuItem>
               ))}
           </TextField>
@@ -157,10 +120,10 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
             sx={{ width: '200px' }}
           >
             <MenuItem value={'선택'}>선택</MenuItem>
-            {subItems &&
-              subItems.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+            {subCategorys &&
+              subCategorys.map((category, index) => (
+                <MenuItem key={index} value={category}>
+                  {category.toUpperCase()}
                 </MenuItem>
               ))}
           </TextField>
@@ -176,10 +139,10 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
             sx={{ width: '200px' }}
           >
             <MenuItem value={'선택'}>선택</MenuItem>
-            {lastItems &&
-              lastItems.map((item) => (
-                <MenuItem key={item} value={item}>
-                  {item.toUpperCase()}
+            {itemCategorys &&
+              itemCategorys.map((category, index) => (
+                <MenuItem key={index} value={category}>
+                  {category.toUpperCase()}
                 </MenuItem>
               ))}
           </TextField>

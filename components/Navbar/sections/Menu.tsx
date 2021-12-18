@@ -1,4 +1,3 @@
-import categoryData from 'public/data/category.json'
 import React, { useEffect, useState } from 'react'
 import styles from './Menu.module.css'
 import classnames from 'classnames/bind'
@@ -13,12 +12,13 @@ import {
   IBestProduct,
   selectProduct,
 } from '@redux/features/productSlice'
+import * as getCategorys from '@libs/getCategory'
 
 interface MenuProps {
   passDraw: (open: boolean) => void
 }
 
-const navCategory = ['best', ...categoryData.map((item) => item.name)]
+const navCategory = ['best', ...getCategorys.getMainCategorys()]
 
 const StyledDrawer = styled(Drawer)(() => ({
   '& .MuiBackdrop-root': {
@@ -67,9 +67,7 @@ const Menu = ({ passDraw }: MenuProps) => {
       return <></>
     }
     const mainCategory = navCategory[selectedItem]
-    const subCategoryData = categoryData[selectedItem - 1].value.map(
-      (item) => item.name
-    )
+    const subCategoryData = getCategorys.getSubCateogrys(mainCategory)
 
     return (
       <>
@@ -115,7 +113,7 @@ const Menu = ({ passDraw }: MenuProps) => {
                           }`}
                           data-price={`${product.price.toLocaleString(
                             'ko-KR'
-                          )}₩`}
+                          )}`}
                         >
                           <img src={product.image} alt={product.name} />
                         </li>
