@@ -32,26 +32,9 @@
 }
 
 .drawFilter {
-  padding: 2rem;
+  margin: 2rem 40px;
+  min-width: 300px;
   height: 100vh;
-}
-
-.drawFilter-nav {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.drawFilter-nav-item {
-  padding: 0 15px;
-  height: 30px;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  background-color: black;
-  color: white;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  flex-shrink: 0;
 }
 
 .content .title {
@@ -156,6 +139,7 @@
   flex-shrink: 0;
 }
 
+.menu-nav-itemSelect,
 .menu-nav-item:hover {
   color: black;
 }
@@ -173,6 +157,22 @@
   line-height: 60px;
   text-align: center;
   width: 115px;
+}
+
+.popover {
+  border: 1px solid lightgray;
+}
+
+.popover li {
+  margin: 1rem 0;
+  text-align: center;
+  color: gray;
+  font-family: var(--product-font);
+  cursor: pointer;
+}
+
+.popover li:hover {
+  color: black;
 }
 
 .menu-normal-item.count::after {

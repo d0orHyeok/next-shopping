@@ -8,13 +8,17 @@ handler.use(database)
 
 handler.post(async (req, res) => {
   try {
-    if (!req.body || !req.body?.category) {
+    const { sort, category } = req.body
+
+    if (!category) {
       return res.status(400).json({ success: false, message: '잘못된 요청' })
     }
 
+    const sortOption = !sort || sort?.sold ? { sold: -1, createdAt: -1 } : sort
+
     const products = await Product.find()
       .all('category', req.body.category)
-      .sort({ sold: -1, createdAt: -1 })
+      .sort(sortOption)
       .exec()
 
     res.status(200).json({ success: true, products })

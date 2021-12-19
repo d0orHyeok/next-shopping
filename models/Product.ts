@@ -11,6 +11,8 @@ interface Product {
   price: number
   sold: number
   reviews: number
+  views: number
+  likes: number
 }
 
 export interface IProduct extends Product {
@@ -53,6 +55,14 @@ const productSchema: Schema = new Schema(
       default: 0,
     },
     reviews: {
+      type: Number,
+      default: 0,
+    },
+    views: {
+      type: Number,
+      default: 0,
+    },
+    likes: {
       type: Number,
       default: 0,
     },
