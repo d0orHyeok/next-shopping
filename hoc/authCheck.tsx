@@ -58,7 +58,7 @@ interface IRedirectNotAuth {
 
 export const authCheckServerSide = async (
   store: any, // redux store
-  ctx: GetServerSidePropsContext, // ctx
+  context: GetServerSidePropsContext, // context
   // null: all user | false: not login user | true: login user
   option: null | boolean,
   adminRoute = false, // default false | false: not admin | true: for admin
@@ -68,7 +68,7 @@ export const authCheckServerSide = async (
     permanent: false,
     destination: destination,
   }
-  const { w_auth } = cookies(ctx)
+  const { w_auth } = cookies(context)
   if (w_auth) {
     await store.dispatch(userAuth({ token: w_auth }))
   }

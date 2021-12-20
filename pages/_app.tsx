@@ -14,8 +14,15 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Shopping" />
-        <meta name="keywords" content="nextjs,static,website" />
+        <meta name="author" content="JangHyeok Kim" />
+        <meta
+          name="description"
+          content="Nextjs Cloth Shop, PIIC 온라인 의류 판매"
+        />
+        <meta
+          name="keywords"
+          content="nextjs,shop,website,PIIC,쇼핑,온라인쇼핑, 쇼핑몰, 의류"
+        />
       </Head>
       {pathname === '/' ? (
         <Component {...pageProps} />

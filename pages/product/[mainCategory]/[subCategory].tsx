@@ -21,12 +21,13 @@ interface SubCategoryPageQuery extends ParsedUrlQuery {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (ctx) => {
+  (store) => async (context) => {
     // 로그인 여부 확인
-    await authCheckServerSide(store, ctx, null)
+    await authCheckServerSide(store, context, null)
 
-    const { itemCategory, sort } = ctx.query as SubCategoryPageQuery
-    const { mainCategory, subCategory } = ctx.params as SubCategoryPageParams
+    const { itemCategory, sort } = context.query as SubCategoryPageQuery
+    const { mainCategory, subCategory } =
+      context.params as SubCategoryPageParams
 
     // 잘못된 링크 접속일 경우 404페이지로 Redirect
     if (
@@ -100,10 +101,26 @@ export const getServerSideProps = wrapper.getServerSideProps(
 type SubCategoryPageProps = IProductViewPageProps
 
 const SubCategory = ({ products, category }: SubCategoryPageProps) => {
+  const metaDesc = products.map((product) => product.name).join(',')
+
   return (
     <>
       <Head>
         <title>{category[category.length - 1].toUpperCase()} | PIIC</title>
+        <meta
+          name="description"
+          content={
+            'Nextjs Cloth Shop, PIIC 온라인 의류 판매, ' +
+            `PIIC 상품 목록, ${metaDesc}`
+          }
+        />
+        <meta
+          name="keywords"
+          content={
+            'nextjs,shop,website,PIIC,쇼핑,온라인쇼핑, 쇼핑몰, 의류, ' +
+            category.join(',')
+          }
+        />
       </Head>
       <ProductViewPage products={products} category={category} />
     </>

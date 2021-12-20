@@ -61,7 +61,7 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
 
   return (
     <>
-      <Modal open={open} onClose={onClose}>
+      <Modal open={open} onClose={onClose} disableScrollLock={true}>
         <div className={styles.wrapper}>
           <IconButton
             className={styles.closeBtn}
