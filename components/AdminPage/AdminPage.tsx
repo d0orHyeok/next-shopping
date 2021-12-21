@@ -1,9 +1,18 @@
 import AuthCheck from 'hoc/authCheck'
 import styles from './AdminPage.module.css'
 import Link from 'next/link'
-import PreNav from '@components/utils/PreNav/PreNav'
+import PreNav from './sections/PreNav'
 
-const AdminPage = () => {
+export interface ITab {
+  label: string
+  href: string
+}
+
+interface IAdminPageProps {
+  tabs: ITab[]
+}
+
+const AdminPage = ({ tabs }: IAdminPageProps) => {
   return (
     <>
       <div className={styles.container}>
@@ -11,12 +20,11 @@ const AdminPage = () => {
 
         <div className={styles.nav}>
           <ul>
-            <li>
-              <Link href="/admin/users">유저관리</Link>
-            </li>
-            <li>
-              <Link href="/admin/products">상품관리</Link>
-            </li>
+            {tabs.map((tab, index) => (
+              <li key={index}>
+                <Link href={tab.href}>{tab.label}</Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

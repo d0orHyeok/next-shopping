@@ -3,6 +3,7 @@
   height: 100%;
   max-width: 800px;
   margin: 3rem auto;
+  padding: 0 16px;
 }
 
 .title {
@@ -33,17 +34,37 @@
 }
 
 .form .colorItem {
-  background-color: whitesmoke;
   text-align: center;
   height: 30px;
   line-height: 30px;
   border-radius: 15px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0);
 }
 
 .colorItem:hover {
   cursor: pointer;
   filter: brightness(90%);
+}
+
+.colorInput {
+  display: flex;
+}
+
+.colorInput .colorHex {
+  width: 45px;
+  height: 45px;
+  margin-top: 4px;
+  margin-right: 8px;
+}
+
+.colorInput select {
+  max-width: 200px;
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 6px;
 }
 
 .form .addBtn {
@@ -61,4 +82,27 @@
 .addBtn:hover {
   opacity: 0.75;
   cursor: pointer;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+}
+
+.details .detail {
+  margin-bottom: 1.5rem;
+}
+
+.details .detail label {
+  margin-right: 5px;
+}
+
+@media only screen and (max-width: 480px) {
+  .form .categoryGroup {
+    flex-direction: column;
+  }
+
+  .form .categoryGroup > * {
+    margin-bottom: 1rem;
+  }
 }

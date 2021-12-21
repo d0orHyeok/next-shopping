@@ -10,10 +10,14 @@ interface Categorys {
 }
 
 interface SelectCategoryProps {
+  pCateogry?: string[]
   onChangeHandler: (categorys: string[]) => void
 }
 
-const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
+const SelectCategory = ({
+  pCateogry,
+  onChangeHandler,
+}: SelectCategoryProps) => {
   const [category, setCategory] = useState({
     mainCategory: '선택',
     subCategory: '선택',
@@ -21,7 +25,7 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
   })
 
   const [categorys, setCategorys] = useState<Categorys>({
-    mainCategorys: [],
+    mainCategorys: getCategorys.getMainCategorys(),
     subCategorys: [],
     itemCategorys: [],
   })
@@ -29,12 +33,25 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
   const { mainCategorys, subCategorys, itemCategorys } = categorys
 
   useEffect(() => {
-    // 처음 로드시 json데이터를 state에 저장
-    setCategorys({
-      ...categorys,
-      mainCategorys: getCategorys.getMainCategorys(),
-    })
-  }, [])
+    if (pCateogry) {
+      setCategory({
+        mainCategory: pCateogry[0],
+        subCategory: pCateogry[1],
+        lastCategory: pCateogry.length === 2 ? '전체보기' : pCateogry[2],
+      })
+
+      const newSubCategorys = getCategorys.getSubCateogrys(pCateogry[0])
+      const newItemCategorys = getCategorys.getItemCategorys(
+        pCateogry[0],
+        pCateogry[1]
+      )
+      setCategorys({
+        ...categorys,
+        subCategorys: newSubCategorys,
+        itemCategorys: newItemCategorys,
+      })
+    }
+  }, [pCateogry])
 
   useEffect(() => {
     // 마지막 카테고리 까지 선택되었으면 카테고리 결과를 설정한다
@@ -96,7 +113,6 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
             label="대분류"
             value={mainCategory}
             onChange={handleChange}
-            helperText="대분류"
             sx={{ width: '200px' }}
           >
             <MenuItem value={'선택'}>선택</MenuItem>
@@ -116,7 +132,6 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
             label="소분류"
             value={subCategory}
             onChange={handleChange}
-            helperText="소분류"
             sx={{ width: '200px' }}
           >
             <MenuItem value={'선택'}>선택</MenuItem>
@@ -135,7 +150,6 @@ const SelectCategory = ({ onChangeHandler }: SelectCategoryProps) => {
             label="종류"
             value={lastCategory}
             onChange={handleChange}
-            helperText="종류"
             sx={{ width: '200px' }}
           >
             <MenuItem value={'선택'}>선택</MenuItem>

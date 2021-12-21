@@ -4,8 +4,8 @@ import { wrapper } from '@redux/store'
 import Head from 'next/head'
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (ctx) => {
-    const redirect = await authCheckServerSide(store, ctx, false)
+  (store) => async (context) => {
+    const redirect = await authCheckServerSide(store, context, false)
 
     return redirect ? { redirect: redirect, props: {} } : { props: {} }
   }

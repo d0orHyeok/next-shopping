@@ -4,25 +4,41 @@ import styles from '../AddProductPage.module.css'
 import sizeData from 'public/data/size.json'
 
 interface SelectSizeProps {
+  pSizes?: string[]
   category: string[]
   handleChange: (sizes: string[]) => void
 }
 
-const SelectSize = ({ category, handleChange }: SelectSizeProps) => {
+const SelectSize = ({ pSizes, category, handleChange }: SelectSizeProps) => {
   const [sizeItems, setSizeItems] = useState<string[]>([]) // 사이즈 정보를 담는다
   const [sizeChecked, setSizeChecked] = useState<boolean[]>([]) // checkbox 정보
 
+  const getSizeItems = () => {
+    const newSizeItems = sizeData.filter((item) => item.name === category[0])[0]
+    if (newSizeItems) {
+      return newSizeItems.sizes
+    } else {
+      return []
+    }
+  }
+
   useEffect(() => {
     // 카테고리에 맞는 사이즈 정보를 설정한다
-    const newSizeItems = sizeData.filter((item) => item.name === category[0])[0]
-    newSizeItems ? setSizeItems(newSizeItems.sizes) : setSizeItems([])
+    const newSizeItems = getSizeItems()
+
+    setSizeItems(newSizeItems)
+    const newSizeChecked = newSizeItems.map((_) => false)
+    setSizeChecked(newSizeChecked)
   }, [category])
 
   useEffect(() => {
-    // 사이즈 정보가 갱신되면 그에맞는 checkbox정보를 설정
-    const newSizeChecked = sizeItems.map((_) => false)
-    setSizeChecked(newSizeChecked)
-  }, [sizeItems])
+    if (pSizes) {
+      const newChecked = getSizeItems().map(
+        (item) => pSizes.find((size) => size === item) !== undefined
+      )
+      setSizeChecked(newChecked)
+    }
+  }, [pSizes])
 
   useEffect(() => {
     // 사이즈가 선택되면 해당 사이즈정보를 반환한다

@@ -6,6 +6,7 @@ import PreMenu from '@components/ProductViewPage/section/PreMenu'
 import React, { useState } from 'react'
 import ProductOrder from './section/ProductOrder'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import DetailCheck from './section/DetailCheck'
 
 const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
   const { product } = productDetail
@@ -60,7 +61,7 @@ const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
                 </div>
                 <h2 className={styles.subTitle}>Detail Check</h2>
                 <div className={styles.detailCheck}>
-                  detail of products, 핏, 신축성, 비침
+                  <DetailCheck product={product} />
                 </div>
               </>
             )}

@@ -1,10 +1,15 @@
 import AuthCheck from 'hoc/authCheck'
-import AdminPage from '@components/AdminPage/AdminPage'
+import AdminPage, { ITab } from '@components/AdminPage/AdminPage'
+
+const tabs: ITab[] = [
+  { label: '유저관리', href: '/admin/users' },
+  { label: '상품관리', href: '/admin/products' },
+]
 
 const AdminIndex = () => {
   return (
     <>
-      <AdminPage />
+      <AdminPage tabs={tabs} />
     </>
   )
 }

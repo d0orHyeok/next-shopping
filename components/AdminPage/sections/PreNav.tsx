@@ -9,7 +9,7 @@ interface WithRouterProps {
 }
 
 const PreNav = ({ router, sx }: WithRouterProps) => {
-  const paths = router.pathname.split('/')
+  const paths = router.asPath.split('/')
 
   return (
     <ol className={styles.nav} style={sx}>

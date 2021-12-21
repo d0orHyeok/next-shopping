@@ -1,14 +1,15 @@
 import AuthCheck from 'hoc/authCheck'
-import Link from 'next/link'
-import PreNav from '@components/utils/PreNav/PreNav'
+import AdminPage, { ITab } from '@components/AdminPage/AdminPage'
+
+const tabs: ITab[] = [
+  { label: '상품등록', href: '/admin/products/add' },
+  { label: '상품조회/편집', href: '/admin/products/list' },
+]
 
 const ProductIndex = () => {
   return (
     <>
-      <div style={{ width: '80%', margin: '3rem auto' }}>
-        <PreNav sx={{ fontSize: '0.9rem', textAlign: 'right' }} />
-        <Link href="/admin/products/add">상품 등록</Link>
-      </div>
+      <AdminPage tabs={tabs} />
     </>
   )
 }

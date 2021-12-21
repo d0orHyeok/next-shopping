@@ -1,0 +1,22 @@
+.wrapper {
+  margin: 3rem auto;
+  max-width: 800px;
+  width: 100%;
+}
+
+.list {
+  height: 650px;
+  width: 100%;
+}
+
+.listHead {
+  font-weight: bold;
+  margin-bottom: 3rem;
+}
+
+.listHead span {
+  font-weight: normal;
+  font-size: 0.9rem;
+  color: gray;
+  margin-left: 1rem;
+}

@@ -5,10 +5,10 @@ import { Divider } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
-import { IProduct } from '@models/Product'
+import { IProduct, IColor } from '@models/Product'
 
 interface ISelect {
-  color: string | null
+  color: IColor | null
   size: string | null
 }
 
@@ -41,11 +41,17 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
   const handleColorClick = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       const { textContent } = event.currentTarget
-      setSelect({
-        ...select,
-        size: null,
-        color: select.color === textContent ? null : textContent,
-      })
+      const dataColor = event.currentTarget.getAttribute('data-color')
+      if (textContent && dataColor) {
+        setSelect({
+          ...select,
+          size: null,
+          color:
+            select.color?.colorName === textContent
+              ? null
+              : { colorName: textContent, colorHex: dataColor },
+        })
+      }
     },
     [select]
   )
@@ -115,6 +121,8 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
     }
   }, [select.size])
 
+  console.log(picks)
+
   return (
     <>
       <div className={cx('wrapper')}>
@@ -130,16 +138,17 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
             data-select={
               select.color === null
                 ? '[필수] 옵션을 선택해 주세요'
-                : `[필수] ${select.color}`
+                : `[필수] ${select.color.colorName}`
             }
           >
             {product.colors.map((color, index) => (
               <button
                 key={index}
-                className={cx(color === select.color && 'selectItem')}
+                className={cx(select.color === color && 'selectItem')}
+                data-color={color.colorHex}
                 onClick={handleColorClick}
               >
-                {color}
+                {color.colorName}
               </button>
             ))}
           </div>
@@ -192,7 +201,7 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
                       </button>
                       <h3 className={cx('checkTitle')}>
                         {product.name}
-                        <span>{`- ${pick.color}/${pick.size}`}</span>
+                        <span>{`- ${pick.color?.colorName}/${pick.size}`}</span>
                       </h3>
                       <div className={cx('checkNum')}>
                         <button onClick={() => updatePickNum(index, -1)}>

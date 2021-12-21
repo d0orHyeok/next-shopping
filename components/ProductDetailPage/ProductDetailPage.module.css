@@ -88,6 +88,10 @@
   color: rgb(50, 50, 160);
 }
 
+.product-content .detailCheck {
+  margin-bottom: 3rem;
+}
+
 @media only screen and (max-width: 1500px) {
   .wrapper {
     padding: 1rem 20px;

@@ -6,11 +6,6 @@ import { ParsedUrlQuery } from 'querystring'
 import Axios from 'axios'
 import { IProductDetail } from '@api/product/getProductDetail'
 
-interface DetailPageParams extends ParsedUrlQuery {
-  mainCategory: string
-  subCategory: string
-}
-
 export interface IDetailPageProps {
   productDetail: IProductDetail
 }
@@ -19,7 +14,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
     await authCheckServerSide(store, context, false)
 
-    const { pid } = context.params as DetailPageParams
+    const { pid } = context.params as ParsedUrlQuery
     const response = await Axios.post('/api/product/getProductDetail', { pid })
     const productDetail = response.data.productDetail
 

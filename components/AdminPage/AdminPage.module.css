@@ -4,6 +4,10 @@
   margin: 3rem auto;
 }
 
+.nav {
+  margin-top: 3rem;
+}
+
 .nav ul {
   display: flex;
 }

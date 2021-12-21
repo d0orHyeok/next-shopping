@@ -5,7 +5,6 @@ import Modal from '@mui/material/Modal'
 import styles from './LoginModal.module.css'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useRouter } from 'next/router'
 import { useAppDispatch } from '@redux/hooks'
 import { userLogin, userAuth } from '@redux/features/userSlice'
 
@@ -20,7 +19,6 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ open, onClose }: LoginModalProps) => {
-  const router = useRouter()
   const dispatch = useAppDispatch()
 
   const [inputValue, setInputValue] = useState<inputValue>({
@@ -51,7 +49,6 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
     dispatch(userLogin(inputValue))
       .unwrap()
       .then(() => {
-        router.push('/')
         dispatch(userAuth())
       })
       .catch((err) => {

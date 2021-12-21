@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Dropzone from 'react-dropzone'
 import AddIcon from '@mui/icons-material/Add'
 import { Grid } from '@mui/material'
@@ -6,12 +6,23 @@ import Axios from 'axios'
 import styles from './UploadImages.module.css'
 
 interface UploadImageProps {
+  productImages?: string[]
   maxNum?: 1 | 2 | 3 | 4 | 5
   onChangeHandler?: (images: any) => void
 }
 
-const UploadImages = ({ maxNum = 1, onChangeHandler }: UploadImageProps) => {
+const UploadImages = ({
+  productImages,
+  maxNum = 1,
+  onChangeHandler,
+}: UploadImageProps) => {
   const [Images, setImages] = useState<string[]>([])
+
+  useEffect(() => {
+    if (productImages) {
+      setImages(productImages)
+    }
+  }, [productImages])
 
   const onDropHandler = (files: any) => {
     if (Images.length === maxNum) {
@@ -38,6 +49,10 @@ const UploadImages = ({ maxNum = 1, onChangeHandler }: UploadImageProps) => {
   }
 
   const deleteHandler = (image: string) => {
+    if (!confirm('이미지를 삭제하시겠습니까?')) {
+      return
+    }
+
     const currentIndex = Images.indexOf(image)
     const newImages = [...Images]
     newImages.splice(currentIndex, 1)
