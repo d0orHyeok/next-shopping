@@ -24,25 +24,123 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .product-content .imgBox {
-  min-width: 300px;
+  max-width: 500px;
+  min-width: 200px;
   width: 50%;
-  margin-bottom: 100px;
+  margin-bottom: 6rem;
 }
 
 .product-content .imgBox img {
   width: 100%;
 }
 
-.product-content .title {
-  font-size: 1.4rem;
+.product-content .product-info {
+  padding: 2rem 0;
+  margin-bottom: 6rem;
+}
+
+.product-content .product-info .title {
+  font-size: 2rem;
   font-weight: bold;
+  margin-bottom: 3rem;
+}
+
+.product-content .subTitle {
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.product-content .subImgs {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5rem;
+}
+
+.product-content .subImgs img {
+  max-width: 800px;
+  min-width: 280px;
+  width: 100%;
+  margin-bottom: 6rem;
+}
+
+.product-content .moreBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(rgba(200, 200, 200, 0.3), 5%, white);
+  border: none;
+  cursor: pointer;
+  color: gray;
+}
+
+.product-content .moreBtn span {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.product-content .moreBtn:hover {
+  color: rgb(50, 50, 160);
 }
 
 @media only screen and (max-width: 1500px) {
   .wrapper {
     padding: 1rem 20px;
+  }
+}
+
+@media only screen and (max-width: 993px) {
+  .wrapper {
+    padding: 3rem 20px;
+    max-width: 768px;
+  }
+
+  .depth {
+    display: none;
+  }
+
+  .product {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-content {
+    font-size: 0.9rem;
+    margin-right: 0;
+    order: 2;
+  }
+
+  .product-content::before {
+    width: 100%;
+    height: 1px;
+    content: '';
+    background-color: gray;
+    margin: 100px;
+  }
+
+  .product-order {
+    padding: 0 20px;
+    order: 1;
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .product-content {
+    font-size: 0.9rem;
+  }
+
+  .product-content .product-info .title {
+    font-size: 1.6rem;
+  }
+
+  .product-content .subTitle {
+    font-size: 1.2rem;
   }
 }

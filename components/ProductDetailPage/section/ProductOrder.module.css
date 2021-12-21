@@ -201,3 +201,30 @@
   color: black;
   background-color: inherit;
 }
+
+@media only screen and (max-width: 993px) {
+  .wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .desc .name {
+    font-size: 1.4rem;
+  }
+
+  .desc .price {
+    font-size: 1.1rem;
+  }
+
+  .take .btnGroup button {
+    padding: 0 8px;
+    font-size: 0.7rem;
+  }
+}
