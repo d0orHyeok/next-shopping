@@ -75,7 +75,7 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
   } = inputValue
 
   useEffect(() => {
-    Axios.post('/api/product/getColors').then((res) => {
+    Axios.get('/api/product/getColors').then((res) => {
       res.data.colors && setColorOptions(res.data.colors)
     })
   }, [])

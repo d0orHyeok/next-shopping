@@ -1,0 +1,81 @@
+.wrapper {
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.filterLabel {
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.colorBox {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.colorItem {
+  width: 40px;
+  height: 30px;
+  margin-left: 6px;
+  margin-bottom: 6px;
+  border: 1px solid lightgray;
+  cursor: pointer;
+  position: relative;
+}
+
+.colorItem:hover {
+  opacity: 0.75;
+}
+
+.colorSelect::before {
+  position: absolute;
+  content: '✔';
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-shadow: 0 0 3px black;
+}
+
+.colorItem:hover.colorItem::after {
+  display: block;
+}
+
+.colorItem::after {
+  position: absolute;
+  content: attr(data-label);
+  top: 0;
+  left: 50%;
+  margin-top: -14px;
+  transform: translateX(-50%);
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0 4px;
+  color: white;
+  display: none;
+}
+
+.btnBox {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.btnItem {
+  width: 48%;
+  margin: 0 1% 6px 1%;
+  border: 1px solid gray;
+  background-color: inherit;
+  font-family: inherit;
+  height: 35px;
+  cursor: pointer;
+  transition: 0.2s ease all;
+}
+
+.btnSelect,
+.btnItem:hover {
+  border-color: rgb(0, 0, 138);
+  color: rgb(0, 0, 138);
+  background-color: rgba(19, 22, 84, 0.1);
+}

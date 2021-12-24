@@ -14,11 +14,14 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import { Drawer, Popover } from '@mui/material'
 import { withRouter, NextRouter } from 'next/router'
+import Filter from './section/Filter'
+import { IFilterOptions } from '@api/product/getFilterOptions'
 
 export interface IProductViewPageProps {
   router: NextRouter
   products: IProduct[]
   category: string[]
+  filterOptions: IFilterOptions
 }
 
 interface QueryHref {
@@ -37,6 +40,7 @@ const ProductViewPage = ({
   router,
   products,
   category,
+  filterOptions,
 }: IProductViewPageProps) => {
   // menu에 표시할 item과 href 주소
   const [navItems, setNavItems] = useState<navItemState>({
@@ -215,6 +219,7 @@ const ProductViewPage = ({
           {/* Filter Area */}
           <div className={styles.filter}>
             <h1 className={cx('title', 'title-underline')}>FILTER</h1>
+            <Filter filterOptions={filterOptions} />
           </div>
           {/* Contents Area */}
           <div className={styles.content}>
@@ -230,6 +235,7 @@ const ProductViewPage = ({
               <Drawer anchor="bottom" open={draw} onClose={toggleDrawer(false)}>
                 <div className={cx('drawFilter')}>
                   <h1 className={cx('title', 'title-underline')}>FILTER</h1>
+                  <Filter filterOptions={filterOptions} />
                 </div>
               </Drawer>
             </h1>
@@ -282,7 +288,7 @@ const ProductViewPage = ({
                   onMouseEnter={popoverEnter}
                   onMouseLeave={popoverLeave}
                 >
-                  {/* test */}
+                  {/* 상품정렬 */}
                   <span ref={sortLabelRef}>상품정렬</span>
                   <Popover
                     disableScrollLock={true}

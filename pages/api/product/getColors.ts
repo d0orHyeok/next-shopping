@@ -6,14 +6,8 @@ import database from '@middlewares/database'
 const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 
-handler.post(async (req, res) => {
+handler.get(async (req, res) => {
   try {
-    // const { category } = req.body
-
-    // if (!category) {
-    //   return res.status(400).json({ success: false, message: '잘못된 요청' })
-    // }
-
     const colors = await Product.find()
       .select('colors')
       .distinct('colors')

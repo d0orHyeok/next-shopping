@@ -93,14 +93,20 @@ export const getServerSideProps = wrapper.getServerSideProps(
       const response = await Axios.post('/api/product/findProducts', body)
       products = response.data?.products
     }
+    const filterRes = await Axios.post('/api/product/getFilterOptions', body)
+    const filterOptions = filterRes.data.filterOptions
 
-    return { props: { products, category } }
+    return { props: { products, category, filterOptions } }
   }
 )
 
 type SubCategoryPageProps = IProductViewPageProps
 
-const SubCategory = ({ products, category }: SubCategoryPageProps) => {
+const SubCategory = ({
+  products,
+  category,
+  filterOptions,
+}: SubCategoryPageProps) => {
   const metaDesc = products.map((product) => product.name).join(',')
 
   return (
@@ -122,7 +128,11 @@ const SubCategory = ({ products, category }: SubCategoryPageProps) => {
           }
         />
       </Head>
-      <ProductViewPage products={products} category={category} />
+      <ProductViewPage
+        products={products}
+        category={category}
+        filterOptions={filterOptions}
+      />
     </>
   )
 }
