@@ -74,8 +74,14 @@
 }
 
 .btnSelect,
-.btnItem:hover {
+.btnItem:not(.btnBlock):hover {
   border-color: rgb(0, 0, 138);
   color: rgb(0, 0, 138);
   background-color: rgba(19, 22, 84, 0.1);
+}
+
+.btnBlock {
+  cursor: default;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: gray;
 }

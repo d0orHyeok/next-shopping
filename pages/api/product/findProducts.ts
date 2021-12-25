@@ -8,18 +8,46 @@ handler.use(database)
 
 handler.post(async (req, res) => {
   try {
-    const { sort, category } = req.body
+    const { sort, category, colors, fit, season } = req.body
 
+    // 카테고리가 없을 경우
     if (!category) {
       return res.status(400).json({ success: false, message: '잘못된 요청' })
     }
 
+    // 정렬옵션이 있으면 그에 맞게 설정
     const sortOption = !sort || sort?.sold ? { sold: -1, createdAt: -1 } : sort
 
-    const products = await Product.find()
-      .all('category', req.body.category)
-      .sort(sortOption)
-      .exec()
+    let query = Product.find().all('category', category).sort(sortOption)
+
+    // 각 필터에 맞춘 query 실행
+    if (colors) {
+      // colors query를 split 하여 데이터로 만든후 탐색
+      let queryColors = []
+      if (Array.isArray(colors)) {
+        queryColors = colors.map((item) => {
+          const data = item.split('_')
+          return { colorName: data[0], colorHex: data[1] }
+        })
+      } else {
+        const data = colors.split('_')
+        queryColors = [{ colorName: data[0], colorHex: data[1] }]
+      }
+
+      query = query.where('colors').in(queryColors)
+    }
+    // fit filter
+    if (fit) {
+      query = query.where('fit').equals(fit)
+    }
+    // season filter
+    if (season) {
+      query = Array.isArray(season)
+        ? query.where('season').in(season)
+        : query.where('season').in([season])
+    }
+
+    const products = await query.exec()
 
     res.status(200).json({ success: true, products })
   } catch (error) {

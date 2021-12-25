@@ -18,6 +18,9 @@ interface SubCategoryPageParams extends ParsedUrlQuery {
 interface SubCategoryPageQuery extends ParsedUrlQuery {
   itemCategory?: string
   sort?: string
+  colors?: string | string[]
+  fit: string
+  season: string
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
@@ -25,7 +28,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
     // 로그인 여부 확인
     await authCheckServerSide(store, context, null)
 
-    const { itemCategory, sort } = context.query as SubCategoryPageQuery
+    const { itemCategory, sort, colors, fit, season } =
+      context.query as SubCategoryPageQuery
     const { mainCategory, subCategory } =
       context.params as SubCategoryPageParams
 
@@ -57,15 +61,27 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     let category: string[] = [] // 서버에 요청할 카테고리 목록
     let products: IProduct[] = [] // props로 전달할 상품 목록
+    let isBest = false
     let body = {}
     if (sort !== undefined) {
       const sortOption = sort.split('_')
       body = { sort: { [sortOption[0]]: sortOption[1] === 'asc' ? 1 : -1 } }
     }
 
+    if (colors !== undefined) {
+      body = { ...body, colors }
+    }
+    if (fit !== undefined) {
+      body = { ...body, fit }
+    }
+    if (season !== undefined) {
+      body = { ...body, season }
+    }
+
     // best 상품조회할 경우 redux state 사용
     if (mainCategory === 'best' || subCategory === 'best') {
       // check state
+      isBest = true
       let bestProducts: IBestProduct[] = await store.getState().product
         .bestProducts
       if (bestProducts.length === 0) {
@@ -80,6 +96,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
       category =
         mainCategory === 'best' ? [mainCategory] : [mainCategory, subCategory]
+      body = { ...body, category }
     } else {
       // 전체상품 조회 하는지에 따라 category 설정
       category =
@@ -93,10 +110,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
       const response = await Axios.post('/api/product/findProducts', body)
       products = response.data?.products
     }
+
     const filterRes = await Axios.post('/api/product/getFilterOptions', body)
     const filterOptions = filterRes.data.filterOptions
 
-    return { props: { products, category, filterOptions } }
+    return { props: { products, category, isBest, filterOptions } }
   }
 )
 
@@ -106,6 +124,7 @@ const SubCategory = ({
   products,
   category,
   filterOptions,
+  isBest,
 }: SubCategoryPageProps) => {
   const metaDesc = products.map((product) => product.name).join(',')
 
@@ -129,6 +148,7 @@ const SubCategory = ({
         />
       </Head>
       <ProductViewPage
+        isBest={isBest}
         products={products}
         category={category}
         filterOptions={filterOptions}

@@ -12,7 +12,7 @@ interface IFilterProps {
 
 const Filter = ({ filterOptions }: IFilterProps) => {
   const router = useRouter()
-  const { colorOptions, fitOptions, seasonOptions } = filterOptions
+  const { colorOptions, fitOptions, seasonOptions, isBlock } = filterOptions
 
   const [colorSelect, setColorSelect] = useState(colorOptions.map((_) => false))
   const [fitSelect, setFitSelect] = useState(-1)
@@ -25,9 +25,11 @@ const Filter = ({ filterOptions }: IFilterProps) => {
 
     colorOptions.forEach((option, index) => {
       if (index === selectIndex) {
-        !colorSelect[index] && newHex.push(option.colorHex)
+        !colorSelect[index] &&
+          newHex.push(`${option.colorName}_${option.colorHex}`)
       } else {
-        colorSelect[index] && newHex.push(option.colorHex)
+        colorSelect[index] &&
+          newHex.push(`${option.colorName}_${option.colorHex}`)
       }
     })
 
@@ -132,8 +134,16 @@ const Filter = ({ filterOptions }: IFilterProps) => {
               {fitOptions.map((fit, index) => (
                 <button
                   key={index}
-                  className={cx('btnItem', fitSelect === index && 'btnSelect')}
-                  onClick={() => handleFitClick(index)}
+                  className={cx(
+                    'btnItem',
+                    fitSelect === index && 'btnSelect',
+                    isBlock.fitIsBlock[index] && 'btnBlock'
+                  )}
+                  onClick={() =>
+                    !isBlock.fitIsBlock[index] &&
+                    'btnBlock' &&
+                    handleFitClick(index)
+                  }
                 >
                   {fit}
                 </button>
@@ -149,8 +159,14 @@ const Filter = ({ filterOptions }: IFilterProps) => {
               {seasonOptions.map((fit, index) => (
                 <button
                   key={index}
-                  className={cx('btnItem', seasonSelect[index] && 'btnSelect')}
-                  onClick={() => handleSeasonClick(index)}
+                  className={cx(
+                    'btnItem',
+                    seasonSelect[index] && 'btnSelect',
+                    isBlock.seasonIsBlock[index] && 'btnBlock'
+                  )}
+                  onClick={() =>
+                    !isBlock.seasonIsBlock[index] && handleSeasonClick(index)
+                  }
                 >
                   {fit}
                 </button>

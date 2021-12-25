@@ -21,6 +21,7 @@ export interface IProductViewPageProps {
   router: NextRouter
   products: IProduct[]
   category: string[]
+  isBest: boolean
   filterOptions: IFilterOptions
 }
 
@@ -41,6 +42,7 @@ const ProductViewPage = ({
   products,
   category,
   filterOptions,
+  isBest,
 }: IProductViewPageProps) => {
   // menu에 표시할 item과 href 주소
   const [navItems, setNavItems] = useState<navItemState>({
@@ -131,7 +133,7 @@ const ProductViewPage = ({
     }
     let items: string[] = []
     const hrefs: any[] = []
-    if (category.length === 1 || category.find((c) => c === 'best')) {
+    if (category.length === 1 || isBest) {
       // 메인카테고리 조회 or 베스트 상품조회 페이지 일 때
       if (category[0] === 'best') {
         items = ['all', ...getCategorys.getMainCategorys()]
@@ -217,27 +219,37 @@ const ProductViewPage = ({
         {/* 상품페이지 본문 */}
         <div className={cx('main')}>
           {/* Filter Area */}
-          <div className={styles.filter}>
-            <h1 className={cx('title', 'title-underline')}>FILTER</h1>
-            <Filter filterOptions={filterOptions} />
-          </div>
+          {!isBest && (
+            <div className={styles.filter}>
+              <h1 className={cx('title', 'title-underline')}>FILTER</h1>
+              <Filter filterOptions={filterOptions} />
+            </div>
+          )}
           {/* Contents Area */}
           <div className={styles.content}>
             <h1 className={styles.title}>
               {category[category.length - 1].toUpperCase()}
               {/* 반응형 필터 버튼 및 Drawer */}
-              <button
-                className={cx('filter-media')}
-                onClick={toggleDrawer(true)}
-              >
-                FILTER
-              </button>
-              <Drawer anchor="bottom" open={draw} onClose={toggleDrawer(false)}>
-                <div className={cx('drawFilter')}>
-                  <h1 className={cx('title', 'title-underline')}>FILTER</h1>
-                  <Filter filterOptions={filterOptions} />
-                </div>
-              </Drawer>
+              {!isBest && (
+                <>
+                  <button
+                    className={cx('filter-media')}
+                    onClick={toggleDrawer(true)}
+                  >
+                    FILTER
+                  </button>
+                  <Drawer
+                    anchor="bottom"
+                    open={draw}
+                    onClose={toggleDrawer(false)}
+                  >
+                    <div className={cx('drawFilter')}>
+                      <h1 className={cx('title', 'title-underline')}>FILTER</h1>
+                      <Filter filterOptions={filterOptions} />
+                    </div>
+                  </Drawer>
+                </>
+              )}
             </h1>
             {/* 상품 카테고리 메뉴 */}
             <div className={styles.menu}>
