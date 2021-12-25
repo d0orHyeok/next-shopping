@@ -1,6 +1,6 @@
+import { IAuthUserData } from './../../pages/api/users/auth'
 import { RootState } from '@redux/store'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { IUserCart, IUserHistory } from '@models/User'
 import Axios from 'axios'
 import { backendUrl } from 'config/config'
 import router from 'next/router'
@@ -8,22 +8,9 @@ import router from 'next/router'
 Axios.defaults.baseURL = backendUrl
 Axios.defaults.withCredentials = true // front, backend 간 쿠키공유
 
-// interfaces
-export interface UserData {
-  _id: string
-  isAdmin: boolean
-  email: string
-  name: string
-  role: number
-  image: string
-  cart: IUserCart[]
-  history: IUserHistory[]
-  tokenExp: number
-}
-
 export interface IUserState {
   isLogin: boolean
-  userData: UserData | null
+  userData: IAuthUserData | null
 }
 
 // Async Action
@@ -63,6 +50,18 @@ export const userLogout = createAsyncThunk(`userLogout`, async () => {
   return response.data
 })
 
+export const userClickLike = createAsyncThunk(
+  `userClickLike`,
+  async (pid: string, { rejectWithValue }) => {
+    try {
+      const response = await Axios.post('/api/users/like', { pid })
+      return response.data.userLikes
+    } catch (err) {
+      return rejectWithValue(err.response.data)
+    }
+  }
+)
+
 // Slice
 const initialState: IUserState = {
   isLogin: false,
@@ -94,6 +93,12 @@ export const userSlice = createSlice({
     [userLogout.pending.type]: (state) => {
       state.isLogin = false
       state.userData = null
+    },
+    // userClickLike
+    [userClickLike.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        state.userData.likes = action.payload
+      }
     },
   },
 })

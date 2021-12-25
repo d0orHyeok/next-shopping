@@ -1,15 +1,8 @@
 .wrapper {
   max-width: var(--header-maxWidth);
   margin: 0 auto;
-  padding: 1rem 0;
+  padding: 3rem 0;
   font-family: var(--product-font);
-}
-
-.depth {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 2rem;
 }
 
 .product {
@@ -94,18 +87,13 @@
 
 @media only screen and (max-width: 1500px) {
   .wrapper {
-    padding: 1rem 20px;
+    padding: 3rem 20px;
   }
 }
 
 @media only screen and (max-width: 993px) {
   .wrapper {
-    padding: 3rem 20px;
     max-width: 768px;
-  }
-
-  .depth {
-    display: none;
   }
 
   .product {

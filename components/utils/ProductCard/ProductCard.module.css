@@ -29,13 +29,23 @@
 
 .card-description .name {
   color: rgb(45, 45, 45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
-.card-description .name svg {
+.card-description .name .button {
+  margin-top: -6px;
+}
+
+.card-description .name .button svg {
+  margin-top: -2px;
   font-size: 1.2rem;
   color: inherit;
-  float: right;
-  cursor: pointer;
+}
+
+.card-description .name .like svg {
+  color: rgb(255, 37, 37);
 }
 
 .card-description .priceBox {
@@ -60,11 +70,8 @@
     font-size: 0.9rem;
   }
 
-  .card-description .name svg {
+  .card-description .name .button svg {
     font-size: 1.1rem;
-    color: inherit;
-    float: right;
-    cursor: pointer;
   }
 
   .card-description .priceBox {

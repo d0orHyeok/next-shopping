@@ -21,7 +21,7 @@ interface Product {
   sold: number
   reviews: number
   views: number
-  likes: number
+  likes: string[]
 }
 
 export interface IProduct extends Product {
@@ -84,8 +84,8 @@ const productSchema: Schema = new Schema(
       default: 0,
     },
     likes: {
-      type: Number,
-      default: 0,
+      type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+      default: [],
     },
   },
   { timestamps: true }

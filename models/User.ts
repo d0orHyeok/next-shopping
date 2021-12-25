@@ -26,6 +26,7 @@ export interface IUser {
   password: string
   role: 0 | 1 | 2
   image: string
+  likes: string[]
   cart: IUserCart[]
   history: IUserHistory[]
   token: string
@@ -68,6 +69,10 @@ const userSchema: Schema = new Schema(
     image: {
       type: String,
       default: '',
+    },
+    likes: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+      default: [],
     },
     cart: {
       type: [

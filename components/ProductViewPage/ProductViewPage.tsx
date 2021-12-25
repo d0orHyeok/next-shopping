@@ -16,12 +16,11 @@ import { Drawer, Popover } from '@mui/material'
 import { withRouter, NextRouter } from 'next/router'
 import Filter from './section/Filter'
 import { IFilterOptions } from '@api/product/getFilterOptions'
+import { ISubCategoryPageQuery } from 'pages/product/[mainCategory]/[subCategory]'
 
 export interface IProductViewPageProps {
   router: NextRouter
   products: IProduct[]
-  category: string[]
-  isBest: boolean
   filterOptions: IFilterOptions
 }
 
@@ -37,12 +36,21 @@ interface navItemState {
   hrefs: string[] | QueryHref[]
 }
 
+const sortData = [
+  { data: 'sold_desc', label: '인기상품' },
+  { data: 'createdAt_desc', label: '신상품' },
+  { data: 'name_asc', label: '상품명' },
+  { data: 'price_asc', label: '낮은가격' },
+  { data: 'price_desc', label: '높은가격' },
+  { data: 'reviews_desc', label: '상품후기' },
+  { data: 'views_desc', label: '조회수' },
+  { data: 'likes_desc', label: '좋아요' },
+]
+
 const ProductViewPage = ({
   router,
   products,
-  category,
   filterOptions,
-  isBest,
 }: IProductViewPageProps) => {
   // menu에 표시할 item과 href 주소
   const [navItems, setNavItems] = useState<navItemState>({
@@ -59,16 +67,8 @@ const ProductViewPage = ({
   const menuRef = useRef<HTMLUListElement>(null)
   const sortLabelRef = useRef<HTMLSpanElement>(null)
 
-  const sortData = [
-    { data: 'sold_desc', label: '인기상품' },
-    { data: 'createdAt_desc', label: '신상품' },
-    { data: 'name_asc', label: '상품명' },
-    { data: 'price_asc', label: '낮은가격' },
-    { data: 'price_desc', label: '높은가격' },
-    { data: 'reviews_desc', label: '상품후기' },
-    { data: 'views_desc', label: '조회수' },
-    { data: 'likes_desc', label: '좋아요' },
-  ]
+  const { mainCategory, subCategory, itemCategory } =
+    router.query as ISubCategoryPageQuery
 
   // 반응형일 때 filter drawer
   const toggleDrawer =
@@ -99,7 +99,7 @@ const ProductViewPage = ({
     router.push(href)
   }
 
-  // menu에 스크롤이 있는지 확인하는 함수
+  // menu에 스크롤 이벤트 있는지 확인하는 함수
   const handleResize = debounce(() => {
     menuRef.current !== null &&
     menuRef.current.offsetWidth !== menuRef.current.scrollWidth
@@ -128,76 +128,64 @@ const ProductViewPage = ({
   useEffect(() => {
     setPageIndex(1)
 
-    if (!category) {
-      return
-    }
     let items: string[] = []
     const hrefs: any[] = []
-    if (category.length === 1 || isBest) {
-      // 메인카테고리 조회 or 베스트 상품조회 페이지 일 때
-      if (category[0] === 'best') {
-        items = ['all', ...getCategorys.getMainCategorys()]
-        items.forEach((item) => {
-          const href =
-            item === 'best' ? '/product/best' : `/product/${item}/best`
-          hrefs.push(href)
-        })
-      } else {
-        items = ['best', ...getCategorys.getSubCateogrys(category[0])]
-        items.forEach((item) => {
-          hrefs.push(`/product/${category[0]}/${item}`)
-        })
-      }
-      setNavItems({ items, hrefs })
+    if (mainCategory === 'best') {
+      // 인기상품 조회
+      const newItems = getCategorys.getMainCategorys()
+      items = ['all', ...newItems]
+      hrefs.push('/product/best')
+      newItems.forEach((item) => {
+        hrefs.push(`/product/${item}/best`)
+      })
+    } else if (subCategory === 'best' || subCategory === 'all') {
+      items = ['best', ...getCategorys.getSubCateogrys(mainCategory)]
+      items.forEach((item) => {
+        hrefs.push(`/product/${mainCategory}/${item}`)
+      })
     } else {
       // 서브카테고리나 마지막카테고리 조회 페이지 일 때
-      const items: string[] = [
-        '전체보기',
-        ...getCategorys.getItemCategorys(category[0], category[1]),
-      ]
-      items.forEach((item, index) => {
+      const newItems = getCategorys.getItemCategorys(mainCategory, subCategory)
+      items = ['전체보기', ...newItems]
+      hrefs.push({ pathname: `/product/${mainCategory}/${subCategory}` })
+      newItems.forEach((item) => {
         // 마지막 카테고리에 대한 href는 query 사용
-        const href =
-          index === 0
-            ? {
-                pathname: `/product/${category[0]}/${category[1]}`,
-              }
-            : {
-                pathname: `/product/${category[0]}/${category[1]}`,
-                query: {
-                  itemCategory: item,
-                },
-              }
-        hrefs.push(href)
+        hrefs.push({
+          pathname: `/product/${mainCategory}/${subCategory}`,
+          query: { itemCategory: item },
+        })
       })
-      setNavItems({ items, hrefs })
     }
-  }, [category])
+    setNavItems({ items, hrefs })
+  }, [router.query])
 
   // 주소변화시 변수 초기화
   useEffect(() => {
     handleResize()
     setDraw(false)
+
     if (sortLabelRef.current !== null) {
-      const label = sortData.find((data) => data.data === router.query?.sort)
-      if (label !== undefined) {
-        sortLabelRef.current.textContent = label.label
+      if (mainCategory === 'best' || subCategory === 'best') {
+        sortLabelRef.current.textContent = '인기상품'
       } else {
-        sortLabelRef.current.textContent = '상품정렬'
+        const label = sortData.find((data) => data.data === router.query?.sort)
+        sortLabelRef.current.textContent =
+          label !== undefined ? label.label : '상품정렬'
       }
     }
-  }, [router.asPath])
+  }, [router.query])
 
   useEffect(() => {
-    if (category.length === 2) {
+    if (
+      mainCategory === 'best' ||
+      (subCategory !== 'all' && itemCategory === undefined)
+    ) {
       setNavIndex(0)
-    }
-    if (category.length === 3) {
-      navItems.items.forEach((itme, index) => {
-        if (itme === category[2]) {
-          setNavIndex(index)
-        }
-      })
+    } else if (itemCategory !== undefined) {
+      const index = navItems.items.findIndex((item) => item === itemCategory)
+      setNavIndex(index)
+    } else {
+      setNavIndex(-1)
     }
   }, [navItems])
 
@@ -207,7 +195,6 @@ const ProductViewPage = ({
         {/* 현재 조회중인 페이지 depths, home > [mainCategory] > [subCategory] */}
         <div className={styles.preMenu}>
           <PreMenu
-            category={category}
             sx={{
               color: 'gray',
               fontSize: '0.9rem',
@@ -219,37 +206,31 @@ const ProductViewPage = ({
         {/* 상품페이지 본문 */}
         <div className={cx('main')}>
           {/* Filter Area */}
-          {!isBest && (
-            <div className={styles.filter}>
-              <h1 className={cx('title', 'title-underline')}>FILTER</h1>
-              <Filter filterOptions={filterOptions} />
-            </div>
-          )}
+          <div className={styles.filter}>
+            <h1 className={cx('title', 'title-underline')}>FILTER</h1>
+            <Filter filterOptions={filterOptions} />
+          </div>
           {/* Contents Area */}
           <div className={styles.content}>
             <h1 className={styles.title}>
-              {category[category.length - 1].toUpperCase()}
+              {itemCategory
+                ? itemCategory.toUpperCase()
+                : subCategory && subCategory !== 'all'
+                ? subCategory.toUpperCase()
+                : mainCategory.toUpperCase()}
               {/* 반응형 필터 버튼 및 Drawer */}
-              {!isBest && (
-                <>
-                  <button
-                    className={cx('filter-media')}
-                    onClick={toggleDrawer(true)}
-                  >
-                    FILTER
-                  </button>
-                  <Drawer
-                    anchor="bottom"
-                    open={draw}
-                    onClose={toggleDrawer(false)}
-                  >
-                    <div className={cx('drawFilter')}>
-                      <h1 className={cx('title', 'title-underline')}>FILTER</h1>
-                      <Filter filterOptions={filterOptions} />
-                    </div>
-                  </Drawer>
-                </>
-              )}
+              <button
+                className={cx('filter-media')}
+                onClick={toggleDrawer(true)}
+              >
+                FILTER
+              </button>
+              <Drawer anchor="bottom" open={draw} onClose={toggleDrawer(false)}>
+                <div className={cx('drawFilter')}>
+                  <h1 className={cx('title', 'title-underline')}>FILTER</h1>
+                  <Filter filterOptions={filterOptions} />
+                </div>
+              </Drawer>
             </h1>
             {/* 상품 카테고리 메뉴 */}
             <div className={styles.menu}>
@@ -302,43 +283,45 @@ const ProductViewPage = ({
                 >
                   {/* 상품정렬 */}
                   <span ref={sortLabelRef}>상품정렬</span>
-                  <Popover
-                    disableScrollLock={true}
-                    id="mouse-over-popover"
-                    sx={{ pointerEvents: 'none' }}
-                    open={openedPopover}
-                    anchorEl={popoverAnchor.current}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'center',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'center',
-                    }}
-                    PaperProps={{
-                      sx: {
-                        pointerEvents: 'auto',
-                        boxShadow: 'none',
-                        width: '115px',
-                        overflow: 'hidden',
-                      },
-                      onMouseEnter: popoverEnter,
-                      onMouseLeave: popoverLeave,
-                    }}
-                  >
-                    <ul className={cx('popover')}>
-                      {sortData.map((data, index) => (
-                        <li
-                          key={index}
-                          onClick={handleSort}
-                          data-name={data.data}
-                        >
-                          {data.label}
-                        </li>
-                      ))}
-                    </ul>
-                  </Popover>
+                  {mainCategory !== 'best' && subCategory !== 'best' && (
+                    <Popover
+                      disableScrollLock={true}
+                      id="mouse-over-popover"
+                      sx={{ pointerEvents: 'none' }}
+                      open={openedPopover}
+                      anchorEl={popoverAnchor.current}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                      }}
+                      PaperProps={{
+                        sx: {
+                          pointerEvents: 'auto',
+                          boxShadow: 'none',
+                          width: '115px',
+                          overflow: 'hidden',
+                        },
+                        onMouseEnter: popoverEnter,
+                        onMouseLeave: popoverLeave,
+                      }}
+                    >
+                      <ul className={cx('popover')}>
+                        {sortData.map((data, index) => (
+                          <li
+                            key={index}
+                            onClick={handleSort}
+                            data-name={data.data}
+                          >
+                            {data.label}
+                          </li>
+                        ))}
+                      </ul>
+                    </Popover>
+                  )}
                 </div>
               </div>
             </div>

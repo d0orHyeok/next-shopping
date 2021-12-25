@@ -2,7 +2,6 @@ import styles from './ProductDetailPage.module.css'
 import classNames from 'classnames/bind'
 const cx = classNames.bind(styles)
 import { IDetailPageProps } from 'pages/product/detail/[pid]'
-import PreMenu from '@components/ProductViewPage/section/PreMenu'
 import React, { useState } from 'react'
 import ProductOrder from './section/ProductOrder'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -16,16 +15,6 @@ const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
   return (
     <>
       <div className={styles.wrapper}>
-        <div className={styles.depth}>
-          <PreMenu
-            category={product.category}
-            sx={{
-              color: 'gray',
-              fontSize: '0.9rem',
-              margin: '1rem 0',
-            }}
-          />
-        </div>
         {/* 본문 */}
         <div className={cx('product')}>
           {/* 상품 상세정보 */}

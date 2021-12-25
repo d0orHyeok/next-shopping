@@ -2,8 +2,13 @@ import nextConnect from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import database from '@middlewares/database'
 import auth, { IAuthExtendedRequest } from '@middlewares/auth'
-import { IUserDocument } from '@models/User'
+import { IUserDocument, IUser } from '@models/User'
 import dayjs from 'dayjs'
+
+export interface IAuthUserData extends IUser {
+  _id: string
+  isAdmin: boolean
+}
 
 const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
@@ -25,6 +30,7 @@ handler.post<IAuthExtendedRequest>((req, res) => {
         name: user.name,
         role: user.role,
         image: user.image,
+        likes: user.likes,
         cart: user.cart,
         history: user.history,
         tokenExp: user.tokenExp,
@@ -38,6 +44,7 @@ handler.post<IAuthExtendedRequest>((req, res) => {
       name: req.user.name,
       role: req.user.role,
       image: req.user.image,
+      likes: req.user.likes,
       cart: req.user.cart,
       history: req.user.history,
       tokenExp: req.user.tokenExp,

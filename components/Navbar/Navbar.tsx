@@ -15,7 +15,7 @@ import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/dist/client/router'
 import { useAppSelector } from '@redux/hooks'
-import { selectUser } from '@redux/features/userSlice'
+import { IUserState, selectUser } from '@redux/features/userSlice'
 
 type Anchor = 'menu' | 'search' | 'side'
 
@@ -53,7 +53,7 @@ const Navbar = ({
 }: IndexPageNavbarProps): JSX.Element => {
   const router = useRouter()
 
-  const user = useAppSelector(selectUser)
+  const user: IUserState = useAppSelector(selectUser)
   const [draw, setDraw] = useState({
     menu: false,
     search: false,
@@ -95,6 +95,14 @@ const Navbar = ({
         setIsDark(true)
       }
     }
+  }
+
+  const handleButtonClick = (href: string) => {
+    if (!user.isLogin) {
+      alert('로그인 후 이용가능합니다')
+      return
+    }
+    router.push(href)
   }
 
   return (
@@ -149,27 +157,29 @@ const Navbar = ({
                 </StyledDrawer>
               </li>
               {/* Like, 찜 */}
-              <li className={cx('wishlist')}>
-                <Link href="/user/wishlist">
-                  <Tooltip title="위시리스트" placeholder="bottom">
-                    <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
-                      <FavoriteBorderOutlinedIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Link>
+              <li
+                className={cx('wishlist')}
+                onClick={() => handleButtonClick('/user/wishlist')}
+              >
+                <Tooltip title="위시리스트" placeholder="bottom">
+                  <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
+                    <FavoriteBorderOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
               </li>
 
               {/* Cart, 장바구니 */}
-              <li className={cx('cart')}>
-                <Link href="/user/cart">
-                  <Tooltip title="장바구니" placeholder="bottom">
-                    <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
-                      <StyledBadge badgeContent={user.userData?.cart.length}>
-                        <ShoppingBagOutlinedIcon />
-                      </StyledBadge>
-                    </IconButton>
-                  </Tooltip>
-                </Link>
+              <li
+                className={cx('cart')}
+                onClick={() => handleButtonClick('/user/cart')}
+              >
+                <Tooltip title="장바구니" placeholder="bottom">
+                  <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
+                    <StyledBadge badgeContent={user.userData?.cart.length}>
+                      <ShoppingBagOutlinedIcon />
+                    </StyledBadge>
+                  </IconButton>
+                </Tooltip>
               </li>
               {/* Drawer */}
               <li className={cx('drawer')}>
