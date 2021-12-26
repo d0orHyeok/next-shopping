@@ -58,8 +58,9 @@ const DetailCheck = ({ product }: IDetailPageProps) => {
             <li className={styles.item} key={index}>
               <span
                 style={{
-                  backgroundColor:
-                    item === product.season ? 'rgba(0,0,0,0.75)' : 'inherit',
+                  backgroundColor: product.season.includes(item)
+                    ? 'rgba(0,0,0,0.75)'
+                    : 'inherit',
                 }}
               ></span>
               {item}

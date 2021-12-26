@@ -8,17 +8,21 @@ handler.use(database)
 
 handler.post(async (req, res) => {
   try {
-    const { sort, category, colors, fit, season } = req.body
+    const { sort, category, colors, fit, season, keyword } = req.body
 
-    // 카테고리가 없을 경우
-    if (!category) {
+    // 잘못된 요청일 경우
+    if (keyword ^ category) {
       return res.status(400).json({ success: false, message: '잘못된 요청' })
     }
+
+    let query = category
+      ? Product.find().all('category', category)
+      : Product.find({ name: { $regex: keyword, $options: 'i' } })
 
     // 정렬옵션이 있으면 그에 맞게 설정
     const sortOption = !sort || sort?.sold ? { sold: -1, createdAt: -1 } : sort
 
-    let query = Product.find().all('category', category).sort(sortOption)
+    query = query.sort(sortOption)
 
     // 각 필터에 맞춘 query 실행
     if (colors) {

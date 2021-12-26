@@ -3,7 +3,7 @@ import styles from './ProductViewPage.module.css'
 import classNames from 'classnames/bind'
 const cx = classNames.bind(styles)
 import * as getCategorys from '@libs/getCategory'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import PreMenu from './section/PreMenu'
 import Grid from '@mui/material/Grid'
 import ProductCard from '@components/utils/ProductCard/ProductCard'
@@ -85,13 +85,13 @@ const ProductViewPage = ({
     }
 
   // 상품정렬 Popover
-  const popoverEnter = () => {
+  const popoverEnter = useCallback(() => {
     setOpenedPopover(true)
-  }
+  }, [openedPopover])
 
-  const popoverLeave = () => {
+  const popoverLeave = useCallback(() => {
     setOpenedPopover(false)
-  }
+  }, [openedPopover])
 
   const handleSort = (event: React.MouseEvent<HTMLLIElement>) => {
     const sort = event.currentTarget.getAttribute('data-name')

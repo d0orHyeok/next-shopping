@@ -12,7 +12,7 @@ import SearchBox from './sections/SearchBox'
 import Preheader from './sections/Preheader'
 import Menu from './sections/Menu'
 import Link from 'next/link'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/dist/client/router'
 import { useAppSelector } from '@redux/hooks'
 import { IUserState, selectUser } from '@redux/features/userSlice'
@@ -82,9 +82,12 @@ const Navbar = ({
       setDraw({ ...draw, [anchor]: open })
     }
 
-  const passDraw = (open: boolean) => {
-    setDraw({ ...draw, ['menu']: open })
-  }
+  const passDraw = useCallback(
+    (open: boolean) => {
+      setDraw({ ...draw, ['menu']: open })
+    },
+    [draw]
+  )
 
   // indexpage 에서 navbar 투명하게할지 설정해주는 함수
   const handleMouseOver = (event: React.MouseEvent<HTMLElement>) => {

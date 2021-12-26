@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styles from './Menu.module.css'
 import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
@@ -62,7 +62,7 @@ const Menu = ({ passDraw }: MenuProps) => {
     }
   }, [bestProducts])
 
-  const drawCategoryMenu = () => {
+  const drawCategoryMenu = useCallback(() => {
     if (selectedItem < 1 || !draw) {
       return <></>
     }
@@ -124,7 +124,7 @@ const Menu = ({ passDraw }: MenuProps) => {
         </div>
       </>
     )
-  }
+  }, [selectedItem])
 
   return (
     <>

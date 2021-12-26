@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
 import Link from 'next/link'
 import { useState } from 'react'
-import { selectUser, userLogout } from '@redux/features/userSlice'
+import { selectUser, userLogout, IUserState } from '@redux/features/userSlice'
 import { useAppDispatch, useAppSelector } from '@redux/hooks'
 
 interface PreheaderProps {
@@ -13,16 +13,8 @@ interface PreheaderProps {
 
 const Preheader = ({ isHome }: PreheaderProps) => {
   const dispatch = useAppDispatch()
-
-  const user = useAppSelector(selectUser)
-
+  const user: IUserState = useAppSelector(selectUser)
   const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
-
-  const handleLogout = () => {
-    dispatch(userLogout())
-  }
 
   const drawList = () =>
     user.isLogin ? (
@@ -40,7 +32,7 @@ const Preheader = ({ isHome }: PreheaderProps) => {
           </>
         )}
         <li>
-          <a className={styles.loginBtn} onClick={handleLogout}>
+          <a className={styles.loginBtn} onClick={() => dispatch(userLogout())}>
             로그아웃
           </a>
         </li>
@@ -53,10 +45,10 @@ const Preheader = ({ isHome }: PreheaderProps) => {
         <span></span>
         <li>
           {/* <Link href="/login">로그인</Link> */}
-          <a className={styles.loginBtn} onClick={handleOpen}>
+          <a className={styles.loginBtn} onClick={() => setOpen(true)}>
             로그인
           </a>
-          <LoginModal open={open} onClose={handleClose} />
+          <LoginModal open={open} onClose={() => setOpen(false)} />
         </li>
       </ul>
     )

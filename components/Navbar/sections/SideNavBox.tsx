@@ -10,47 +10,43 @@ const cx = classnames.bind(styles)
 
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { selectUser, userLogout } from '@redux/features/userSlice'
+import { IUserState, selectUser, userLogout } from '@redux/features/userSlice'
 import { useAppSelector, useAppDispatch } from '@redux/hooks'
-import categoryData from 'public/data/category.json'
+import * as getCategory from '@libs/getCategory'
+import { useRouter } from 'next/router'
 
-const navCategory = ['best', ...categoryData.map((item) => item.name)]
+const navCategory = ['best', ...getCategory.getMainCategorys()]
 
 interface DrawPageProops {
-  onClose?: (open: boolean) => void
+  onClose: (open: boolean) => void
 }
 
 const DrawPage = ({ onClose }: DrawPageProops) => {
+  const router = useRouter()
   const dispatch = useAppDispatch()
 
-  const user = useAppSelector(selectUser)
+  const user: IUserState = useAppSelector(selectUser)
 
   const [open, setOpen] = useState(false)
   const [toggleSubMenu, settoggleSubMenu] = useState(false)
   const [menuItem, setMenuItem] = useState('')
   const [subMenuItems, setSubMenuItems] = useState<string[]>([])
 
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
-
-  const handleOpenSubMenu = (name: string) => {
-    setMenuItem(name)
-    if (name !== 'best') {
-      const newSubMenuItems = categoryData
-        .filter((item) => item.name === name)[0]
-        .value.map((item) => item.name)
+  const handleOpenSubMenu = (mainCategory: string) => {
+    setMenuItem(mainCategory)
+    if (mainCategory !== 'best') {
+      const newSubMenuItems = getCategory.getSubCateogrys(mainCategory)
       setSubMenuItems(newSubMenuItems)
     }
     settoggleSubMenu(true)
   }
-  const handleCloseSubMenu = () => {
-    setMenuItem('')
-    setSubMenuItems([])
-    settoggleSubMenu(false)
-  }
 
-  const handleLogout = () => {
-    dispatch(userLogout())
+  const handleClickUserBtn = (href: string) => {
+    if (!user.isLogin) {
+      alert('로그인 후 이용가능합니다')
+      return
+    }
+    router.push(href)
   }
 
   const drawLoginBox = () =>
@@ -63,10 +59,13 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
           <Link href="/register">
             <button className={cx('registerBtn', 'userBtn')}>회원가입</button>
           </Link>
-          <button onClick={handleOpen} className={cx('loginBtn', 'userBtn')}>
+          <button
+            onClick={() => setOpen(true)}
+            className={cx('loginBtn', 'userBtn')}
+          >
             로그인
           </button>
-          <LoginModal open={open} onClose={handleClose} />
+          <LoginModal open={open} onClose={() => setOpen(false)} />
         </div>
       </>
     ) : (
@@ -75,8 +74,8 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
         <div className={cx('userBtn-wrapper')}>
           <button
             onClick={() => {
-              handleLogout()
-              onClose && onClose(false)
+              dispatch(userLogout())
+              onClose(false)
             }}
             className={cx('userBtn', 'registerBtn')}
           >
@@ -98,7 +97,7 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
         type="button"
         color="inherit"
         sx={{ p: '5px' }}
-        onClick={() => onClose && onClose(false)}
+        onClick={() => onClose(false)}
       >
         <CloseIcon />
       </IconButton>
@@ -115,26 +114,36 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
         <div className={cx('user')}>{drawLoginBox()}</div>
         <ul className={cx('member')}>
           <li>
-            <Link href="/user/cart">
-              <div className={cx('memberBtn')}>
-                <ShoppingBagOutlinedIcon fontSize="large" />
-                <span>장바구니</span>
-              </div>
-            </Link>
+            <div
+              className={cx('memberBtn')}
+              onClick={() => handleClickUserBtn('/user/cart')}
+            >
+              <ShoppingBagOutlinedIcon fontSize="large" />
+              <span>장바구니</span>
+            </div>
           </li>
           <li>
-            <Link href="/user/wishlist">
-              <div className={cx('memberBtn')}>
-                <FavoriteBorderOutlinedIcon fontSize="large" />
-                <span>위시리스트</span>
-              </div>
-            </Link>
+            <div
+              className={cx('memberBtn')}
+              onClick={() => handleClickUserBtn('/user/wishlist')}
+            >
+              <FavoriteBorderOutlinedIcon fontSize="large" />
+              <span>위시리스트</span>
+            </div>
           </li>
         </ul>
       </div>
       <div className={cx('subMenu', toggleSubMenu && 'show')}>
         {menuItem && (
-          <h2 onClick={handleCloseSubMenu}>{menuItem.toUpperCase()}</h2>
+          <h2
+            onClick={() => {
+              setMenuItem('')
+              setSubMenuItems([])
+              settoggleSubMenu(false)
+            }}
+          >
+            {menuItem.toUpperCase()}
+          </h2>
         )}
         <ul>
           {menuItem && menuItem !== 'best' && (

@@ -10,7 +10,7 @@ interface PreMenuProps {
 
 const PreMenu = ({ sx }: PreMenuProps) => {
   const router = useRouter()
-  const { mainCategory, subCategory, itemCategory } =
+  const { mainCategory, subCategory, itemCategory, keyword } =
     router.query as ISubCategoryPageQuery
 
   return (
@@ -18,6 +18,11 @@ const PreMenu = ({ sx }: PreMenuProps) => {
       <li>
         <Link href="/">HOME</Link>
       </li>
+      {keyword && (
+        <li>
+          <Link href="/product/search">상품검색</Link>
+        </li>
+      )}
       {mainCategory && (
         <li>
           <Link href={`/product/${mainCategory}`}>
