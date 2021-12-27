@@ -34,8 +34,11 @@
 }
 
 .drawFilter {
-  margin: 2rem 40px;
-  min-width: 300px;
+  padding: 0 40px;
+  margin: 2rem auto;
+  min-width: 240px;
+  width: 100%;
+  max-width: 650px;
   height: 100vh;
 }
 
