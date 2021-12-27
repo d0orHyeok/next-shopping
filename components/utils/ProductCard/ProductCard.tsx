@@ -9,6 +9,7 @@ import {
   userClickLike,
   selectUser,
   IUserState,
+  updateStorageLikes,
 } from '@redux/features/userSlice'
 import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
@@ -26,22 +27,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const handleLikeClick = useCallback(() => {
     if (!user.isLogin) {
-      alert('로그인 후 이용가능합니다')
-      return
+      dispatch(updateStorageLikes(product._id))
+    } else {
+      dispatch(userClickLike(product._id))
     }
-    dispatch(userClickLike(product._id))
   }, [product])
 
   useEffect(() => {
-    if (user.userData) {
-      if (user.userData.likes.findIndex((pid) => pid === product._id) !== -1) {
-        setLike(true)
-      } else {
-        setLike(false)
-      }
-    } else {
-      setLike(false)
-    }
+    user.storage.likes.includes(product._id) ? setLike(true) : setLike(false)
   }, [user])
 
   return (

@@ -12,4 +12,4 @@ const wishlist = () => {
   )
 }
 
-export default AuthCheck(wishlist, true)
+export default AuthCheck(wishlist, null)

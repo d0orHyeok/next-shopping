@@ -12,4 +12,4 @@ const cart = () => {
   )
 }
 
-export default AuthCheck(cart, true)
+export default AuthCheck(cart, null)

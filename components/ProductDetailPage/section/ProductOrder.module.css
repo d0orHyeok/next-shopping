@@ -186,6 +186,14 @@
   border-color: rgb(175, 175, 175);
 }
 
+.take .btnGroup .like svg {
+  margin-top: 2px;
+}
+
+.take .btnGroup .isLike svg {
+  color: rgb(255, 37, 37);
+}
+
 .take .btnGroup .buy:hover,
 .take .btnGroup .cart:hover,
 .take .btnGroup .like:hover {

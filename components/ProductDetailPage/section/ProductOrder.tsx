@@ -6,6 +6,14 @@ import React, { useCallback, useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import { IProduct, IColor } from '@models/Product'
+import {
+  selectUser,
+  IUserState,
+  updateStorageLikes,
+  userClickLike,
+} from '@redux/features/userSlice'
+import { useAppSelector, useAppDispatch } from '@redux/hooks'
+import FavoriteIcon from '@mui/icons-material/Favorite'
 
 interface ISelect {
   color: IColor | null
@@ -27,6 +35,10 @@ interface IProductOrderProps {
 }
 
 const ProductOrder = ({ product }: IProductOrderProps) => {
+  const dispatch = useAppDispatch()
+  const user: IUserState = useAppSelector(selectUser)
+
+  const [isLike, setIsLike] = useState(false)
   const [select, setSelect] = useState<ISelect>({
     color: null,
     size: null,
@@ -37,6 +49,14 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
     qty: 0,
     picks: [],
   })
+
+  const handleLikeClick = useCallback(() => {
+    if (!user.isLogin) {
+      dispatch(updateStorageLikes(product._id))
+    } else {
+      dispatch(userClickLike(product._id))
+    }
+  }, [product])
 
   const handleColorClick = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
@@ -121,7 +141,11 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
     }
   }, [select.size])
 
-  console.log(picks)
+  useEffect(() => {
+    user.storage.likes.includes(product._id)
+      ? setIsLike(true)
+      : setIsLike(false)
+  }, [user])
 
   return (
     <>
@@ -233,8 +257,11 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
             </span>
           </h2>
           <div className={styles.btnGroup}>
-            <button className={styles.like}>
-              <FavoriteBorderIcon />
+            <button
+              className={cx('like', isLike && 'isLike')}
+              onClick={handleLikeClick}
+            >
+              {!isLike ? <FavoriteBorderIcon /> : <FavoriteIcon />}
             </button>
             <button className={styles.cart}>장바구니</button>
             <button className={styles.buy}>구매하기</button>

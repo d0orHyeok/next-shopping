@@ -14,8 +14,12 @@ import Menu from './sections/Menu'
 import Link from 'next/link'
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/dist/client/router'
-import { useAppSelector } from '@redux/hooks'
-import { IUserState, selectUser } from '@redux/features/userSlice'
+import { useAppSelector, useAppDispatch } from '@redux/hooks'
+import {
+  IUserState,
+  selectUser,
+  getStorageLikes,
+} from '@redux/features/userSlice'
 
 type Anchor = 'menu' | 'search' | 'side'
 
@@ -51,6 +55,7 @@ const Navbar = ({
   isDark,
   setIsDark,
 }: IndexPageNavbarProps): JSX.Element => {
+  const dispatch = useAppDispatch()
   const router = useRouter()
 
   const user: IUserState = useAppSelector(selectUser)
@@ -66,6 +71,7 @@ const Navbar = ({
       search: false,
       side: false,
     })
+    dispatch(getStorageLikes())
   }, [router])
 
   const toggleDrawer =
@@ -98,14 +104,6 @@ const Navbar = ({
         setIsDark(true)
       }
     }
-  }
-
-  const handleButtonClick = (href: string) => {
-    if (!user.isLogin) {
-      alert('로그인 후 이용가능합니다')
-      return
-    }
-    router.push(href)
   }
 
   return (
@@ -162,7 +160,7 @@ const Navbar = ({
               {/* Like, 찜 */}
               <li
                 className={cx('wishlist')}
-                onClick={() => handleButtonClick('/user/wishlist')}
+                onClick={() => router.push('/user/wishlist')}
               >
                 <Tooltip title="위시리스트" placeholder="bottom">
                   <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
@@ -174,7 +172,7 @@ const Navbar = ({
               {/* Cart, 장바구니 */}
               <li
                 className={cx('cart')}
-                onClick={() => handleButtonClick('/user/cart')}
+                onClick={() => router.push('/user/cart')}
               >
                 <Tooltip title="장바구니" placeholder="bottom">
                   <IconButton type="button" color="inherit" sx={{ p: '5px' }}>

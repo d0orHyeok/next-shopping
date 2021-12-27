@@ -1,6 +1,6 @@
 import { IAuthUserData } from './../../pages/api/users/auth'
 import { RootState } from '@redux/store'
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import Axios from 'axios'
 import { backendUrl } from 'config/config'
 import router from 'next/router'
@@ -11,6 +11,9 @@ Axios.defaults.withCredentials = true // front, backend 간 쿠키공유
 export interface IUserState {
   isLogin: boolean
   userData: IAuthUserData | null
+  storage: {
+    likes: string[]
+  }
 }
 
 // Async Action
@@ -66,17 +69,41 @@ export const userClickLike = createAsyncThunk(
 const initialState: IUserState = {
   isLogin: false,
   userData: null,
+  storage: {
+    likes: [],
+  },
 }
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    getStorageLikes(state) {
+      if (state.isLogin && state.userData) {
+        state.storage.likes = state.userData.likes
+      } else {
+        const getItems = sessionStorage.getItem('piic_likes')
+        const getLikes: string[] = !getItems ? [] : JSON.parse(getItems)
+        state.storage.likes = getLikes
+      }
+    },
+    updateStorageLikes(state, action: PayloadAction<string>) {
+      const newLikes = !state.storage.likes.includes(action.payload)
+        ? [...state.storage.likes, action.payload]
+        : state.storage.likes.filter((pid) => pid !== action.payload)
+
+      newLikes.length !== 0
+        ? sessionStorage.setItem('piic_likes', JSON.stringify(newLikes))
+        : sessionStorage.removeItem('piic_likes')
+      state.storage.likes = newLikes
+    },
+  },
   extraReducers: {
     // userAuth
     [userAuth.fulfilled.type]: (state, action) => {
       state.isLogin = true
       state.userData = action.payload
+      state.storage.likes = action.payload.likes
     },
     [userAuth.rejected.type]: (state) => {
       state.isLogin = false
@@ -98,12 +125,13 @@ export const userSlice = createSlice({
     [userClickLike.fulfilled.type]: (state, action) => {
       if (state.userData) {
         state.userData.likes = action.payload
+        state.storage.likes = action.payload
       }
     },
   },
 })
 
-// export const {} = userSlice.actions
+export const { getStorageLikes, updateStorageLikes } = userSlice.actions
 export const selectUser = (state: RootState) => state.user
 
 export default userSlice.reducer
