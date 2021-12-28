@@ -26,11 +26,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const [like, setLike] = useState(false)
 
   const handleLikeClick = useCallback(() => {
-    if (!user.isLogin) {
-      dispatch(updateStorageLikes(product._id))
-    } else {
+    if (user.isLogin) {
       dispatch(userClickLike(product._id))
     }
+    dispatch(updateStorageLikes(product._id))
   }, [product])
 
   useEffect(() => {

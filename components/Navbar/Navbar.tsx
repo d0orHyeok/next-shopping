@@ -19,6 +19,7 @@ import {
   IUserState,
   selectUser,
   getStorageLikes,
+  getStorageCart,
 } from '@redux/features/userSlice'
 
 type Anchor = 'menu' | 'search' | 'side'
@@ -72,6 +73,7 @@ const Navbar = ({
       side: false,
     })
     dispatch(getStorageLikes())
+    dispatch(getStorageCart())
   }, [router])
 
   const toggleDrawer =
@@ -176,7 +178,7 @@ const Navbar = ({
               >
                 <Tooltip title="장바구니" placeholder="bottom">
                   <IconButton type="button" color="inherit" sx={{ p: '5px' }}>
-                    <StyledBadge badgeContent={user.userData?.cart.length}>
+                    <StyledBadge badgeContent={user.storage?.cart.length}>
                       <ShoppingBagOutlinedIcon />
                     </StyledBadge>
                   </IconButton>

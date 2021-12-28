@@ -1,0 +1,83 @@
+.wrapper {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  display: none;
+}
+
+.wrapper.open {
+  display: block;
+}
+
+.container {
+  width: 320px;
+  font-size: 0.9rem;
+  border: 1px solid rgb(99, 99, 99);
+}
+
+.title {
+  background-color: rgb(30, 30, 30);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 4px 1rem;
+  border-bottom: 1px solid rgb(99, 99, 99);
+}
+
+.title button {
+  border: none;
+  background-color: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.title button svg {
+  margin-top: 2px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 0;
+}
+
+.content .logo {
+  font-family: var(--logo-font);
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.buttonWrapper {
+  border-top: 1px solid lightgray;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonWrapper button {
+  border: none;
+  padding: 0.5rem;
+  border: 1px solid lightgray;
+  cursor: pointer;
+  transition: 0.2s ease all;
+}
+
+.buttonWrapper button:hover {
+  border-color: rgb(30, 30, 30);
+}
+
+.buttonWrapper .moveBtn {
+  margin-right: 4px;
+  background-color: rgb(30, 30, 30);
+  color: white;
+}
+
+.buttonWrapper .closeBtn {
+  background-color: inherit;
+}

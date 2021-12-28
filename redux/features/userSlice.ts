@@ -1,3 +1,4 @@
+import { IUserCart } from '@models/User'
 import { IAuthUserData } from './../../pages/api/users/auth'
 import { RootState } from '@redux/store'
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
@@ -13,6 +14,7 @@ export interface IUserState {
   userData: IAuthUserData | null
   storage: {
     likes: string[]
+    cart: IUserCart[]
   }
 }
 
@@ -65,12 +67,25 @@ export const userClickLike = createAsyncThunk(
   }
 )
 
+export const userAddCart = createAsyncThunk(
+  `userClickLike`,
+  async (orders: IUserCart[], { rejectWithValue }) => {
+    try {
+      const response = await Axios.post('/api/users/addCart', { orders })
+      return response.data.userCart
+    } catch (err) {
+      return rejectWithValue(err.response.data)
+    }
+  }
+)
+
 // Slice
 const initialState: IUserState = {
   isLogin: false,
   userData: null,
   storage: {
     likes: [],
+    cart: [],
   },
 }
 
@@ -78,6 +93,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    // 위시리스트 가져오기
     getStorageLikes(state) {
       if (state.isLogin && state.userData) {
         state.storage.likes = state.userData.likes
@@ -87,6 +103,7 @@ export const userSlice = createSlice({
         state.storage.likes = getLikes
       }
     },
+    // 위시리스트 업데이트
     updateStorageLikes(state, action: PayloadAction<string>) {
       const newLikes = !state.storage.likes.includes(action.payload)
         ? [...state.storage.likes, action.payload]
@@ -97,6 +114,29 @@ export const userSlice = createSlice({
         : sessionStorage.removeItem('piic_likes')
       state.storage.likes = newLikes
     },
+    // 장바구니 가져오기
+    getStorageCart(state) {
+      if (state.isLogin && state.userData) {
+        state.storage.cart = state.userData.cart
+      } else {
+        const getItems = sessionStorage.getItem('piic_cart')
+        const getCart: IUserCart[] = !getItems ? [] : JSON.parse(getItems)
+        state.storage.cart = getCart
+      }
+    },
+    // 장바구니 업데이트
+    AddStorageCart(state, action: PayloadAction<IUserCart[]>) {
+      const newCart = [...state.storage.cart, ...action.payload]
+      sessionStorage.setItem('piic_cart', JSON.stringify(newCart))
+      state.storage.cart = newCart
+    },
+    DeleteStorageCart(state, action: PayloadAction<number>) {
+      const newCart = state.storage.cart.splice(action.payload, 1)
+      newCart.length
+        ? sessionStorage.setItem('piic_cart', JSON.stringify(newCart))
+        : sessionStorage.removeItem('piic_cart')
+      state.storage.cart = newCart
+    },
   },
   extraReducers: {
     // userAuth
@@ -104,6 +144,7 @@ export const userSlice = createSlice({
       state.isLogin = true
       state.userData = action.payload
       state.storage.likes = action.payload.likes
+      state.storage.cart = action.payload.cart
     },
     [userAuth.rejected.type]: (state) => {
       state.isLogin = false
@@ -128,10 +169,23 @@ export const userSlice = createSlice({
         state.storage.likes = action.payload
       }
     },
+    // userAddCart
+    [userAddCart.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        state.userData.cart = action.payload
+        state.storage.cart = action.payload
+      }
+    },
   },
 })
 
-export const { getStorageLikes, updateStorageLikes } = userSlice.actions
+export const {
+  getStorageLikes,
+  updateStorageLikes,
+  getStorageCart,
+  AddStorageCart,
+  DeleteStorageCart,
+} = userSlice.actions
 export const selectUser = (state: RootState) => state.user
 
 export default userSlice.reducer

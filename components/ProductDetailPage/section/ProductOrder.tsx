@@ -11,23 +11,17 @@ import {
   IUserState,
   updateStorageLikes,
   userClickLike,
+  AddStorageCart,
+  userAddCart,
 } from '@redux/features/userSlice'
 import { useAppSelector, useAppDispatch } from '@redux/hooks'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import AddCartModal from '@components/utils/AddCartModal/AddCartModal'
+import { IUserCart } from '@models/User'
 
 interface ISelect {
   color: IColor | null
   size: string | null
-}
-
-interface IPick extends ISelect {
-  num: number
-}
-
-interface IOrder {
-  pid: string
-  qty: number
-  picks: IPick[]
 }
 
 interface IProductOrderProps {
@@ -38,108 +32,105 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
   const dispatch = useAppDispatch()
   const user: IUserState = useAppSelector(selectUser)
 
+  const [open, setOpen] = useState(false)
   const [isLike, setIsLike] = useState(false)
   const [select, setSelect] = useState<ISelect>({
     color: null,
     size: null,
   })
-  const [picks, setPicks] = useState<IPick[]>([])
-  const [order, setOrder] = useState<IOrder>({
-    pid: product._id,
-    qty: 0,
-    picks: [],
-  })
+  const [orders, setOrders] = useState<IUserCart[]>([])
+  const [totalQty, setTotalQty] = useState(0)
 
   const handleLikeClick = useCallback(() => {
-    if (!user.isLogin) {
-      dispatch(updateStorageLikes(product._id))
-    } else {
+    if (user.isLogin) {
       dispatch(userClickLike(product._id))
     }
+    dispatch(updateStorageLikes(product._id))
   }, [product])
 
-  const handleColorClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      const { textContent } = event.currentTarget
-      const dataColor = event.currentTarget.getAttribute('data-color')
-      if (textContent && dataColor) {
-        setSelect({
-          ...select,
-          size: null,
-          color:
-            select.color?.colorName === textContent
-              ? null
-              : { colorName: textContent, colorHex: dataColor },
-        })
+  const handleCartClick = () => {
+    if (!orders.length) {
+      alert('상품을 선택해 주세요.')
+    } else {
+      if (user.isLogin) {
+        dispatch(userAddCart(orders))
       }
-    },
-    [select]
-  )
+      dispatch(AddStorageCart(orders))
+      setOpen(true)
+    }
+  }
 
-  const handleSizeClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      const { textContent } = event.currentTarget
-      if (select.color !== null) {
-        setSelect({
-          ...select,
-          size: select.size === textContent ? null : textContent,
-        })
+  const handleColorClick = (event: React.MouseEvent<HTMLElement>) => {
+    const { textContent } = event.currentTarget
+    const dataColor = event.currentTarget.getAttribute('data-color')
+    if (textContent && dataColor) {
+      const setColor =
+        select.color?.colorName === textContent ? null : JSON.parse(dataColor)
+      setSelect({ size: null, color: setColor })
+    }
+  }
+
+  const handleSizeClick = (event: React.MouseEvent<HTMLElement>) => {
+    const { textContent } = event.currentTarget
+    if (select.color !== null) {
+      const newSelect = { ...select, size: textContent }
+      updateOrders(newSelect)
+      setSelect({ color: null, size: null })
+    }
+  }
+
+  const deleteOrder = (deleteIndex: number) => {
+    const newOrders = orders.filter((order, index) => {
+      if (index === deleteIndex) {
+        setTotalQty(totalQty - order.qty)
+        return false
       }
-    },
-    [select]
-  )
+      return true
+    })
+    setOrders(newOrders)
+  }
 
-  const deletePick = useCallback(
-    (deleteIndex: number) => {
-      setOrder({ ...order, qty: order.qty - picks[deleteIndex].num })
-      const newPicks = picks.filter((_, index) => index !== deleteIndex)
-      setPicks(newPicks)
-    },
-    [picks, order]
-  )
-
-  const updatePickNum = useCallback(
-    (existPickIndex: number, value: number) => {
-      const newPicks = picks.map((pick, index) => {
-        if (index === existPickIndex) {
-          if (pick.num + value === 0) {
-            alert('최소 주문 수량은 1개입니다.')
-            return pick
-          }
-          setOrder({ ...order, qty: order.qty + value })
-          return { ...pick, num: pick.num + value }
+  const updateOrderQty = (existOrderIndex: number, value: number) => {
+    const newOrders = orders.map((order, index) => {
+      if (index === existOrderIndex) {
+        if (order.qty + value === 0) {
+          alert('최소 주문 수량은 1개입니다.')
+          return order
         } else {
-          return pick
+          setTotalQty(totalQty + value)
+          return { ...order, qty: order.qty + value }
         }
-      })
+      } else {
+        return order
+      }
+    })
 
-      setPicks(newPicks)
-    },
-    [picks, order]
-  )
+    setOrders(newOrders)
+  }
 
-  useEffect(() => {
-    setSelect({ color: null, size: null })
-  }, [])
-
-  useEffect(() => {
+  const updateOrders = (select: ISelect) => {
     // 상품을 사용자가 선택했을 때 주문목록에 추가
-    if (select.size !== null) {
-      // 같은 색상과 사이즈를 더 추가했는지 확인
-      const existPickIndex = picks.findIndex(
-        (pick) => pick.color === select.color && pick.size === select.size
+    if (select.color && select.size) {
+      const existOrderIndex = orders.findIndex(
+        (order) => JSON.stringify(order.option) === JSON.stringify(select)
       )
-
-      if (existPickIndex !== -1) {
+      if (existOrderIndex !== -1) {
         // 기존에 추가한 상품인 경우 : 개수 증가
-        updatePickNum(existPickIndex, 1)
+        updateOrderQty(existOrderIndex, 1)
       } else {
         // 새로운 상품 추가
-        setPicks([...picks, { ...select, num: 1 }])
+        setOrders([
+          ...orders,
+          {
+            pid: product._id,
+            qty: 1,
+            option: { color: select.color, size: select.size },
+          },
+        ])
       }
-      setOrder({ ...order, qty: order.qty + 1 })
+      setTotalQty(totalQty + 1)
     }
-  }, [select.size])
+  }
 
   useEffect(() => {
     user.storage.likes.includes(product._id)
@@ -168,8 +159,11 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
             {product.colors.map((color, index) => (
               <button
                 key={index}
-                className={cx(select.color === color && 'selectItem')}
-                data-color={color.colorHex}
+                className={cx(
+                  JSON.stringify(select.color) === JSON.stringify(color) &&
+                    'selectItem'
+                )}
+                data-color={JSON.stringify(color)}
                 onClick={handleColorClick}
               >
                 {color.colorName}
@@ -200,7 +194,7 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
           </div>
         </div>
         {/* 담은 상품 내역 */}
-        {picks.length ? (
+        {orders.length ? (
           <>
             <Divider
               sx={{
@@ -211,36 +205,36 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
             />
             <div className={cx('check')}>
               <ul>
-                {picks.map((pick, index) => (
-                  <>
+                {orders.map((order, index) => (
+                  <li key={index}>
                     {index !== 0 && (
                       <Divider sx={{ margin: '1rem 1%', width: '98%' }} />
                     )}
-                    <li className={cx('checkItem')} key={index}>
+                    <div className={cx('checkItem')}>
                       <button
                         className={cx('deleteBtn')}
-                        onClick={() => deletePick(index)}
+                        onClick={() => deleteOrder(index)}
                       >
                         <CloseIcon />
                       </button>
                       <h3 className={cx('checkTitle')}>
                         {product.name}
-                        <span>{`- ${pick.color?.colorName}/${pick.size}`}</span>
+                        <span>{`- ${order.option.color?.colorName}/${order.option.size}`}</span>
                       </h3>
                       <div className={cx('checkNum')}>
-                        <button onClick={() => updatePickNum(index, -1)}>
+                        <button onClick={() => updateOrderQty(index, -1)}>
                           －
                         </button>
-                        <span>{pick.num}</span>
-                        <button onClick={() => updatePickNum(index, 1)}>
+                        <span>{order.qty}</span>
+                        <button onClick={() => updateOrderQty(index, 1)}>
                           +
                         </button>
                       </div>
                       <div className={cx('checkPrice')}>
-                        <span>{pick.num * product.price}</span>
+                        <span>{order.qty * product.price}</span>
                       </div>
-                    </li>
-                  </>
+                    </div>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -252,9 +246,7 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
         <div className={cx('take')}>
           <h2 className={styles.totalPrice}>
             총 상품금액
-            <span data-qty={`(${order.qty}개)`}>
-              {product.price * order.qty}
-            </span>
+            <span data-qty={`(${totalQty}개)`}>{product.price * totalQty}</span>
           </h2>
           <div className={styles.btnGroup}>
             <button
@@ -263,11 +255,14 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
             >
               {!isLike ? <FavoriteBorderIcon /> : <FavoriteIcon />}
             </button>
-            <button className={styles.cart}>장바구니</button>
+            <button className={styles.cart} onClick={handleCartClick}>
+              장바구니
+            </button>
             <button className={styles.buy}>구매하기</button>
           </div>
         </div>
       </div>
+      <AddCartModal open={open} onClose={() => setOpen(false)} />
     </>
   )
 }

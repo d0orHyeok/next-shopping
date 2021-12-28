@@ -1,3 +1,4 @@
+import { IColor } from './Product'
 import mongoose, { Schema, Document, Model } from 'mongoose'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -6,9 +7,12 @@ import dayjs from 'dayjs'
 const saltRounds = 10
 
 export interface IUserCart {
-  id: string
-  quantity: number
-  date: number
+  pid: string
+  qty: number
+  option: {
+    color: IColor
+    size: string
+  }
 }
 
 export interface IUserHistory {

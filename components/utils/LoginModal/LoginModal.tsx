@@ -65,7 +65,7 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
             type="button"
             color="inherit"
             sx={{ p: '5px' }}
-            onClick={() => onClose && onClose()}
+            onClick={onClose}
           >
             <CloseIcon />
           </IconButton>
