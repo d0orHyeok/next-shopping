@@ -23,7 +23,7 @@ const Pagination = ({ itemNum, displayNum, onChange }: PaginationProps) => {
     setBullets(
       Array.from({ length: Math.ceil(itemNum / displayNum) }, (v, i) => i + 1)
     )
-  }, [itemNum])
+  }, [itemNum, displayNum])
 
   useEffect(() => {
     setPage(Math.ceil(index / 5))

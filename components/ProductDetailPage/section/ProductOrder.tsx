@@ -9,8 +9,10 @@ import { IProduct, IColor } from '@models/Product'
 import {
   selectUser,
   IUserState,
-  updateStorageLikes,
-  userClickLike,
+  userAddLike,
+  userDeleteLike,
+  addStorageLikes,
+  deleteStorageLikes,
   AddStorageCart,
   userAddCart,
 } from '@redux/features/userSlice'
@@ -41,12 +43,18 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
   const [orders, setOrders] = useState<IUserCart[]>([])
   const [totalQty, setTotalQty] = useState(0)
 
-  const handleLikeClick = useCallback(() => {
-    if (user.isLogin) {
-      dispatch(userClickLike(product._id))
-    }
-    dispatch(updateStorageLikes(product._id))
-  }, [product])
+  const handleLikeClick = useCallback(
+    (isDelete: boolean) => {
+      const pid = [product._id]
+      if (user.isLogin) {
+        isDelete ? dispatch(userDeleteLike(pid)) : dispatch(userAddLike(pid))
+      }
+      isDelete
+        ? dispatch(deleteStorageLikes(pid))
+        : dispatch(addStorageLikes(pid))
+    },
+    [product]
+  )
 
   const handleCartClick = () => {
     if (!orders.length) {
@@ -251,7 +259,7 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
           <div className={styles.btnGroup}>
             <button
               className={cx('like', isLike && 'isLike')}
-              onClick={handleLikeClick}
+              onClick={() => handleLikeClick(isLike)}
             >
               {!isLike ? <FavoriteBorderIcon /> : <FavoriteIcon />}
             </button>

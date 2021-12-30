@@ -55,11 +55,23 @@ export const userLogout = createAsyncThunk(`userLogout`, async () => {
   return response.data
 })
 
-export const userClickLike = createAsyncThunk(
-  `userClickLike`,
-  async (pid: string, { rejectWithValue }) => {
+export const userAddLike = createAsyncThunk(
+  `userAddLike`,
+  async (pid: string[], { rejectWithValue }) => {
     try {
-      const response = await Axios.post('/api/users/like', { pid })
+      const response = await Axios.post('/api/users/addLike', { pid })
+      return response.data.userLikes
+    } catch (err) {
+      return rejectWithValue(err.response.data)
+    }
+  }
+)
+
+export const userDeleteLike = createAsyncThunk(
+  `userDeleteLike`,
+  async (pid: string[], { rejectWithValue }) => {
+    try {
+      const response = await Axios.post('/api/users/deleteLike', { pid })
       return response.data.userLikes
     } catch (err) {
       return rejectWithValue(err.response.data)
@@ -68,7 +80,7 @@ export const userClickLike = createAsyncThunk(
 )
 
 export const userAddCart = createAsyncThunk(
-  `userClickLike`,
+  `userAddCart`,
   async (orders: IUserCart[], { rejectWithValue }) => {
     try {
       const response = await Axios.post('/api/users/addCart', { orders })
@@ -104,12 +116,18 @@ export const userSlice = createSlice({
       }
     },
     // 위시리스트 업데이트
-    updateStorageLikes(state, action: PayloadAction<string>) {
-      const newLikes = !state.storage.likes.includes(action.payload)
-        ? [...state.storage.likes, action.payload]
-        : state.storage.likes.filter((pid) => pid !== action.payload)
-
-      newLikes.length !== 0
+    addStorageLikes(state, action: PayloadAction<string[]>) {
+      const newLikes = Array.from(
+        new Set(state.storage.likes.concat(action.payload))
+      )
+      sessionStorage.setItem('piic_likes', JSON.stringify(newLikes))
+      state.storage.likes = newLikes
+    },
+    deleteStorageLikes(state, action: PayloadAction<string[]>) {
+      const newLikes = state.storage.likes.filter(
+        (pid) => !action.payload.includes(pid)
+      )
+      newLikes.length
         ? sessionStorage.setItem('piic_likes', JSON.stringify(newLikes))
         : sessionStorage.removeItem('piic_likes')
       state.storage.likes = newLikes
@@ -163,7 +181,13 @@ export const userSlice = createSlice({
       state.userData = null
     },
     // userClickLike
-    [userClickLike.fulfilled.type]: (state, action) => {
+    [userAddLike.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        state.userData.likes = action.payload
+        state.storage.likes = action.payload
+      }
+    },
+    [userDeleteLike.fulfilled.type]: (state, action) => {
       if (state.userData) {
         state.userData.likes = action.payload
         state.storage.likes = action.payload
@@ -181,7 +205,8 @@ export const userSlice = createSlice({
 
 export const {
   getStorageLikes,
-  updateStorageLikes,
+  addStorageLikes,
+  deleteStorageLikes,
   getStorageCart,
   AddStorageCart,
   DeleteStorageCart,

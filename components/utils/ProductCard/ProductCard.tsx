@@ -6,10 +6,12 @@ import { IProduct } from '@models/Product'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { useAppDispatch, useAppSelector } from '@redux/hooks'
 import {
-  userClickLike,
   selectUser,
   IUserState,
-  updateStorageLikes,
+  userAddLike,
+  userDeleteLike,
+  addStorageLikes,
+  deleteStorageLikes,
 } from '@redux/features/userSlice'
 import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
@@ -25,12 +27,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const [like, setLike] = useState(false)
 
-  const handleLikeClick = useCallback(() => {
-    if (user.isLogin) {
-      dispatch(userClickLike(product._id))
-    }
-    dispatch(updateStorageLikes(product._id))
-  }, [product])
+  const handleLikeClick = useCallback(
+    (isDelete: boolean) => {
+      const pid = [product._id]
+      if (user.isLogin) {
+        isDelete ? dispatch(userDeleteLike(pid)) : dispatch(userAddLike(pid))
+      }
+      isDelete
+        ? dispatch(deleteStorageLikes(pid))
+        : dispatch(addStorageLikes(pid))
+    },
+    [product]
+  )
 
   useEffect(() => {
     user.storage.likes.includes(product._id) ? setLike(true) : setLike(false)
@@ -51,7 +59,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <IconButton
               className={cx('button', like && 'like')}
               aria-label="like"
-              onClick={handleLikeClick}
+              onClick={() => handleLikeClick(like)}
             >
               {!like ? <FavoriteBorderOutlinedIcon /> : <FavoriteIcon />}
             </IconButton>
