@@ -1,5 +1,6 @@
 import AuthCheck from 'hoc/authCheck'
 import Head from 'next/head'
+import CartPage from '@components/CartPage/CartPage'
 
 const cart = () => {
   return (
@@ -7,7 +8,7 @@ const cart = () => {
       <Head>
         <title>장바구니 | PIIC</title>
       </Head>
-      <div>CartPage</div>
+      <CartPage />
     </>
   )
 }
