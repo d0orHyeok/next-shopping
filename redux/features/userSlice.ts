@@ -1,3 +1,4 @@
+import { IUpdateCartBody } from './../../pages/api/users/updateCart'
 import { IUserCart } from '@models/User'
 import { IAuthUserData } from './../../pages/api/users/auth'
 import { RootState } from '@redux/store'
@@ -91,6 +92,30 @@ export const userAddCart = createAsyncThunk(
   }
 )
 
+export const userUpdateCart = createAsyncThunk(
+  `userUpdateCart`,
+  async (body: IUpdateCartBody, { rejectWithValue }) => {
+    try {
+      const response = await Axios.post('/api/users/updateCart', body)
+      return response.data.userCart
+    } catch (err) {
+      return rejectWithValue(err.response.data)
+    }
+  }
+)
+
+export const userDeleteCart = createAsyncThunk(
+  `userDeleteCart`,
+  async (dropIndex: number[], { rejectWithValue }) => {
+    try {
+      const response = await Axios.post('/api/users/deleteCart', { dropIndex })
+      return response.data.userCart
+    } catch (err) {
+      return rejectWithValue(err.response.data)
+    }
+  }
+)
+
 // Slice
 const initialState: IUserState = {
   isLogin: false,
@@ -143,13 +168,27 @@ export const userSlice = createSlice({
       }
     },
     // 장바구니 업데이트
-    AddStorageCart(state, action: PayloadAction<IUserCart[]>) {
+    addStorageCart(state, action: PayloadAction<IUserCart[]>) {
       const newCart = [...state.storage.cart, ...action.payload]
       sessionStorage.setItem('piic_cart', JSON.stringify(newCart))
       state.storage.cart = newCart
     },
-    DeleteStorageCart(state, action: PayloadAction<number>) {
-      const newCart = state.storage.cart.splice(action.payload, 1)
+    updateStorageCart(state, action: PayloadAction<IUpdateCartBody>) {
+      const { index, update } = action.payload
+      const newCart = state.storage.cart.map((order, i) => {
+        if (i === index) {
+          return update
+        } else {
+          return order
+        }
+      })
+      sessionStorage.setItem('piic_cart', JSON.stringify(newCart))
+      state.storage.cart = newCart
+    },
+    deleteStorageCart(state, action: PayloadAction<number[]>) {
+      const newCart = state.storage.cart.filter(
+        (_, index) => !action.payload.includes(index)
+      )
       newCart.length
         ? sessionStorage.setItem('piic_cart', JSON.stringify(newCart))
         : sessionStorage.removeItem('piic_cart')
@@ -200,6 +239,18 @@ export const userSlice = createSlice({
         state.storage.cart = action.payload
       }
     },
+    [userUpdateCart.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        state.userData.cart = action.payload
+        state.storage.cart = action.payload
+      }
+    },
+    [userDeleteCart.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        state.userData.cart = action.payload
+        state.storage.cart = action.payload
+      }
+    },
   },
 })
 
@@ -208,8 +259,9 @@ export const {
   addStorageLikes,
   deleteStorageLikes,
   getStorageCart,
-  AddStorageCart,
-  DeleteStorageCart,
+  addStorageCart,
+  updateStorageCart,
+  deleteStorageCart,
 } = userSlice.actions
 export const selectUser = (state: RootState) => state.user
 

@@ -18,7 +18,7 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
 
     const newUser = await User.findOneAndUpdate(
       { _id: req.user._id },
-      { $set: { cart: [...req.user.cart, ...orders] } },
+      { $push: { cart: { $each: orders } } },
       { new: true }
     )
 

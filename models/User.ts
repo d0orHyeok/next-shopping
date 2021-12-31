@@ -6,13 +6,15 @@ import dayjs from 'dayjs'
 
 const saltRounds = 10
 
+interface IOption {
+  color: IColor
+  size: string
+}
+
 export interface IUserCart {
   pid: string
   qty: number
-  option: {
-    color: IColor
-    size: string
-  }
+  option: IOption
 }
 
 export interface IUserHistory {
@@ -79,26 +81,11 @@ const userSchema: Schema = new Schema(
       default: [],
     },
     cart: {
-      type: [
-        {
-          id: String,
-          quantity: Number,
-          date: Number,
-        },
-      ],
+      type: Array,
       default: [],
     },
     history: {
-      type: [
-        {
-          dateOfPurchase: Number,
-          name: String,
-          id: String,
-          price: Number,
-          quantity: Number,
-          paymentId: String,
-        },
-      ],
+      type: Array,
       default: [],
     },
     token: {

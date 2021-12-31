@@ -1,0 +1,46 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  margin: 20px 30px;
+  font-size: 0.9rem;
+}
+
+.name {
+  display: block;
+  padding-bottom: 12px;
+  border-bottom: 1px dotted lightgray;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 12px 0;
+}
+
+.title {
+  width: 100%;
+  text-overflow: hidden;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.optionWrapper label {
+  display: inline-block;
+  width: 50px;
+}
+
+.optionWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 240px;
+  margin-bottom: 6px;
+}
+
+.optionWrapper select {
+  width: 150px;
+  text-align: center;
+}

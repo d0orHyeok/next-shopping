@@ -109,23 +109,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: space-evenly;
+  justify-content: center;
   height: 100%;
 }
 
 .product-info .product-name {
   cursor: pointer;
-}
-
-.product-info .product-option {
-  font-size: 0.9rem;
-  color: gray;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.product-info .product-option:hover {
-  color: black;
 }
 
 .product-select {

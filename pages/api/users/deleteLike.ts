@@ -13,7 +13,7 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
   try {
     const { pid } = req.body
 
-    if (!pid === undefined) {
+    if (!pid) {
       return res.status(400).json({ success: false, message: '잘못된 요청' })
     }
 

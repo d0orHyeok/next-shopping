@@ -189,7 +189,6 @@ const WishlistPage = () => {
                             {product.name}
                           </Link>
                         </span>
-                        <span className={cx('product-option')}>옵션선택</span>
                       </div>
                       <div className={cx('product-delivery', 'basic')}>
                         {delivery.delivery.toLocaleString('ko-KR')}
