@@ -25,10 +25,12 @@ const WishlistPage = () => {
   const [pageIndex, setPageIndex] = useState(1)
   const [checked, setChecked] = useState<boolean[]>([])
 
-  const handleCheckAll = () => {
-    checked.includes(false)
-      ? setChecked(checked.map((_) => true))
-      : setChecked(checked.map((_) => false))
+  const handleCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (checked.includes(false)) {
+      event.target.checked && setChecked(checked.map((_) => true))
+    } else {
+      !event.target.checked && setChecked(checked.map((_) => false))
+    }
   }
 
   const handleClickDelete = (pid: string) => {
@@ -142,7 +144,7 @@ const WishlistPage = () => {
                     id="all"
                     type="checkbox"
                     value="all"
-                    onChange={() => handleCheckAll()}
+                    onChange={handleCheckAll}
                   />
                 </li>
                 <li className={styles.basic}></li>

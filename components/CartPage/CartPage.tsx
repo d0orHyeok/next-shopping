@@ -11,7 +11,7 @@ import {
 import { IProduct } from '@models/Product'
 import { IUserCart } from '@models/User'
 import Axios from 'axios'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import classNames from 'classnames/bind'
 const cx = classNames.bind(styles)
 import Link from 'next/link'
@@ -19,6 +19,7 @@ import Pagination from '@components/utils/Pagination/Pagination'
 import * as delivery from 'public/data/delivery'
 import CustomModal from '@components/utils/CustomModal/CustomModal'
 import SelectOption from './section/SelectOption'
+import { useRouter } from 'next/router'
 
 const displayNum = 10
 
@@ -28,6 +29,7 @@ interface IUpdate {
 }
 
 const CartPage = () => {
+  const router = useRouter()
   const dispatch = useAppDispatch()
   const user: IUserState = useAppSelector(selectUser)
   const userCart: IUserCart[] = useAppSelector(
@@ -52,11 +54,14 @@ const CartPage = () => {
   const [products, setProducts] = useState<IProduct[]>([])
   const [pageIndex, setPageIndex] = useState(1)
   const [checked, setChecked] = useState<boolean[]>([])
+  const [totalPrice, setTotalPrice] = useState(0)
 
-  const handleCheckAll = () => {
-    checked.includes(false)
-      ? setChecked(checked.map((_) => true))
-      : setChecked(checked.map((_) => false))
+  const handleCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (checked.includes(false)) {
+      event.target.checked && setChecked(checked.map((_) => true))
+    } else {
+      !event.target.checked && setChecked(checked.map((_) => false))
+    }
   }
 
   // Modal Prop Function
@@ -140,6 +145,24 @@ const CartPage = () => {
     }
   }
 
+  const handleSelectOrder = () => {
+    if (!checked.includes(true)) {
+      return alert('선택된 상품이 없습니다.')
+    }
+
+    const startIndex = (pageIndex - 1) * displayNum
+    const cartIndex: number[] = []
+    checked.forEach((check, index) => {
+      if (check) {
+        cartIndex.push(startIndex + index)
+      }
+    })
+    router.push({
+      pathname: '/user/order',
+      query: { cartIndex },
+    })
+  }
+
   useEffect(() => {
     Axios.post('/api/product/findProductsByIds', {
       ids: userCart.map((order) => order.pid),
@@ -154,6 +177,31 @@ const CartPage = () => {
         : setChecked(Array.from({ length: displayNum }, () => false))
     }
   }, [products, pageIndex])
+
+  useEffect(() => {
+    let total = 0
+    if (!checked.includes(true)) {
+      userCart.forEach((order) => {
+        const product = products.find((p) => p._id === order.pid)
+        if (product) {
+          total += product.price * order.qty
+        }
+      })
+      setTotalPrice(total)
+    } else {
+      const startIndex = (pageIndex - 1) * displayNum
+      checked.forEach((check, index) => {
+        if (check) {
+          const order = userCart[startIndex + index]
+          const product = products.find((p) => p._id === order.pid)
+          if (product) {
+            total += product.price * order.qty
+          }
+        }
+      })
+      setTotalPrice(total)
+    }
+  }, [checked])
 
   return (
     <>
@@ -172,13 +220,13 @@ const CartPage = () => {
                   id="all"
                   type="checkbox"
                   value="all"
-                  onChange={() => handleCheckAll()}
+                  onChange={handleCheckAll}
                 />
               </li>
-              <li className={styles.basic}></li>
+              <li className={cx('basic', 'media1')}></li>
               <li className={styles.epic}>상품정보</li>
               <li className={styles.basic}>수량</li>
-              <li className={styles.basic}>배송비</li>
+              <li className={cx('basic', 'media1')}>배송비</li>
               <li className={styles.basic}>합계</li>
               <li className={styles.basic}>선택</li>
             </ul>
@@ -211,7 +259,7 @@ const CartPage = () => {
                           }
                         />
                       </div>
-                      <div className={cx('product-img', 'basic')}>
+                      <div className={cx('product-img', 'basic', 'media1')}>
                         <Link href={`/product/detail/${product._id}`}>
                           <img src={product.image} alt={product.name} />
                         </Link>
@@ -241,14 +289,25 @@ const CartPage = () => {
                           +
                         </button>
                       </div>
-                      <div className={cx('product-delivery', 'basic')}>
+                      <div
+                        className={cx('product-delivery', 'basic', 'media1')}
+                      >
                         {delivery.delivery.toLocaleString('ko-KR')}
                       </div>
                       <div className={cx('product-price', 'basic')}>
                         {product.price.toLocaleString('ko-KR')}
                       </div>
                       <div className={cx('product-select', 'basic')}>
-                        <button>주문하기</button>
+                        <button
+                          onClick={() =>
+                            router.push({
+                              pathname: '/user/order',
+                              query: { cartIndex: index },
+                            })
+                          }
+                        >
+                          주문하기
+                        </button>
                         <button onClick={() => handleClickDelete([index])}>
                           삭제
                         </button>
@@ -259,19 +318,75 @@ const CartPage = () => {
               }
             })}
           </section>
-          {/* 상품 컨트롤 */}
-          <section className={cx('controls-container')}>
-            <div className={cx('selectControls')}>
-              <button onClick={handleAllDelete}>전체삭제</button>
-              <button onClick={handleCheckedDelete}>선택상품삭제</button>
+          {userCart.length ? (
+            <>
+              {/* 상품 컨트롤 */}
+              <section className={cx('controls-container')}>
+                <div className={cx('selectControls')}>
+                  <button onClick={handleAllDelete}>전체삭제</button>
+                  <button onClick={handleCheckedDelete}>선택상품삭제</button>
+                </div>
+              </section>
+
+              <Pagination
+                itemNum={products.length}
+                displayNum={displayNum}
+                onChange={setPageIndex}
+              />
+
+              <section className={cx('pay')}>
+                <div className={cx('pay-priceBox')}>
+                  <div className={cx('pay-price-item')}>
+                    <h3>총상품금액</h3>
+                    <span>{totalPrice.toLocaleString('ko-KR')}</span>
+                  </div>
+                  <span>+</span>
+                  <div className={cx('pay-price-item')}>
+                    <h3>배송비</h3>
+                    <span>
+                      {totalPrice < 50000
+                        ? delivery.delivery.toLocaleString('ko-KR')
+                        : 0}
+                    </span>
+                  </div>
+                  <span>=</span>
+                  <div className={cx('pay-price-item')}>
+                    <h3>결제금액</h3>
+                    <span>
+                      {totalPrice < 50000
+                        ? (delivery.delivery + totalPrice).toLocaleString(
+                            'ko-KR'
+                          )
+                        : totalPrice.toLocaleString('ko-KR')}
+                    </span>
+                  </div>
+                </div>
+                <div className={cx('pay-btnBox')}>
+                  <button
+                    className={cx('pay-btn', 'pay-btn-white')}
+                    onClick={() => handleSelectOrder()}
+                  >
+                    선택상품주문
+                  </button>
+                  <button
+                    className={cx('pay-btn', 'pay-btn-black')}
+                    onClick={() => router.push('/user/order')}
+                  >
+                    전체상품주문
+                  </button>
+                </div>
+              </section>
+            </>
+          ) : (
+            <div className={cx('pay-btnBox')}>
+              <button
+                className={cx('pay-btn', 'pay-btn-white')}
+                onClick={() => router.push('/')}
+              >
+                상품둘러보기
+              </button>
             </div>
-          </section>
-          <Pagination
-            itemNum={products.length}
-            displayNum={displayNum}
-            onChange={setPageIndex}
-          />
-          <div></div>
+          )}
         </div>
       </div>
 
