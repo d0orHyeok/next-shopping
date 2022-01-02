@@ -135,7 +135,7 @@ export const userSlice = createSlice({
       if (state.isLogin && state.userData) {
         state.storage.likes = state.userData.likes
       } else {
-        const getItems = sessionStorage.getItem('piic_likes')
+        const getItems = localStorage.getItem('piic_likes')
         const getLikes: string[] = !getItems ? [] : JSON.parse(getItems)
         state.storage.likes = getLikes
       }
@@ -145,7 +145,7 @@ export const userSlice = createSlice({
       const newLikes = Array.from(
         new Set(state.storage.likes.concat(action.payload))
       )
-      sessionStorage.setItem('piic_likes', JSON.stringify(newLikes))
+      localStorage.setItem('piic_likes', JSON.stringify(newLikes))
       state.storage.likes = newLikes
     },
     deleteStorageLikes(state, action: PayloadAction<string[]>) {
@@ -153,8 +153,8 @@ export const userSlice = createSlice({
         (pid) => !action.payload.includes(pid)
       )
       newLikes.length
-        ? sessionStorage.setItem('piic_likes', JSON.stringify(newLikes))
-        : sessionStorage.removeItem('piic_likes')
+        ? localStorage.setItem('piic_likes', JSON.stringify(newLikes))
+        : localStorage.removeItem('piic_likes')
       state.storage.likes = newLikes
     },
     // 장바구니 가져오기
@@ -162,7 +162,7 @@ export const userSlice = createSlice({
       if (state.isLogin && state.userData) {
         state.storage.cart = state.userData.cart
       } else {
-        const getItems = sessionStorage.getItem('piic_cart')
+        const getItems = localStorage.getItem('piic_cart')
         const getCart: IUserCart[] = !getItems ? [] : JSON.parse(getItems)
         state.storage.cart = getCart
       }
@@ -170,7 +170,7 @@ export const userSlice = createSlice({
     // 장바구니 업데이트
     addStorageCart(state, action: PayloadAction<IUserCart[]>) {
       const newCart = [...state.storage.cart, ...action.payload]
-      sessionStorage.setItem('piic_cart', JSON.stringify(newCart))
+      localStorage.setItem('piic_cart', JSON.stringify(newCart))
       state.storage.cart = newCart
     },
     updateStorageCart(state, action: PayloadAction<IUpdateCartBody>) {
@@ -182,7 +182,7 @@ export const userSlice = createSlice({
           return order
         }
       })
-      sessionStorage.setItem('piic_cart', JSON.stringify(newCart))
+      localStorage.setItem('piic_cart', JSON.stringify(newCart))
       state.storage.cart = newCart
     },
     deleteStorageCart(state, action: PayloadAction<number[]>) {
@@ -190,8 +190,8 @@ export const userSlice = createSlice({
         (_, index) => !action.payload.includes(index)
       )
       newCart.length
-        ? sessionStorage.setItem('piic_cart', JSON.stringify(newCart))
-        : sessionStorage.removeItem('piic_cart')
+        ? localStorage.setItem('piic_cart', JSON.stringify(newCart))
+        : localStorage.removeItem('piic_cart')
       state.storage.cart = newCart
     },
   },

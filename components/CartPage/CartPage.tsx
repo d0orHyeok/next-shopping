@@ -215,7 +215,7 @@ const CartPage = () => {
           <section className={cx('tag-container')}>
             {/* 테이블 제목 */}
             <ul>
-              <li className={styles.basic}>
+              <li className={cx('basic', 'media2-n')}>
                 <input
                   id="all"
                   type="checkbox"
@@ -223,12 +223,14 @@ const CartPage = () => {
                   onChange={handleCheckAll}
                 />
               </li>
-              <li className={cx('basic', 'media1')}></li>
-              <li className={styles.epic}>상품정보</li>
-              <li className={styles.basic}>수량</li>
+              <li className={cx('basic', 'media3-n')}></li>
+              <li className={styles.epic} style={{ textAlign: 'center' }}>
+                상품정보
+              </li>
+              <li className={cx('basic', 'media2-n')}>수량</li>
               <li className={cx('basic', 'media1')}>배송비</li>
-              <li className={styles.basic}>합계</li>
-              <li className={styles.basic}>선택</li>
+              <li className={cx('basic', 'media2-n')}>합계</li>
+              <li className={cx('basic', 'media3-n')}>선택</li>
             </ul>
           </section>
           {/* 테이블 아이템 */}
@@ -242,7 +244,7 @@ const CartPage = () => {
                 return (
                   product && (
                     <div key={index} className={cx('product')}>
-                      <div className={cx('product-check', 'basic')}>
+                      <div className={cx('product-check', 'basic', 'media2-n')}>
                         <input
                           id={`p${index}`}
                           type="checkbox"
@@ -259,7 +261,7 @@ const CartPage = () => {
                           }
                         />
                       </div>
-                      <div className={cx('product-img', 'basic', 'media1')}>
+                      <div className={cx('product-img', 'basic')}>
                         <Link href={`/product/detail/${product._id}`}>
                           <img src={product.image} alt={product.name} />
                         </Link>
@@ -270,17 +272,41 @@ const CartPage = () => {
                             {product.name}
                           </Link>
                         </span>
+                        <span className={cx('product-option')}>
+                          {`[옵션] ${order.option.color.colorName}/${order.option.size}`}
+                        </span>
+                        <span className={cx('product-option', 'media2-b')}>
+                          {`[수량] ${order.qty}`}
+                        </span>
                         <span
-                          className={cx('product-option')}
-                        >{`[옵션] ${order.option.color.colorName}/${order.option.size}`}</span>
+                          className={cx('product-option', 'media2-b')}
+                          style={{ marginBottom: '1rem' }}
+                        >
+                          {`[합계] ${order.qty * product.price}`}
+                        </span>
                         <span
                           className={cx('product-change')}
                           onClick={() => handleChangeOption(index, product)}
                         >
                           옵션변경
                         </span>
+                        <div className={cx('product-select', 'media3-b')}>
+                          <button
+                            onClick={() =>
+                              router.push({
+                                pathname: '/user/order',
+                                query: { cartIndex: index },
+                              })
+                            }
+                          >
+                            주문하기
+                          </button>
+                          <button onClick={() => handleClickDelete([index])}>
+                            삭제
+                          </button>
+                        </div>
                       </div>
-                      <div className={cx('product-qty', 'basic')}>
+                      <div className={cx('product-qty', 'basic', 'media2-n')}>
                         <button onClick={() => handleChangeQty(index, -1)}>
                           －
                         </button>
@@ -294,10 +320,12 @@ const CartPage = () => {
                       >
                         {delivery.delivery.toLocaleString('ko-KR')}
                       </div>
-                      <div className={cx('product-price', 'basic')}>
+                      <div className={cx('product-price', 'basic', 'media2-n')}>
                         {product.price.toLocaleString('ko-KR')}
                       </div>
-                      <div className={cx('product-select', 'basic')}>
+                      <div
+                        className={cx('product-select', 'basic', 'media3-n')}
+                      >
                         <button
                           onClick={() =>
                             router.push({
@@ -324,7 +352,12 @@ const CartPage = () => {
               <section className={cx('controls-container')}>
                 <div className={cx('selectControls')}>
                   <button onClick={handleAllDelete}>전체삭제</button>
-                  <button onClick={handleCheckedDelete}>선택상품삭제</button>
+                  <button
+                    className={cx('media2-n')}
+                    onClick={handleCheckedDelete}
+                  >
+                    선택상품삭제
+                  </button>
                 </div>
               </section>
 
@@ -344,7 +377,7 @@ const CartPage = () => {
                   <div className={cx('pay-price-item')}>
                     <h3>배송비</h3>
                     <span>
-                      {totalPrice < 50000
+                      {totalPrice < delivery.free_base
                         ? delivery.delivery.toLocaleString('ko-KR')
                         : 0}
                     </span>
@@ -353,7 +386,7 @@ const CartPage = () => {
                   <div className={cx('pay-price-item')}>
                     <h3>결제금액</h3>
                     <span>
-                      {totalPrice < 50000
+                      {totalPrice < delivery.free_base
                         ? (delivery.delivery + totalPrice).toLocaleString(
                             'ko-KR'
                           )
@@ -363,7 +396,7 @@ const CartPage = () => {
                 </div>
                 <div className={cx('pay-btnBox')}>
                   <button
-                    className={cx('pay-btn', 'pay-btn-white')}
+                    className={cx('pay-btn', 'pay-btn-white', 'media2-n')}
                     onClick={() => handleSelectOrder()}
                   >
                     선택상품주문

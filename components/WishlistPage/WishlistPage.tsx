@@ -14,6 +14,7 @@ const cx = classNames.bind(styles)
 import Link from 'next/link'
 import Pagination from '@components/utils/Pagination/Pagination'
 import * as delivery from 'public/data/delivery'
+import UserNav from './section/UserNav'
 
 const displayNum = 10
 
@@ -100,46 +101,14 @@ const WishlistPage = () => {
         <h2 className={styles.subTitle}>마이페이지</h2>
         <div className={styles.main}>
           {/* 유저 네비게이션 */}
-          <nav className={styles.nav}>
-            <div className={cx('nav-item')}>
-              <h3 className={cx('nav-title')}>쇼핑 정보</h3>
-              <ul>
-                <li>
-                  <Link href="#">주문/배송</Link>
-                </li>
-                <li>
-                  <Link href="#">취소</Link>
-                </li>
-              </ul>
-            </div>
-            <div className={cx('nav-item')}>
-              <h3 className={cx('nav-title')}>활동 정보</h3>
-              <ul>
-                <li>
-                  <Link href="#">회원정보 수정</Link>
-                </li>
-                <li>
-                  <Link href="#">회원탈퇴</Link>
-                </li>
-                <li>
-                  <Link href="#">배송 주소 관리</Link>
-                </li>
-                <li>
-                  <Link href="/user/wishlist">위시리스트</Link>
-                </li>
-                <li>
-                  <Link href="/user/cart">장바구니</Link>
-                </li>
-              </ul>
-            </div>
-          </nav>
+          <UserNav clasName={styles.nav} />
 
           {/* 담긴 상품 */}
           <div className={styles.content}>
             <section className={cx('tag-container')}>
               {/* 테이블 제목 */}
               <ul>
-                <li className={styles.basic}>
+                <li className={cx('basic', 'media1')}>
                   <input
                     id="all"
                     type="checkbox"
@@ -147,11 +116,11 @@ const WishlistPage = () => {
                     onChange={handleCheckAll}
                   />
                 </li>
-                <li className={styles.basic}></li>
+                <li className={cx('basic', 'media1')}></li>
                 <li className={styles.epic}>상품정보</li>
-                <li className={styles.basic}>배송비</li>
-                <li className={styles.basic}>합계</li>
-                <li className={styles.basic}>선택</li>
+                <li className={cx('basic', 'media1')}>배송비</li>
+                <li className={cx('basic', 'media1')}>가격</li>
+                <li className={cx('basic', 'media2-n')}>선택</li>
               </ul>
             </section>
             {/* 테이블 아이템 */}
@@ -163,7 +132,7 @@ const WishlistPage = () => {
                 ) {
                   return (
                     <div key={index} className={cx('product')}>
-                      <div className={cx('product-check', 'basic')}>
+                      <div className={cx('product-check', 'basic', 'media1')}>
                         <input
                           id={`p${index}`}
                           type="checkbox"
@@ -191,14 +160,36 @@ const WishlistPage = () => {
                             {product.name}
                           </Link>
                         </span>
+                        <span className={cx('product-option')}>
+                          {`[배송비] ${delivery.delivery.toLocaleString(
+                            'ko-KR'
+                          )}`}
+                        </span>
+                        <span className={cx('product-option')}>
+                          {`[가격] ${product.price.toLocaleString('ko-KR')}`}
+                        </span>
+                        <div className={cx('product-select', 'media2-b')}>
+                          <Link href={`/product/detail/${product._id}`}>
+                            <button>상품조회</button>
+                          </Link>
+                          <button
+                            onClick={() => handleClickDelete(product._id)}
+                          >
+                            삭제
+                          </button>
+                        </div>
                       </div>
-                      <div className={cx('product-delivery', 'basic')}>
+                      <div
+                        className={cx('product-delivery', 'basic', 'media1')}
+                      >
                         {delivery.delivery.toLocaleString('ko-KR')}
                       </div>
-                      <div className={cx('product-price', 'basic')}>
+                      <div className={cx('product-price', 'basic', 'media1')}>
                         {product.price.toLocaleString('ko-KR')}
                       </div>
-                      <div className={cx('product-select', 'basic')}>
+                      <div
+                        className={cx('product-select', 'basic', 'media2-n')}
+                      >
                         <Link href={`/product/detail/${product._id}`}>
                           <button>상품조회</button>
                         </Link>
@@ -215,7 +206,9 @@ const WishlistPage = () => {
             <section className={cx('controls-container')}>
               <div className={cx('selectControls')}>
                 <button onClick={handleAllDelete}>전체삭제</button>
-                <button onClick={handleCheckedDelete}>선택상품삭제</button>
+                <button className={cx('media1')} onClick={handleCheckedDelete}>
+                  선택상품삭제
+                </button>
               </div>
             </section>
             <Pagination

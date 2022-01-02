@@ -48,8 +48,7 @@
 }
 
 .epic {
-  text-align: center;
-  min-width: 200px;
+  min-width: 100px;
   width: 100%;
 }
 
@@ -57,7 +56,9 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid lightgray;
-  height: 150px;
+  min-height: 150px;
+  height: 100%;
+  padding: 0.5rem 0;
 }
 
 .product-img {
@@ -175,7 +176,8 @@
 
 .pay-priceBox {
   width: 100%;
-  height: 160px;
+  min-height: 160px;
+  height: 100%;
   background-color: rgb(240, 240, 240);
   display: flex;
   align-items: center;
@@ -233,6 +235,11 @@
   color: white;
 }
 
+.media2-b,
+.media3-b {
+  display: none;
+}
+
 @media only screen and (max-width: 1500px) {
   .wrapper {
     padding: 3rem;
@@ -242,5 +249,59 @@
 @media only screen and (max-width: 993px) {
   .media1 {
     display: none;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .media2-b {
+    display: block;
+  }
+
+  .media2-n {
+    display: none;
+  }
+
+  .basic:last-child {
+    width: 80px;
+  }
+
+  .product-info {
+    align-items: flex-start;
+    transform: scale(90%);
+  }
+
+  .pay-price-item,
+  .pay-btnBox span,
+  .pay-btn {
+    margin: 0;
+    transform: scale(80%);
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .media3-n {
+    display: none;
+  }
+
+  .media3-b {
+    margin-top: 1rem;
+    display: block;
+    flex-direction: row;
+  }
+
+  .media3-b button {
+    padding: 4px;
+  }
+
+  .media3-b button:first-child {
+    margin-right: 4px;
+  }
+
+  .pay-priceBox > * {
+    display: none;
+  }
+
+  .pay-price-item:last-child {
+    display: block;
   }
 }

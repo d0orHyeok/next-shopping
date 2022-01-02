@@ -21,11 +21,20 @@ const Preheader = ({ isHome }: PreheaderProps) => {
       <ul>
         <li>{user.userData?.name}님</li>
         <span></span>
-        {user.userData?.isAdmin && (
+        {user.userData?.isAdmin ? (
           <>
             <li>
               <div className={styles.loginBtn}>
                 <Link href="/admin">관리자</Link>
+              </div>
+            </li>
+            <span></span>
+          </>
+        ) : (
+          <>
+            <li>
+              <div className={styles.loginBtn}>
+                <Link href="/user/mypage">마이페이지</Link>
               </div>
             </li>
             <span></span>

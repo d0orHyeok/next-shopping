@@ -39,33 +39,11 @@
   width: 100%;
 }
 
-/* 유저 네비게이션 */
 .nav {
-  margin-right: 50px;
   max-width: 180px;
   width: 180px;
   flex-shrink: 0;
-  padding: 1rem 0;
-}
-
-.nav-item {
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-}
-
-.nav-title {
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.nav-item ul li {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: rgb(100, 100, 100);
-}
-
-.nav-item ul li a:hover {
-  color: black;
+  margin-right: 40px;
 }
 
 /* 담긴 상품 */
@@ -84,7 +62,7 @@
 
 .epic {
   text-align: center;
-  min-width: 200px;
+  min-width: 160px;
   width: 100%;
 }
 
@@ -106,6 +84,7 @@
 }
 
 .product-info {
+  text-align: left;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -164,8 +143,61 @@
   border-color: black;
 }
 
+.product-option {
+  color: gray;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.media2-b {
+  display: none;
+}
+
 @media only screen and (max-width: 1500px) {
   .wrapper {
     padding: 3rem 1rem;
+  }
+}
+
+@media only screen and (max-width: 993px) {
+  .subTitle,
+  .nav {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .product-option {
+    display: block;
+  }
+
+  .media1 {
+    display: none;
+  }
+
+  .product-info {
+    align-items: flex-start;
+    transform: scale(90%);
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .media2-n {
+    display: none;
+  }
+
+  .media2-b {
+    margin-top: 1rem;
+    display: block;
+    flex-direction: row;
+  }
+
+  .media2-b button {
+    padding: 4px;
+  }
+
+  .media2-b button:first-child {
+    margin-right: 4px;
   }
 }
