@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           content="nextjs,shop,website,PIIC,쇼핑,온라인쇼핑, 쇼핑몰, 의류"
         />
       </Head>
-      {pathname === '/' ? (
+      {pathname === '/' || pathname === '/user/order' ? (
         <Component {...pageProps} />
       ) : (
         <Layout>

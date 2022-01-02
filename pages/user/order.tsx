@@ -1,7 +1,9 @@
+import OrderPage from '@components/OrderPage/OrderPage'
+
 const order = () => {
   return (
     <>
-      <div>Enter</div>
+      <OrderPage />
     </>
   )
 }

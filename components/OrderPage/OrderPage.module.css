@@ -1,2 +1,144 @@
 .wrapper {
+  background-color: rgb(235, 235, 235);
+  min-height: 100vh;
+  height: 100%;
+}
+
+.wrapper button {
+  border: none;
+  background-color: inherit;
+  cursor: pointer;
+}
+
+.container {
+  font-family: var(--product-font);
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: white;
+  border: 1px solid lightgray;
+}
+
+/* 주문페이지 헤드 */
+.head {
+  position: relative;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.head h1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--logo-font);
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.head .user {
+  display: flex;
+  align-items: flex-end;
+}
+
+.head .user button {
+  padding: 0;
+}
+
+.head .user button svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* 주문페이지 메인 영역 */
+.main {
+  background-color: lightgray;
+}
+
+.main h1 {
+  background-color: black;
+  color: white;
+  text-align: center;
+  font-size: 1.25rem;
+  padding: 1rem 0;
+}
+
+.box {
+  background-color: white;
+  margin-bottom: 1rem;
+  width: 100%;
+  height: 100%;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-bottom: 1px solid lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title,
+.content {
+  padding: 1rem;
+}
+
+.hide {
+  display: none;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 주문자정보 */
+.orderInfo .infoBox {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.orderInfo .infoBox:last-child {
+  margin: 0;
+}
+
+.orderInfo .infoBox .label {
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.orderInfo .inputBox {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.orderInfo .inputBox input {
+  border: 1px solid lightgray;
+  padding: 0.5rem;
+  min-width: 50px;
+  width: 100%;
+}
+
+.orderInfo .inputBox span {
+  margin: 0 3px;
+}
+
+.orderInfo input:focus {
+  outline: none;
+}
+
+@media only screen and (max-width: 480px) {
+  .orderInfo .inputBox input {
+    padding: 0.5rem 2px;
+  }
 }
