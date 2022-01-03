@@ -1,0 +1,38 @@
+.container {
+  border: 1px solid gray;
+  display: none;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  max-width: 550px;
+  min-width: 300px;
+  width: 100%;
+}
+
+.open {
+  display: block;
+}
+
+.head {
+  border-bottom: 1px solid gray;
+  background-color: rgb(100, 100, 100);
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.head button {
+  padding: 0;
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
+}
+.head svg {
+  transform: translateY(2px);
+  color: white;
+}
