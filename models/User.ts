@@ -17,13 +17,12 @@ export interface IUserCart {
   option: IOption
 }
 
-export interface IUserHistory {
+export interface IUserHistory extends IUserCart {
   dateOfPurchase: number
-  name: string
-  id: string
-  price: number
-  quantity: number
-  paymentId: string
+  orderState: {
+    state: string
+    waybill: number
+  }
 }
 
 export interface IUser {
@@ -76,18 +75,40 @@ const userSchema: Schema = new Schema(
       type: String,
       default: '',
     },
-    likes: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
-      default: [],
-    },
-    cart: {
-      type: Array,
-      default: [],
-    },
-    history: {
-      type: Array,
-      default: [],
-    },
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Product', default: [] }],
+    cart: [
+      {
+        pid: { type: Schema.Types.ObjectId, ref: 'Product' },
+        qty: { type: Number },
+        option: {
+          color: {
+            colorName: { type: String },
+            colorHex: { type: String },
+          },
+          size: { type: String },
+        },
+        default: [],
+      },
+    ],
+    history: [
+      {
+        pid: { type: Schema.Types.ObjectId, ref: 'Product' },
+        qty: { type: Number },
+        option: {
+          color: {
+            colorName: { type: String },
+            colorHex: { type: String },
+          },
+          size: { type: String },
+        },
+        dateOfPurchase: { type: Number },
+        orderState: {
+          state: { type: String },
+          waybill: { type: Number },
+        },
+        default: [],
+      },
+    ],
     token: {
       type: String,
       default: '',

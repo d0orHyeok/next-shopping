@@ -5,7 +5,7 @@ import database from '@middlewares/database'
 import { IUserCart } from '@models/User'
 
 interface Ibody {
-  cart: IUserCart[]
+  orders: IUserCart[]
 }
 
 export interface IUserProduct extends IUserCart {
@@ -17,21 +17,19 @@ handler.use(database)
 
 handler.post(async (req, res) => {
   try {
-    const { cart } = req.body as Ibody
+    const { orders } = req.body as Ibody
 
-    if (!cart) {
+    if (!orders) {
       return res.status(400).json({ success: false, message: '잘못된 요청' })
     }
     const products = await Product.find({
-      _id: { $in: cart.map((order) => order.pid) },
+      _id: { $in: orders.map((order) => order.pid) },
     }).exec()
 
-    const userProducts = await Promise.all(
-      cart.map((order) => {
-        const product = products.find((p) => p._id.toString() === order.pid)
-        return { ...order, product }
-      })
-    )
+    const userProducts = orders.map((order) => {
+      const product = products.find((p) => p._id.toString() === order.pid)
+      return { ...order, product }
+    })
 
     res.status(200).json({ success: true, userProducts })
   } catch (error) {

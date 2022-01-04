@@ -152,7 +152,7 @@
 
 /* 배송방법 */
 .delivery {
-  border: 1px solid black;
+  border: 1px solid lightgray;
   margin-bottom: 3rem;
 }
 
@@ -224,6 +224,58 @@
   width: 100%;
   box-sizing: border-box;
   margin-top: 1rem;
+}
+
+/* 주문상품 */
+.orderlist ul li {
+  margin-bottom: 1rem;
+}
+
+/* 결제정보 */
+.price-calcBox {
+  padding: 0 1rem;
+}
+
+.price-calcBox ul li,
+.price-resultbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price-calcBox ul li {
+  margin-bottom: 0.5rem;
+  color: gray;
+}
+
+.price-resultbox {
+  color: black;
+  font-size: 1.1rem;
+  background-color: rgb(214, 221, 226);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+/* 약관 */
+.terms .title {
+  justify-content: flex-start;
+}
+
+.terms .terms-check {
+  margin-right: 1rem;
+}
+
+.terms .terms-container {
+  margin-bottom: 0.5rem;
+}
+
+.terms .terms-container:last-child {
+  margin-bottom: 0;
+}
+
+.terms input,
+.terms label {
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 480px) {

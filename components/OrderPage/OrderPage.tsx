@@ -9,10 +9,19 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Badge } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { useAppSelector } from '@redux/hooks'
-import { selectUser, IUserState } from '@redux/features/userSlice'
-import React, { useState } from 'react'
+import { useAppDispatch, useAppSelector } from '@redux/hooks'
+import {
+  selectUser,
+  IUserState,
+  getStorageCart,
+} from '@redux/features/userSlice'
+import React, { useEffect, useState } from 'react'
 import DaumPostCodeModal from '@components/utils/DaumPostCodeModal/DaumPostCodeModal'
+import Axios from 'axios'
+import { IUserProduct } from 'pages/api/product/findProductsByOrders'
+import { IUserCart } from '@models/User'
+import OrderCard from './section/OrderCard'
+import * as delivery from 'public/data/delivery'
 
 const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
@@ -28,6 +37,7 @@ const StyledBadge = styled(Badge)(() => ({
 
 const OrderPage = () => {
   const router = useRouter()
+  const dispatch = useAppDispatch()
 
   const user: IUserState = useAppSelector(selectUser)
 
@@ -45,6 +55,63 @@ const OrderPage = () => {
     phone: { phone1: '', phone2: '', phone3: '' },
     message: '',
   })
+  const [termsCheck, setTermsCheck] = useState([false, false, false])
+  const [userProducts, setUserProducts] = useState<IUserProduct[]>([])
+  const [paymentPrice, setPaymentPrice] = useState({
+    totalPrice: 0,
+    deliveryPrice: delivery.delivery,
+    deliveryAddPrice: 0,
+  })
+
+  useEffect(() => {
+    dispatch(getStorageCart())
+  }, [])
+
+  useEffect(() => {
+    const { cartIndex } = router.query
+
+    if (cartIndex !== undefined) {
+      let orders: IUserCart[] = []
+
+      if (cartIndex === 'all') {
+        orders = user.storage.cart
+      } else {
+        orders = user.storage.cart.filter((_, index) =>
+          Array.isArray(cartIndex)
+            ? cartIndex.includes(index.toString())
+            : cartIndex === index.toString()
+        )
+      }
+
+      Axios.post('/api/product/findProductsByOrders', { orders })
+        .then((res) => setUserProducts(res.data.userProducts))
+        .catch((error) => {
+          console.log(error)
+          alert('오류가 발생하여 결제를 진행할 수 없습니다.')
+          router.back()
+        })
+    }
+  }, [router.query, user.storage])
+
+  useEffect(() => {
+    let price = 0
+    userProducts.forEach((userProduct) => {
+      price += userProduct.qty * userProduct.product.price
+    })
+    setPaymentPrice({
+      ...paymentPrice,
+      totalPrice: price,
+      deliveryPrice: price < delivery.free_base ? delivery.delivery : 0,
+    })
+  }, [userProducts])
+
+  useEffect(() => {
+    delivery.isAdd(parseInt(addrInfo.address.zonecode)) &&
+      setPaymentPrice({
+        ...paymentPrice,
+        deliveryAddPrice: delivery.delivery_add,
+      })
+  }, [addrInfo])
 
   const handleOrderInfoChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -123,6 +190,14 @@ const OrderPage = () => {
     }
   }
 
+  const handleChangeTermsCheck = (changeIndex: number) => {
+    setTermsCheck(
+      termsCheck.map((checked, index) =>
+        index === changeIndex ? !checked : checked
+      )
+    )
+  }
+
   const handleClickShowButton = (selectIndex: number) => {
     const newIsShow = isShow.map((bol, index) =>
       index === selectIndex ? !bol : bol
@@ -147,17 +222,19 @@ const OrderPage = () => {
     }
   }
 
+  const handleAddrSearchSubmit = (zonecode: string, baseAddress: string) => {
+    setAddrInfo({
+      ...addrInfo,
+      address: { zonecode, baseAddress, extraAddress: '' },
+    })
+  }
+
   return (
     <>
       <DaumPostCodeModal
         open={open}
         onClose={() => setOpen(false)}
-        onSubmit={(zonecode: string, baseAddress: string) =>
-          setAddrInfo({
-            ...addrInfo,
-            address: { zonecode, baseAddress, extraAddress: '' },
-          })
-        }
+        onSubmit={handleAddrSearchSubmit}
       />
       <div className={cx('wrapper')}>
         <div className={cx('container')}>
@@ -417,22 +494,61 @@ const OrderPage = () => {
                 ></textarea>
               </div>
             </div>
+
             {/* 주문상품정보 */}
             <div className={cx('box')}>
               <h2 className={cx('title')}>
                 주문상품
                 {drawShowButton(2)}
               </h2>
-              <div className={cx('content', !isShow[2] && 'hide')}>afaasdf</div>
+              <div className={cx('content', 'orderlist', !isShow[2] && 'hide')}>
+                <ul>
+                  {userProducts.map((userProduct, index) => (
+                    <li key={index}>
+                      <OrderCard userProduct={userProduct} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
+
             {/* 결제정보 */}
             <div className={cx('box')}>
               <h2 className={cx('title')}>
                 결제정보
                 {drawShowButton(3)}
               </h2>
-              <div className={cx('content', !isShow[3] && 'hide')}>afaasdf</div>
+              <div
+                className={cx('content', 'payment-Info', !isShow[3] && 'hide')}
+              >
+                <div className={cx('price-calcBox')}>
+                  <ul>
+                    <li>
+                      <span>주문금액</span>
+                      <span>{paymentPrice.totalPrice}</span>
+                    </li>
+                    <li>
+                      <span>배송비</span>
+                      <span>
+                        {`+${
+                          paymentPrice.deliveryPrice +
+                          paymentPrice.deliveryAddPrice
+                        }`}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div className={cx('price-resultbox')}>
+                  <h3>결제금액</h3>
+                  <span>
+                    {paymentPrice.deliveryPrice +
+                      paymentPrice.totalPrice +
+                      paymentPrice.deliveryAddPrice}
+                  </span>
+                </div>
+              </div>
             </div>
+
             {/* 결제수단 */}
             <div className={cx('box')}>
               <h2 className={cx('title')}>
@@ -441,10 +557,63 @@ const OrderPage = () => {
               </h2>
               <div className={cx('content', !isShow[4] && 'hide')}>afaasdf</div>
             </div>
+
             {/* 약관 */}
-            <div className={cx('box')}>
-              <h2 className={cx('title')}>약관</h2>
-              <div className={cx('content')}>afaasdf</div>
+            <div className={cx('box', 'terms')}>
+              <h2 className={cx('title')}>
+                <input
+                  id="terms-check-all"
+                  type="checkbox"
+                  className={cx('terms-check')}
+                  checked={!termsCheck.includes(false)}
+                  onChange={() =>
+                    setTermsCheck(
+                      termsCheck.map((_) =>
+                        termsCheck.includes(false) ? true : false
+                      )
+                    )
+                  }
+                />
+                <label htmlFor="terms-check-all">모든 약관 동의</label>
+              </h2>
+              <div className={cx('content')}>
+                <div className={cx('terms-container')}>
+                  <input
+                    id="terms-check-1"
+                    type="checkbox"
+                    className={cx('terms-check')}
+                    checked={termsCheck[0]}
+                    onChange={() => handleChangeTermsCheck(0)}
+                  />
+                  <label htmlFor="terms-check-1">
+                    {'[필수] 결제서비스 이용약관 동의'}
+                  </label>
+                </div>
+                <div className={cx('terms-container')}>
+                  <input
+                    id="terms-check-2"
+                    type="checkbox"
+                    className={cx('terms-check')}
+                    checked={termsCheck[1]}
+                    onChange={() => handleChangeTermsCheck(1)}
+                  />
+                  <label htmlFor="terms-check-2">
+                    {'[필수] 쇼핑몰 이용약관 동의'}
+                  </label>
+                </div>
+                <div className={cx('terms-container')}>
+                  <input
+                    id="terms-check-3"
+                    type="checkbox"
+                    className={cx('terms-check')}
+                    checked={termsCheck[2]}
+                    onChange={() => handleChangeTermsCheck(2)}
+                  />
+                  <label htmlFor="terms-check-3">
+                    {'[선택] 청약철회방침 동의'}
+                  </label>
+                </div>
+              </div>
             </div>
           </section>
         </div>

@@ -182,7 +182,9 @@ const CartPage = () => {
   }
 
   useEffect(() => {
-    Axios.post('/api/product/findProductsByOrders', { cart: user.storage.cart })
+    Axios.post('/api/product/findProductsByOrders', {
+      orders: user.storage.cart,
+    })
       .then((res) => setUserProducts(res.data.userProducts))
       .catch((error) => {
         console.log(error)
