@@ -26,14 +26,6 @@ const WishlistPage = () => {
   const [pageIndex, setPageIndex] = useState(1)
   const [checked, setChecked] = useState<boolean[]>([])
 
-  const handleCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (checked.includes(false)) {
-      event.target.checked && setChecked(checked.map((_) => true))
-    } else {
-      !event.target.checked && setChecked(checked.map((_) => false))
-    }
-  }
-
   const handleClickDelete = (pid: string) => {
     if (confirm('정말로 삭제하시겠습니까?')) {
       if (user.isLogin) {
@@ -113,7 +105,14 @@ const WishlistPage = () => {
                     id="all"
                     type="checkbox"
                     value="all"
-                    onChange={handleCheckAll}
+                    checked={!checked.includes(false)}
+                    onChange={() =>
+                      setChecked(
+                        checked.map((_) =>
+                          checked.includes(false) ? true : false
+                        )
+                      )
+                    }
                   />
                 </li>
                 <li className={cx('basic', 'media1')}></li>

@@ -20,6 +20,7 @@ import * as delivery from 'public/data/delivery'
 import CustomModal from '@components/utils/CustomModal/CustomModal'
 import SelectOption from './section/SelectOption'
 import { useRouter } from 'next/router'
+import { IUserProduct } from 'pages/api/product/findProductsByOrders'
 
 const displayNum = 10
 
@@ -51,18 +52,10 @@ const CartPage = () => {
     },
   })
   const [changeProduct, setChangeProduct] = useState<IProduct | null>(null)
-  const [products, setProducts] = useState<IProduct[]>([])
+  const [userProducts, setUserProducts] = useState<IUserProduct[]>([])
   const [pageIndex, setPageIndex] = useState(1)
   const [checked, setChecked] = useState<boolean[]>([])
   const [totalPrice, setTotalPrice] = useState(0)
-
-  const handleCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (checked.includes(false)) {
-      event.target.checked && setChecked(checked.map((_) => true))
-    } else {
-      !event.target.checked && setChecked(checked.map((_) => false))
-    }
-  }
 
   // Modal Prop Function
   const handleSelect = (newOption: any) => {
@@ -78,6 +71,15 @@ const CartPage = () => {
       }
       dispatch(updateStorageCart(update))
     }
+    setUserProducts(
+      userProducts.map((userProduct, index) => {
+        if (index === update.index) {
+          return { ...update.update, ...userProduct }
+        } else {
+          return userProduct
+        }
+      })
+    )
     setChangeProduct(null)
     alert('변경되었습니다.')
   }
@@ -96,6 +98,15 @@ const CartPage = () => {
       dispatch(userUpdateCart(body))
     }
     dispatch(updateStorageCart(body))
+    setUserProducts(
+      userProducts.map((userProduct, index) => {
+        if (index === update.index) {
+          return { ...update.update, ...userProduct }
+        } else {
+          return userProduct
+        }
+      })
+    )
   }
 
   const handleChangeOption = (index: number, product: IProduct) => {
@@ -112,15 +123,19 @@ const CartPage = () => {
         dispatch(userDeleteCart(dropIndex))
       }
       dispatch(deleteStorageCart(dropIndex))
+      setUserProducts(userProducts.filter((_, index) => index !== dropIndex[0]))
     }
   }
 
   const handleCheckedDelete = () => {
     if (confirm('정말로 삭제하시겠습니까?')) {
       const dropIndex: number[] = []
+      const newUserProducts: IUserProduct[] = []
       checked.forEach((check, index) => {
         if (check) {
           dropIndex.push((pageIndex - 1) * displayNum + index)
+        } else {
+          newUserProducts.push(userProducts[index])
         }
       })
 
@@ -128,6 +143,7 @@ const CartPage = () => {
         return
       }
 
+      setUserProducts(newUserProducts)
       if (user.isLogin) {
         dispatch(userDeleteCart(dropIndex))
       }
@@ -142,6 +158,8 @@ const CartPage = () => {
         dispatch(userDeleteCart(dropIndex))
       }
       dispatch(deleteStorageCart(dropIndex))
+
+      setUserProducts([])
     }
   }
 
@@ -164,10 +182,13 @@ const CartPage = () => {
   }
 
   useEffect(() => {
-    Axios.post('/api/product/findProductsByIds', {
-      ids: userCart.map((order) => order.pid),
-    }).then((res) => setProducts(res.data.products))
-  }, [])
+    Axios.post('/api/product/findProductsByOrders', { cart: user.storage.cart })
+      .then((res) => setUserProducts(res.data.userProducts))
+      .catch((error) => {
+        console.log(error)
+        alert('장바구니 정보를 불러오는데 실패했습니다.')
+      })
+  }, [userCart])
 
   useEffect(() => {
     const length = userCart.length
@@ -176,27 +197,22 @@ const CartPage = () => {
         ? setChecked(Array.from({ length: length % displayNum }, () => false))
         : setChecked(Array.from({ length: displayNum }, () => false))
     }
-  }, [products, pageIndex])
+  }, [userProducts, pageIndex])
 
   useEffect(() => {
     let total = 0
     if (!checked.includes(true)) {
-      userCart.forEach((order) => {
-        const product = products.find((p) => p._id === order.pid)
-        if (product) {
-          total += product.price * order.qty
-        }
+      userProducts.forEach((userProduct) => {
+        total += userProduct.product.price * userProduct.qty
       })
       setTotalPrice(total)
     } else {
       const startIndex = (pageIndex - 1) * displayNum
       checked.forEach((check, index) => {
         if (check) {
-          const order = userCart[startIndex + index]
-          const product = products.find((p) => p._id === order.pid)
-          if (product) {
-            total += product.price * order.qty
-          }
+          const userProduct = userProducts[startIndex + index]
+
+          total += userProduct.product.price * userProduct.qty
         }
       })
       setTotalPrice(total)
@@ -220,7 +236,14 @@ const CartPage = () => {
                   id="all"
                   type="checkbox"
                   value="all"
-                  onChange={handleCheckAll}
+                  checked={!checked.includes(false)}
+                  onChange={() =>
+                    setChecked(
+                      checked.map((_) =>
+                        checked.includes(false) ? true : false
+                      )
+                    )
+                  }
                 />
               </li>
               <li className={cx('basic', 'media3-n')}></li>
@@ -235,97 +258,69 @@ const CartPage = () => {
           </section>
           {/* 테이블 아이템 */}
           <section className={cx('product-container')}>
-            {userCart.map((order, index) => {
+            {userProducts.map((userProduct, index) => {
               if (
                 index + 1 <= pageIndex * displayNum &&
                 index + 1 > (pageIndex - 1) * displayNum
               ) {
-                const product = products.find((p) => p._id === order.pid)
                 return (
-                  product && (
-                    <div key={index} className={cx('product')}>
-                      <div className={cx('product-check', 'basic', 'media2-n')}>
-                        <input
-                          id={`p${index}`}
-                          type="checkbox"
-                          value={index}
-                          onChange={() =>
-                            setChecked(
-                              checked.map((check, i) =>
-                                i === index % displayNum ? !check : check
-                              )
+                  <div key={index} className={cx('product')}>
+                    <div className={cx('product-check', 'basic', 'media2-n')}>
+                      <input
+                        id={`p${index}`}
+                        type="checkbox"
+                        value={index}
+                        onChange={() =>
+                          setChecked(
+                            checked.map((check, i) =>
+                              i === index % displayNum ? !check : check
                             )
-                          }
-                          checked={
-                            checked.length ? checked[index % displayNum] : false
-                          }
+                          )
+                        }
+                        checked={
+                          checked.length ? checked[index % displayNum] : false
+                        }
+                      />
+                    </div>
+                    <div className={cx('product-img', 'basic')}>
+                      <Link href={`/product/detail/${userProduct.product._id}`}>
+                        <img
+                          src={userProduct.product.image}
+                          alt={userProduct.product.name}
                         />
-                      </div>
-                      <div className={cx('product-img', 'basic')}>
-                        <Link href={`/product/detail/${product._id}`}>
-                          <img src={product.image} alt={product.name} />
+                      </Link>
+                    </div>
+                    <div className={cx('product-info', 'epic')}>
+                      <span className={cx('product-name')}>
+                        <Link
+                          href={`/product/detail/${userProduct.product._id}`}
+                        >
+                          {userProduct.product.name}
                         </Link>
-                      </div>
-                      <div className={cx('product-info', 'epic')}>
-                        <span className={cx('product-name')}>
-                          <Link href={`/product/detail/${product._id}`}>
-                            {product.name}
-                          </Link>
-                        </span>
-                        <span className={cx('product-option')}>
-                          {`[옵션] ${order.option.color.colorName}/${order.option.size}`}
-                        </span>
-                        <span className={cx('product-option', 'media2-b')}>
-                          {`[수량] ${order.qty}`}
-                        </span>
-                        <span
-                          className={cx('product-option', 'media2-b')}
-                          style={{ marginBottom: '1rem' }}
-                        >
-                          {`[합계] ${order.qty * product.price}`}
-                        </span>
-                        <span
-                          className={cx('product-change')}
-                          onClick={() => handleChangeOption(index, product)}
-                        >
-                          옵션변경
-                        </span>
-                        <div className={cx('product-select', 'media3-b')}>
-                          <button
-                            onClick={() =>
-                              router.push({
-                                pathname: '/user/order',
-                                query: { cartIndex: index },
-                              })
-                            }
-                          >
-                            주문하기
-                          </button>
-                          <button onClick={() => handleClickDelete([index])}>
-                            삭제
-                          </button>
-                        </div>
-                      </div>
-                      <div className={cx('product-qty', 'basic', 'media2-n')}>
-                        <button onClick={() => handleChangeQty(index, -1)}>
-                          －
-                        </button>
-                        <span>{order.qty}</span>
-                        <button onClick={() => handleChangeQty(index, 1)}>
-                          +
-                        </button>
-                      </div>
-                      <div
-                        className={cx('product-delivery', 'basic', 'media1')}
+                      </span>
+                      <span className={cx('product-option')}>
+                        {`[옵션] ${userProduct.option.color.colorName}/${userProduct.option.size}`}
+                      </span>
+                      <span className={cx('product-option', 'media2-b')}>
+                        {`[수량] ${userProduct.qty}`}
+                      </span>
+                      <span
+                        className={cx('product-option', 'media2-b')}
+                        style={{ marginBottom: '1rem' }}
                       >
-                        {delivery.delivery.toLocaleString('ko-KR')}
-                      </div>
-                      <div className={cx('product-price', 'basic', 'media2-n')}>
-                        {product.price.toLocaleString('ko-KR')}
-                      </div>
-                      <div
-                        className={cx('product-select', 'basic', 'media3-n')}
+                        {`[합계] ${
+                          userProduct.qty * userProduct.product.price
+                        }`}
+                      </span>
+                      <span
+                        className={cx('product-change')}
+                        onClick={() =>
+                          handleChangeOption(index, userProduct.product)
+                        }
                       >
+                        옵션변경
+                      </span>
+                      <div className={cx('product-select', 'media3-b')}>
                         <button
                           onClick={() =>
                             router.push({
@@ -341,7 +336,37 @@ const CartPage = () => {
                         </button>
                       </div>
                     </div>
-                  )
+                    <div className={cx('product-qty', 'basic', 'media2-n')}>
+                      <button onClick={() => handleChangeQty(index, -1)}>
+                        －
+                      </button>
+                      <span>{userProduct.qty}</span>
+                      <button onClick={() => handleChangeQty(index, 1)}>
+                        +
+                      </button>
+                    </div>
+                    <div className={cx('product-delivery', 'basic', 'media1')}>
+                      {delivery.delivery.toLocaleString('ko-KR')}
+                    </div>
+                    <div className={cx('product-price', 'basic', 'media2-n')}>
+                      {userProduct.product.price.toLocaleString('ko-KR')}
+                    </div>
+                    <div className={cx('product-select', 'basic', 'media3-n')}>
+                      <button
+                        onClick={() =>
+                          router.push({
+                            pathname: '/user/order',
+                            query: { cartIndex: index },
+                          })
+                        }
+                      >
+                        주문하기
+                      </button>
+                      <button onClick={() => handleClickDelete([index])}>
+                        삭제
+                      </button>
+                    </div>
+                  </div>
                 )
               }
             })}
@@ -362,7 +387,7 @@ const CartPage = () => {
               </section>
 
               <Pagination
-                itemNum={products.length}
+                itemNum={userProducts.length}
                 displayNum={displayNum}
                 onChange={setPageIndex}
               />
@@ -403,7 +428,7 @@ const CartPage = () => {
                   </button>
                   <button
                     className={cx('pay-btn', 'pay-btn-black')}
-                    onClick={() => router.push('/user/order')}
+                    onClick={() => router.push('/user/order?cartIndex=all')}
                   >
                     전체상품주문
                   </button>
