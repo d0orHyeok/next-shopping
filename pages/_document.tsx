@@ -28,6 +28,10 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Keania+One&display=swap"
             rel="stylesheet"
           />
+          <script
+            src="https://cdn.bootpay.co.kr/js/bootpay-3.3.1.min.js"
+            type="application/javascript"
+          ></script>
         </Head>
         <body>
           <Main />

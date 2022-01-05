@@ -15,13 +15,14 @@ import {
   IUserState,
   getStorageCart,
 } from '@redux/features/userSlice'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import DaumPostCodeModal from '@components/utils/DaumPostCodeModal/DaumPostCodeModal'
 import Axios from 'axios'
 import { IUserProduct } from 'pages/api/product/findProductsByOrders'
 import { IUserCart } from '@models/User'
 import OrderCard from './section/OrderCard'
 import * as delivery from 'public/data/delivery'
+import Payment from './section/Payment'
 
 const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
@@ -36,14 +37,19 @@ const StyledBadge = styled(Badge)(() => ({
 }))
 
 const OrderPage = () => {
+  const numberRegex = /[^0-9]/g
+
   const router = useRouter()
   const dispatch = useAppDispatch()
 
   const user: IUserState = useAppSelector(selectUser)
 
+  const orderInfoRef = useRef<HTMLDivElement>(null)
+  const addrInfoRef = useRef<HTMLDivElement>(null)
+
   const [open, setOpen] = useState(false)
   const [showTextarea, setShowTextarea] = useState(false)
-  const [isShow, setIsShow] = useState([true, true, false, true, true])
+  const [isShow, setIsShow] = useState([true, true, false, true])
   const [orderInfo, setOrderInfo] = useState({
     name: '',
     email: { email_id: '', email_domain: '' },
@@ -66,6 +72,18 @@ const OrderPage = () => {
   useEffect(() => {
     dispatch(getStorageCart())
   }, [])
+
+  useEffect(() => {
+    if (user.isLogin && user.userData) {
+      const email = user.userData.email.split('@')
+
+      setOrderInfo({
+        ...orderInfo,
+        name: user.userData.name,
+        email: { email_id: email[0], email_domain: email[1] },
+      })
+    }
+  }, [user])
 
   useEffect(() => {
     const { cartIndex } = router.query
@@ -119,6 +137,7 @@ const OrderPage = () => {
     const { id, name, value } = event.target
 
     if (id === name) {
+      event.currentTarget.style.borderColor = 'lightgray'
       setOrderInfo({ ...orderInfo, [name]: value })
     } else {
       if (name === 'email') {
@@ -127,10 +146,11 @@ const OrderPage = () => {
           [name]: { ...orderInfo.email, [id]: value },
         })
       } else {
-        setOrderInfo({
-          ...orderInfo,
-          [name]: { ...orderInfo.phone, [id]: value },
-        })
+        !numberRegex.test(value) &&
+          setOrderInfo({
+            ...orderInfo,
+            [name]: { ...orderInfo.phone, [id]: value },
+          })
       }
     }
   }
@@ -142,15 +162,19 @@ const OrderPage = () => {
       setAddrInfo({ ...addrInfo, [name]: value })
     } else {
       if (name === 'address') {
+        if (id === 'zonecode' && numberRegex.test(value)) {
+          return
+        }
         setAddrInfo({
           ...addrInfo,
           [name]: { ...addrInfo.address, [id]: value },
         })
       } else {
-        setAddrInfo({
-          ...addrInfo,
-          [name]: { ...addrInfo.phone, [id]: value },
-        })
+        !numberRegex.test(value) &&
+          setAddrInfo({
+            ...addrInfo,
+            [name]: { ...addrInfo.phone, [id]: value },
+          })
       }
     }
   }
@@ -229,6 +253,64 @@ const OrderPage = () => {
     })
   }
 
+  const checkPaymentData = () => {
+    if (
+      orderInfo.name === '' ||
+      orderInfo.email.email_id === '' ||
+      orderInfo.email.email_domain === '' ||
+      orderInfo.phone.phone1 === '' ||
+      orderInfo.phone.phone2 === '' ||
+      orderInfo.phone.phone3 === ''
+    ) {
+      orderInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return alert('주문자정보를 입력해주세요.')
+    }
+    if (
+      addrInfo.name === '' ||
+      addrInfo.address.zonecode === '' ||
+      addrInfo.address.baseAddress === '' ||
+      addrInfo.address.extraAddress === '' ||
+      addrInfo.phone.phone1 === '' ||
+      addrInfo.phone.phone2 === '' ||
+      addrInfo.phone.phone3 === ''
+    ) {
+      addrInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
+
+      return alert('배송정보를 입력해주세요.')
+    }
+    if (termsCheck[0] === false || termsCheck[1] === false) {
+      return alert('약관 동의가 필요합니다.')
+    }
+
+    const nameRegex = /[^ㄱ-ㅎ|가-힣|a-z|A-Z|\s]/g
+    const phoneRegex = /^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$/
+    // eslint-disable-next-line no-useless-escape
+    const emailRegex = /^[a-z0-9\.\-_]+@([a-z0-9\-]+\.)+[a-z]{2,6}$/
+    // eslint-disable-next-line no-useless-escape
+    const addressRegex = /^[가-힣a-zA-Z\s0-9\-\_\(\)]+$/
+
+    const name = addrInfo.name.trim()
+    const phone = `${addrInfo.phone.phone1}-${addrInfo.phone.phone2}-${addrInfo.phone.phone3}`
+    const email = `${orderInfo.email.email_id.trim()}@${orderInfo.email.email_domain.trim()}`
+    const address = `${addrInfo.address.zonecode.trim()} ${addrInfo.address.baseAddress.trim()} ${addrInfo.address.extraAddress.trim()}`
+
+    console.log(nameRegex.test(name))
+    if (nameRegex.test(name)) {
+      return alert('이름을 올바르게 입력해주세요.')
+    }
+    if (!phoneRegex.test(phone)) {
+      return alert('잘못된 휴대전화번호 입니다.')
+    }
+    if (!emailRegex.test(email)) {
+      return alert('잘못된 이메일정보 입니다.')
+    }
+    if (!addressRegex.test(address)) {
+      return alert('주소를 바르게 입력해 주세요')
+    }
+
+    return { name, phone, email, address }
+  }
+
   return (
     <>
       <DaumPostCodeModal
@@ -262,7 +344,7 @@ const OrderPage = () => {
           <section className={cx('main')}>
             <h1>주문/결제</h1>
             {/* 주문자 정보 */}
-            <div className={cx('box')}>
+            <div ref={orderInfoRef} className={cx('box')}>
               <h2 className={cx('title')}>
                 주문자정보
                 {drawShowButton(0)}
@@ -307,6 +389,7 @@ const OrderPage = () => {
                       type="text"
                       id="phone1"
                       name="phone"
+                      maxLength={3}
                       value={orderInfo.phone.phone1}
                       onChange={handleOrderInfoChange}
                     />
@@ -315,6 +398,7 @@ const OrderPage = () => {
                       type="text"
                       id="phone2"
                       name="phone"
+                      maxLength={4}
                       value={orderInfo.phone.phone2}
                       onChange={handleOrderInfoChange}
                     />
@@ -323,6 +407,7 @@ const OrderPage = () => {
                       type="text"
                       id="phone3"
                       name="phone"
+                      maxLength={4}
                       value={orderInfo.phone.phone3}
                       onChange={handleOrderInfoChange}
                     />
@@ -332,7 +417,7 @@ const OrderPage = () => {
             </div>
 
             {/* 배송방법 */}
-            <div className={cx('box')}>
+            <div ref={addrInfoRef} className={cx('box')}>
               <h2 className={cx('title')}>
                 배송방법
                 {drawShowButton(1)}
@@ -396,6 +481,7 @@ const OrderPage = () => {
                             placeholder="우편번호"
                             id="zonecode"
                             name="address"
+                            maxLength={5}
                             value={addrInfo.address.zonecode}
                             onChange={handleAddrInfoChange}
                           />
@@ -525,15 +611,17 @@ const OrderPage = () => {
                   <ul>
                     <li>
                       <span>주문금액</span>
-                      <span>{paymentPrice.totalPrice}</span>
+                      <span>
+                        {paymentPrice.totalPrice.toLocaleString('ko-KR')}
+                      </span>
                     </li>
                     <li>
                       <span>배송비</span>
                       <span>
-                        {`+${
+                        {`+${(
                           paymentPrice.deliveryPrice +
                           paymentPrice.deliveryAddPrice
-                        }`}
+                        ).toLocaleString('ko-KR')}`}
                       </span>
                     </li>
                   </ul>
@@ -541,21 +629,14 @@ const OrderPage = () => {
                 <div className={cx('price-resultbox')}>
                   <h3>결제금액</h3>
                   <span>
-                    {paymentPrice.deliveryPrice +
+                    {(
+                      paymentPrice.deliveryPrice +
                       paymentPrice.totalPrice +
-                      paymentPrice.deliveryAddPrice}
+                      paymentPrice.deliveryAddPrice
+                    ).toLocaleString('ko-KR')}
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* 결제수단 */}
-            <div className={cx('box')}>
-              <h2 className={cx('title')}>
-                결제수단
-                {drawShowButton(4)}
-              </h2>
-              <div className={cx('content', !isShow[4] && 'hide')}>afaasdf</div>
             </div>
 
             {/* 약관 */}
@@ -614,6 +695,18 @@ const OrderPage = () => {
                   </label>
                 </div>
               </div>
+            </div>
+            <div className={cx('paymentBox')}>
+              <Payment
+                className={cx('payBtn')}
+                orders={userProducts}
+                totalPrice={
+                  paymentPrice.totalPrice +
+                  paymentPrice.deliveryPrice +
+                  paymentPrice.deliveryAddPrice
+                }
+                passData={checkPaymentData}
+              />
             </div>
           </section>
         </div>

@@ -278,6 +278,27 @@
   cursor: pointer;
 }
 
+/* 결제버튼 영역 */
+.paymentBox {
+  width: 100%;
+  background-color: inherit;
+  padding: 1rem;
+}
+
+.paymentBox .payBtn {
+  background-color: rgb(92, 92, 190);
+  color: white;
+  width: 100%;
+  font-size: 1.5rem;
+  padding: 1rem 0;
+  cursor: pointer;
+  border: 0.5px solid gray;
+}
+
+.paymentBox .payBtn:hover {
+  border-color: black;
+}
+
 @media only screen and (max-width: 480px) {
   .orderInfo .inputBox input {
     padding: 0.5rem 2px;
