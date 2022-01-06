@@ -1,7 +1,7 @@
 import { RootState } from '@redux/store'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import Axios from 'axios'
-import { backendUrl } from 'config/config'
+import { backendUrl } from 'appConfig/config'
 import { IProduct } from '@models/Product'
 
 Axios.defaults.baseURL = backendUrl

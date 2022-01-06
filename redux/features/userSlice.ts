@@ -4,7 +4,7 @@ import { IAuthUserData } from './../../pages/api/users/auth'
 import { RootState } from '@redux/store'
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import Axios from 'axios'
-import { backendUrl } from 'config/config'
+import { backendUrl } from 'appConfig/config'
 import router from 'next/router'
 
 Axios.defaults.baseURL = backendUrl

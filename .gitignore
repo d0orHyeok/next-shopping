@@ -39,3 +39,5 @@ husky.json
 
 # 업로드
 /public/images
+
+/appConfig

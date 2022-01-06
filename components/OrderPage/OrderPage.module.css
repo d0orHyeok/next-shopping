@@ -103,6 +103,7 @@
 }
 
 /* 주문자정보 */
+.notLogin .infoBox,
 .address-info .infoBox,
 .orderInfo .infoBox {
   margin-bottom: 1rem;
@@ -110,17 +111,20 @@
   align-items: center;
 }
 
+.notLogin .infoBox:last-child,
 .address-info .infoBox:last-child,
 .orderInfo .infoBox:last-child {
   margin: 0;
 }
 
+.notLogin .infoBox .label,
 .address-info .infoBox .label,
 .orderInfo .infoBox .label {
   width: 80px;
   flex-shrink: 0;
 }
 
+.notLogin .inputBox,
 .address-info .inputBox,
 .orderInfo .inputBox {
   display: flex;
@@ -130,6 +134,7 @@
   margin: 0 auto;
 }
 
+.notLogin .inputBox input,
 .address-info .inputBox input,
 .orderInfo .inputBox input {
   border: 1px solid lightgray;
@@ -140,11 +145,13 @@
   box-sizing: border-box;
 }
 
+.notLogin .inputBox span,
 .address-info .inputBox span,
 .orderInfo .inputBox span {
   margin: 0 3px;
 }
 
+.notLogin input:focus,
 .address-info input:focus,
 .orderInfo input:focus {
   outline: none;

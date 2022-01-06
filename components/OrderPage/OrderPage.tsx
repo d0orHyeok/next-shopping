@@ -46,6 +46,7 @@ const OrderPage = () => {
 
   const orderInfoRef = useRef<HTMLDivElement>(null)
   const addrInfoRef = useRef<HTMLDivElement>(null)
+  const passwordRef = useRef<HTMLDivElement>(null)
 
   const [open, setOpen] = useState(false)
   const [showTextarea, setShowTextarea] = useState(false)
@@ -61,6 +62,7 @@ const OrderPage = () => {
     phone: { phone1: '', phone2: '', phone3: '' },
     message: '',
   })
+  const [radioCheck, setRadioCheck] = useState([true, false])
   const [termsCheck, setTermsCheck] = useState([false, false, false])
   const [userProducts, setUserProducts] = useState<IUserProduct[]>([])
   const [paymentPrice, setPaymentPrice] = useState({
@@ -68,6 +70,7 @@ const OrderPage = () => {
     deliveryPrice: delivery.delivery,
     deliveryAddPrice: 0,
   })
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
     dispatch(getStorageCart())
@@ -137,8 +140,10 @@ const OrderPage = () => {
     const { id, name, value } = event.target
 
     if (id === name) {
-      event.currentTarget.style.borderColor = 'lightgray'
       setOrderInfo({ ...orderInfo, [name]: value })
+      if (radioCheck[0]) {
+        setAddrInfo({ ...addrInfo, [name]: value })
+      }
     } else {
       if (name === 'email') {
         setOrderInfo({
@@ -146,11 +151,18 @@ const OrderPage = () => {
           [name]: { ...orderInfo.email, [id]: value },
         })
       } else {
-        !numberRegex.test(value) &&
+        if (!numberRegex.test(value)) {
           setOrderInfo({
             ...orderInfo,
             [name]: { ...orderInfo.phone, [id]: value },
           })
+          if (radioCheck[0]) {
+            setAddrInfo({
+              ...addrInfo,
+              [name]: { ...addrInfo.phone, [id]: value },
+            })
+          }
+        }
       }
     }
   }
@@ -204,12 +216,14 @@ const OrderPage = () => {
     const { id } = event.target
 
     if (id === 'addr-new') {
+      setRadioCheck([true, false])
       setAddrInfo({
         ...addrInfo,
         name: '',
         phone: { phone1: '', phone2: '', phone3: '' },
       })
     } else {
+      setRadioCheck([false, true])
       setAddrInfo({ ...addrInfo, name: orderInfo.name, phone: orderInfo.phone })
     }
   }
@@ -253,6 +267,13 @@ const OrderPage = () => {
     })
   }
 
+  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+
+    const korRegex = /[ㄱ-ㅎ|가-힣]/g
+    !korRegex.test(value) && setPassword(value)
+  }
+
   const checkPaymentData = () => {
     if (
       orderInfo.name === '' ||
@@ -269,7 +290,6 @@ const OrderPage = () => {
       addrInfo.name === '' ||
       addrInfo.address.zonecode === '' ||
       addrInfo.address.baseAddress === '' ||
-      addrInfo.address.extraAddress === '' ||
       addrInfo.phone.phone1 === '' ||
       addrInfo.phone.phone2 === '' ||
       addrInfo.phone.phone3 === ''
@@ -280,6 +300,10 @@ const OrderPage = () => {
     }
     if (termsCheck[0] === false || termsCheck[1] === false) {
       return alert('약관 동의가 필요합니다.')
+    }
+    if (!user.isLogin && !/^[a-zA-Z0-9]{4,15}$/.test(password)) {
+      passwordRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return alert('바르지 않은 비회원 주문조회 비밀번호 입니다.')
     }
 
     const nameRegex = /[^ㄱ-ㅎ|가-힣|a-z|A-Z|\s]/g
@@ -294,7 +318,6 @@ const OrderPage = () => {
     const email = `${orderInfo.email.email_id.trim()}@${orderInfo.email.email_domain.trim()}`
     const address = `${addrInfo.address.zonecode.trim()} ${addrInfo.address.baseAddress.trim()} ${addrInfo.address.extraAddress.trim()}`
 
-    console.log(nameRegex.test(name))
     if (nameRegex.test(name)) {
       return alert('이름을 올바르게 입력해주세요.')
     }
@@ -332,12 +355,14 @@ const OrderPage = () => {
                   <ShoppingBagOutlinedIcon />
                 </StyledBadge>
               </button>
-              <button
-                style={{ marginLeft: '1rem' }}
-                onClick={() => router.push('/user/mypage')}
-              >
-                <PersonOutlineIcon sx={{ transform: 'translateY(4px)' }} />
-              </button>
+              {user.isLogin && (
+                <button
+                  style={{ marginLeft: '1rem' }}
+                  onClick={() => router.push('/user/mypage')}
+                >
+                  <PersonOutlineIcon sx={{ transform: 'translateY(4px)' }} />
+                </button>
+              )}
             </div>
           </section>
           {/* 주문 내용 */}
@@ -445,6 +470,7 @@ const OrderPage = () => {
                           id="addr-user"
                           name="addr"
                           type="radio"
+                          checked={radioCheck[0]}
                           onChange={handleAddrRadioChange}
                         />
                         <label htmlFor="addr-user">주문자 정보와 동일</label>
@@ -454,6 +480,7 @@ const OrderPage = () => {
                           id="addr-new"
                           name="addr"
                           type="radio"
+                          checked={radioCheck[1]}
                           onChange={handleAddrRadioChange}
                         />
                         <label htmlFor="addr-new">새로운 배송지</label>
@@ -545,6 +572,7 @@ const OrderPage = () => {
                   'addr-select',
                   !isShow[1] && 'hide'
                 )}
+                style={{ backgroundColor: 'whitesmoke' }}
               >
                 <select
                   name="delivery_message"
@@ -579,6 +607,27 @@ const OrderPage = () => {
                   }
                 ></textarea>
               </div>
+              {!user.isLogin && (
+                <>
+                  <h2 className={cx('title', 'topline')}>
+                    비회원 주문조회 비밀번호
+                  </h2>
+                  <div ref={passwordRef} className={cx('content', 'notLogin')}>
+                    <div className={cx('infoBox')}>
+                      <span className={cx('label')}>비밀번호 *</span>
+                      <div className={cx('inputBox')}>
+                        <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          value={password}
+                          onChange={handleChangePassword}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* 주문상품정보 */}
@@ -696,6 +745,7 @@ const OrderPage = () => {
                 </div>
               </div>
             </div>
+            {/* 결제버튼 */}
             <div className={cx('paymentBox')}>
               <Payment
                 className={cx('payBtn')}

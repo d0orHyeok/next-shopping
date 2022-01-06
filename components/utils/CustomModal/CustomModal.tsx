@@ -10,6 +10,7 @@ interface ICustomModalProps {
   cancelText: string
   open: boolean
   onClose: () => void
+  onCancel?: () => void
   onSubmit?: () => void
 }
 
@@ -20,6 +21,7 @@ const CustomModal = ({
   title,
   open,
   onClose,
+  onCancel,
   onSubmit,
 }: ICustomModalProps) => {
   return (
@@ -37,7 +39,10 @@ const CustomModal = ({
             <button className={styles.moveBtn} onClick={onSubmit}>
               {submitText}
             </button>
-            <button className={styles.closeBtn} onClick={onClose}>
+            <button
+              className={styles.closeBtn}
+              onClick={onCancel ? onCancel : onClose}
+            >
               {cancelText}
             </button>
           </div>

@@ -67,14 +67,16 @@
   border-radius: 20px;
   font-size: 16px;
   line-height: 16px;
+  transition: ease 0.2s all;
+  cursor: pointer;
 }
 
 .userBtn:first-child {
   margin-right: 1rem;
 }
 
-.userBtn:hover {
-  cursor: pointer;
+.user .userBtn-wrapper .userBtn:hover {
+  border-color: black;
 }
 
 .registerBtn {
@@ -82,17 +84,9 @@
   color: white;
 }
 
-.registerBtn:hover {
-  opacity: 0.75;
-}
-
 .loginBtn {
   color: black;
   background-color: white;
-}
-
-.loginBtn:hover {
-  background-color: var(--preHeader-background);
 }
 
 /* Member Group */

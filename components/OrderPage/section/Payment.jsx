@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import config from 'appConfig/config'
 
 const Payment = (props) => {
   const { orders, totalPrice, style, className, passData } = props
@@ -12,9 +13,9 @@ const Payment = (props) => {
 
     window.BootPay.request({
       price: totalPrice.toString(), //실제 결제되는 가격
-      application_id: '61d52adae38c3000287b771e',
+      application_id: config.pay_app_id,
       name: orders.length === 1 ? orders[0].product.name : 'PIIC 상품 결제', //결제창에서 보여질 이름
-      pg: 'kcp',
+      pg: 'danal',
       method: 'card', //결제수단, 입력하지 않으면 결제수단 선택부터 화면이 시작합니다.
       show_agree_window: 0, // 부트페이 정보 동의 창 보이기 여부
 
@@ -35,7 +36,7 @@ const Payment = (props) => {
         addr: data.address,
         phone: data.phone,
       },
-      order_id: `${Math.random().toString(36).substring(2, 13)}-${Date.now()}`, //고유 주문번호로, 생성하신 값을 보내주셔야 합니다.
+      order_id: `${Math.random().toString(36).substring(2, 13)}_${Date.now()}`, //고유 주문번호로, 생성하신 값을 보내주셔야 합니다.
       params: {},
       account_expire_at: dayjs(Date.now()).add(1, 'day').format('YYYY-MM-DD'), // 가상계좌 입금기간 제한 ( yyyy-mm-dd 포멧으로 입력해주세요. 가상계좌만 적용됩니다. )
       extra: {
@@ -73,9 +74,8 @@ const Payment = (props) => {
           BootPay.removePaymentWindow() // 조건이 맞지 않으면 결제 창을 닫고 결제를 승인하지 않는다.
         }
       })
-      .close(function (data) {
+      .close(function () {
         // 결제창이 닫힐때 수행됩니다. (성공,실패,취소에 상관없이 모두 수행됨)
-        console.log('--- 결제 창 닫힘 ---', data)
       })
       .done(function (data) {
         //결제가 정상적으로 완료되면 수행됩니다
