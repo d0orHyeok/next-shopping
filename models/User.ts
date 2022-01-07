@@ -17,14 +17,6 @@ export interface IUserCart {
   option: IOption
 }
 
-export interface IUserHistory extends IUserCart {
-  dateOfPurchase: number
-  orderState: {
-    state: string
-    waybill: number
-  }
-}
-
 export interface IUser {
   name: string
   email: string
@@ -33,7 +25,6 @@ export interface IUser {
   image: string
   likes: string[]
   cart: IUserCart[]
-  history: IUserHistory[]
   token: string
   tokenExp: number
 }
@@ -86,25 +77,6 @@ const userSchema: Schema = new Schema(
             colorHex: { type: String },
           },
           size: { type: String },
-        },
-        default: [],
-      },
-    ],
-    history: [
-      {
-        pid: { type: Schema.Types.ObjectId, ref: 'Product' },
-        qty: { type: Number },
-        option: {
-          color: {
-            colorName: { type: String },
-            colorHex: { type: String },
-          },
-          size: { type: String },
-        },
-        dateOfPurchase: { type: Number },
-        orderState: {
-          state: { type: String },
-          waybill: { type: Number },
         },
         default: [],
       },

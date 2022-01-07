@@ -22,11 +22,11 @@ export default function AuthCheck(
         const res = await dispatch(userAuth()).unwrap()
         if (adminRoute && !res.isAdmin) {
           // admin이 아닌데 adminRoute에 접근한 경우
-          router.push('/')
+          router.back()
         } else {
           if (option === false) {
             // 로그인 했을때 접근할 수 없는 경우 (ex: 로그인, 회원가입 페이지)
-            router.push('/')
+            router.back()
           } else {
             setIsLoading(false)
           }
@@ -34,7 +34,7 @@ export default function AuthCheck(
       } catch (err) {
         if (option) {
           // 로그인 필요
-          router.push('/')
+          router.back()
         } else {
           setIsLoading(false)
         }

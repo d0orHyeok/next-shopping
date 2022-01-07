@@ -1,18 +1,27 @@
 import dayjs from 'dayjs'
 import config from 'appConfig/config'
+import Axios from 'axios'
 
 const Payment = (props) => {
-  const { orders, totalPrice, style, className, passData } = props
+  const { orders, totalPrice, style, className, passData, onSuccess } = props
 
   function requestPayment() {
-    const data = passData ? passData() : null
+    const orderUserData = passData ? passData() : null
 
-    if (!data) {
+    if (!orderUserData) {
+      return
+    }
+
+    if (
+      !confirm(
+        '테스트결제입니다.\n실제로 결제가 진행되므로 100원으로 결제를 진행합니다.\n결제완료 후 23:30~00:00 사이에 결제취소가 진행됩니다. 빠르게 취소를 원하시는 경우 직접 결제취소를 진행하셔야 합니다.\n\n결제진행을 계속하시려면 확인을 클릭해주세요.'
+      )
+    ) {
       return
     }
 
     window.BootPay.request({
-      price: totalPrice.toString(), //실제 결제되는 가격
+      price: '100',
       application_id: config.pay_app_id,
       name: orders.length === 1 ? orders[0].product.name : 'PIIC 상품 결제', //결제창에서 보여질 이름
       pg: 'danal',
@@ -31,12 +40,12 @@ const Payment = (props) => {
         }
       }),
       user_info: {
-        username: data.name,
-        email: data.email,
-        addr: data.address,
-        phone: data.phone,
+        username: orderUserData.name,
+        email: orderUserData.email,
+        addr: orderUserData.address,
+        phone: orderUserData.phone,
       },
-      order_id: `${Math.random().toString(36).substring(2, 13)}_${Date.now()}`, //고유 주문번호로, 생성하신 값을 보내주셔야 합니다.
+      order_id: `${orderUserData.uid.substring(0, 10)}_${Date.now()}`, //고유 주문번호로, 생성하신 값을 보내주셔야 합니다.
       params: {},
       account_expire_at: dayjs(Date.now()).add(1, 'day').format('YYYY-MM-DD'), // 가상계좌 입금기간 제한 ( yyyy-mm-dd 포멧으로 입력해주세요. 가상계좌만 적용됩니다. )
       extra: {
@@ -49,12 +58,12 @@ const Payment = (props) => {
     })
       .error(function (data) {
         //결제 진행시 에러가 발생하면 수행됩니다.
-        console.log('--- 결제 error ---', data)
+        console.log('--- 결제 error ---')
         alert(`오류가 발생하였습니다.\n\n오류: ${data.message}`)
       })
       .cancel(function (data) {
         //결제가 취소되면 수행됩니다.
-        console.log('--- 결제 cancel ---', data)
+        console.log('--- 결제 cancel ---')
         alert(`결제가 취소되었습니다.\n\n${data.message}`)
       })
       .ready(function (data) {
@@ -64,7 +73,6 @@ const Payment = (props) => {
       .confirm(function (data) {
         //결제가 실행되기 전에 수행되며, 주로 재고를 확인하는 로직이 들어갑니다.
         //주의 - 카드 수기결제일 경우 이 부분이 실행되지 않습니다.
-        console.log('--- 결제 수행 전 ---', data)
         let enable = true // 재고 수량 관리 로직 혹은 다른 처리
         if (enable) {
           // eslint-disable-next-line no-undef
@@ -80,7 +88,14 @@ const Payment = (props) => {
       .done(function (data) {
         //결제가 정상적으로 완료되면 수행됩니다
         //비즈니스 로직을 수행하기 전에 결제 유효성 검증을 하시길 추천합니다.
-        console.log('--- 결제 완료 ---', data)
+        console.log('--- 결제 완료 ---')
+        Axios.post('/api/payment/validation', {
+          data,
+          orders,
+        }).then((res) => {
+          onSuccess && onSuccess(res.data.order_id)
+          console.log('주문번호', res.data.order_id)
+        })
       })
   }
 

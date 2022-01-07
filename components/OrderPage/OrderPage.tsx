@@ -46,7 +46,6 @@ const OrderPage = () => {
 
   const orderInfoRef = useRef<HTMLDivElement>(null)
   const addrInfoRef = useRef<HTMLDivElement>(null)
-  const passwordRef = useRef<HTMLDivElement>(null)
 
   const [open, setOpen] = useState(false)
   const [showTextarea, setShowTextarea] = useState(false)
@@ -70,7 +69,6 @@ const OrderPage = () => {
     deliveryPrice: delivery.delivery,
     deliveryAddPrice: 0,
   })
-  const [password, setPassword] = useState('')
 
   useEffect(() => {
     dispatch(getStorageCart())
@@ -79,7 +77,6 @@ const OrderPage = () => {
   useEffect(() => {
     if (user.isLogin && user.userData) {
       const email = user.userData.email.split('@')
-
       setOrderInfo({
         ...orderInfo,
         name: user.userData.name,
@@ -267,13 +264,6 @@ const OrderPage = () => {
     })
   }
 
-  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-
-    const korRegex = /[ㄱ-ㅎ|가-힣]/g
-    !korRegex.test(value) && setPassword(value)
-  }
-
   const checkPaymentData = () => {
     if (
       orderInfo.name === '' ||
@@ -301,10 +291,6 @@ const OrderPage = () => {
     if (termsCheck[0] === false || termsCheck[1] === false) {
       return alert('약관 동의가 필요합니다.')
     }
-    if (!user.isLogin && !/^[a-zA-Z0-9]{4,15}$/.test(password)) {
-      passwordRef.current?.scrollIntoView({ behavior: 'smooth' })
-      return alert('바르지 않은 비회원 주문조회 비밀번호 입니다.')
-    }
 
     const nameRegex = /[^ㄱ-ㅎ|가-힣|a-z|A-Z|\s]/g
     const phoneRegex = /^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$/
@@ -331,7 +317,20 @@ const OrderPage = () => {
       return alert('주소를 바르게 입력해 주세요')
     }
 
-    return { name, phone, email, address }
+    return {
+      name,
+      phone,
+      email,
+      address,
+      uid: user.userData?._id,
+    }
+  }
+
+  const onPaymentSuccess = (order_id: string) => {
+    router.push({
+      pathname: '/user/order/result',
+      query: { order_id, result: '성공' },
+    })
   }
 
   return (
@@ -607,27 +606,6 @@ const OrderPage = () => {
                   }
                 ></textarea>
               </div>
-              {!user.isLogin && (
-                <>
-                  <h2 className={cx('title', 'topline')}>
-                    비회원 주문조회 비밀번호
-                  </h2>
-                  <div ref={passwordRef} className={cx('content', 'notLogin')}>
-                    <div className={cx('infoBox')}>
-                      <span className={cx('label')}>비밀번호 *</span>
-                      <div className={cx('inputBox')}>
-                        <input
-                          type="password"
-                          id="password"
-                          name="password"
-                          value={password}
-                          onChange={handleChangePassword}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
             </div>
 
             {/* 주문상품정보 */}
@@ -756,6 +734,7 @@ const OrderPage = () => {
                   paymentPrice.deliveryAddPrice
                 }
                 passData={checkPaymentData}
+                onSuccess={onPaymentSuccess}
               />
             </div>
           </section>

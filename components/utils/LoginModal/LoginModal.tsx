@@ -50,6 +50,7 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
       .unwrap()
       .then(() => {
         dispatch(userAuth())
+        onClose()
       })
       .catch((err) => {
         err.message ? alert(err.message) : alert('로그인에 실패했습니다.')
