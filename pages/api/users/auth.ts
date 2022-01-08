@@ -14,6 +14,7 @@ const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 handler.use(auth)
 handler.post<IAuthExtendedRequest>((req, res) => {
+  let userData: IUserDocument = req.user
   if (req.user.tokenExp < dayjs(Date.now()).add(10, 'minute').valueOf()) {
     req.user.generateToken((err, user: IUserDocument) => {
       if (err) {
@@ -23,31 +24,20 @@ handler.post<IAuthExtendedRequest>((req, res) => {
         'Set-Cookie',
         `w_auth=${user.token}; Max-Age=3600; Path=/; HttpOnly; Secure; SameSite=None`
       )
-      res.status(200).json({
-        _id: user._id,
-        isAdmin: user.role === 0 ? false : true,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        image: user.image,
-        likes: user.likes,
-        cart: user.cart,
-        tokenExp: user.tokenExp,
-      })
-    })
-  } else {
-    res.status(200).json({
-      _id: req.user._id,
-      isAdmin: req.user.role === 0 ? false : true,
-      email: req.user.email,
-      name: req.user.name,
-      role: req.user.role,
-      image: req.user.image,
-      likes: req.user.likes,
-      cart: req.user.cart,
-      tokenExp: req.user.tokenExp,
+      userData = user
     })
   }
+  res.status(200).json({
+    _id: userData._id,
+    isAdmin: userData.role === 0 ? false : true,
+    email: userData.email,
+    name: userData.name,
+    role: userData.role,
+    image: userData.image,
+    likes: userData.likes,
+    cart: userData.cart,
+    tokenExp: userData.tokenExp,
+  })
 })
 
 export default handler
