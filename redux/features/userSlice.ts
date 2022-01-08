@@ -29,41 +29,7 @@ export const userAuth = createAsyncThunk(
         ? await Axios.post('/api/users/auth')
         : await Axios.post('/api/users/auth', token)
 
-      const { likes, cart } = response.data as IAuthUserData
-
-      let newLikes = likes
-      const getLikes: string[] = getStorageData('piic_likes')
-      if (getLikes.length) {
-        const pid = getLikes.filter((pid) => !likes.includes(pid))
-        if (pid.length) {
-          const likeRes = await Axios.post('/api/users/addLike', { pid })
-          newLikes = likeRes.data.userLikes
-        }
-      }
-
-      let newCart = cart
-      const getCart: IUserCart[] = getStorageData('piic_cart')
-      if (getCart.length) {
-        const orders = getCart.filter(
-          (order) =>
-            cart.find(
-              (uOrder) =>
-                order.pid === uOrder.pid &&
-                JSON.stringify(order.option) === JSON.stringify(uOrder.option)
-            ) === undefined
-        )
-        if (orders.length) {
-          const cartRes = await Axios.post('/api/users/addCart', { orders })
-          newCart = cartRes.data.userCart
-        }
-      }
-
-      localStorage.removeItem('piic_likes')
-      localStorage.removeItem('piic_cart')
-
-      const userData = { ...response.data, likes: newLikes, cart: newCart }
-
-      return userData
+      return response.data
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
@@ -89,6 +55,27 @@ export const userLogout = createAsyncThunk(`userLogout`, async () => {
   const response = await Axios.get('/api/users/logout')
   router.push('/')
   return response.data
+})
+
+export const getLikesCart = createAsyncThunk(`getLikesCart`, async () => {
+  const storageLikes: string[] = getStorageData('piic_likes')
+  const storageCart: IUserCart[] = getStorageData('piic_cart')
+  let data = { likes: storageLikes, cart: storageCart }
+  try {
+    if (storageLikes || storageCart) {
+      const response = await Axios.post('/api/users/mergeStorageData', {
+        storageLikes,
+        storageCart,
+      })
+      data = response.data.mergeData
+
+      localStorage.removeItem('piic_likes')
+      localStorage.removeItem('piic_cart')
+    }
+    return data
+  } catch (err) {
+    return data
+  }
 })
 
 export const userAddLike = createAsyncThunk(
@@ -186,15 +173,6 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // 위시리스트 가져오기
-    getStorageLikes(state) {
-      if (state.isLogin && state.userData) {
-        state.storage.likes = state.userData.likes
-      } else {
-        const getLikes: string[] = getStorageData('piic_likes')
-        state.storage.likes = getLikes
-      }
-    },
     // 위시리스트 업데이트
     addStorageLikes(state, action: PayloadAction<string[]>) {
       const newLikes = Array.from(
@@ -209,15 +187,6 @@ export const userSlice = createSlice({
       )
       updateStorageData('piic_likes', newLikes)
       state.storage.likes = newLikes
-    },
-    // 장바구니 가져오기
-    getStorageCart(state) {
-      if (state.isLogin && state.userData) {
-        state.storage.cart = state.userData.cart
-      } else {
-        const getCart: IUserCart[] = getStorageData('piic_cart')
-        state.storage.cart = getCart
-      }
     },
     // 장바구니 업데이트
     addStorageCart(state, action: PayloadAction<IUserCart[]>) {
@@ -301,14 +270,18 @@ export const userSlice = createSlice({
         state.storage.cart = action.payload
       }
     },
+    [getLikesCart.fulfilled.type]: (state, action) => {
+      state.storage = action.payload
+    },
+    [getLikesCart.rejected.type]: (state, action) => {
+      state.storage = action.payload
+    },
   },
 })
 
 export const {
-  getStorageLikes,
   addStorageLikes,
   deleteStorageLikes,
-  getStorageCart,
   addStorageCart,
   updateStorageCart,
   deleteStorageCart,

@@ -73,10 +73,12 @@ const WishlistPage = () => {
   }
 
   useEffect(() => {
-    Axios.post('/api/product/findProductsByIds', {
-      ids: user.storage.likes,
-    }).then((res) => setProducts(res.data.products))
-  }, [])
+    if (user.storage.likes.length && !products.length) {
+      Axios.post('/api/product/findProductsByIds', {
+        ids: user.storage.likes,
+      }).then((res) => setProducts(res.data.products))
+    }
+  }, [user.storage.likes])
 
   useEffect(() => {
     const length = products.length

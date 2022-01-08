@@ -15,12 +15,7 @@ import Link from 'next/link'
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/dist/client/router'
 import { useAppSelector, useAppDispatch } from '@redux/hooks'
-import {
-  IUserState,
-  selectUser,
-  getStorageLikes,
-  getStorageCart,
-} from '@redux/features/userSlice'
+import { IUserState, selectUser, getLikesCart } from '@redux/features/userSlice'
 
 type Anchor = 'menu' | 'search' | 'side'
 
@@ -72,8 +67,7 @@ const Navbar = ({
       search: false,
       side: false,
     })
-    dispatch(getStorageLikes())
-    dispatch(getStorageCart())
+    dispatch(getLikesCart())
   }, [router])
 
   const toggleDrawer =

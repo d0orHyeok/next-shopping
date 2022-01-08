@@ -95,7 +95,6 @@ const CartPage = () => {
       index,
       update: { ...userCart[index], qty: updateQty },
     }
-    console.log('----', body)
     if (user.isLogin) {
       dispatch(userUpdateCart(body))
     } else {
@@ -188,15 +187,17 @@ const CartPage = () => {
   }
 
   useEffect(() => {
-    Axios.post('/api/product/findProductsByOrders', {
-      orders: user.storage.cart,
-    })
-      .then((res) => setUserProducts(res.data.userProducts))
-      .catch((error) => {
-        console.log(error)
-        alert('장바구니 정보를 불러오는데 실패했습니다.')
+    if (user.storage.cart.length && !userProducts.length) {
+      Axios.post('/api/product/findProductsByOrders', {
+        orders: user.storage.cart,
       })
-  }, [])
+        .then((res) => setUserProducts(res.data.userProducts))
+        .catch((error) => {
+          console.log(error)
+          alert('장바구니 정보를 불러오는데 실패했습니다.')
+        })
+    }
+  }, [user.storage.cart])
 
   useEffect(() => {
     const length = userCart.length

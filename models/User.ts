@@ -78,7 +78,6 @@ const userSchema: Schema = new Schema(
           },
           size: { type: String },
         },
-        default: [],
       },
     ],
     token: {
