@@ -28,7 +28,42 @@ export const userAuth = createAsyncThunk(
       const response = !token
         ? await Axios.post('/api/users/auth')
         : await Axios.post('/api/users/auth', token)
-      return response.data
+
+      const { likes, cart } = response.data as IAuthUserData
+
+      let newLikes = likes
+      const getLikes: string[] = getStorageData('piic_likes')
+      if (getLikes.length) {
+        const pid = getLikes.filter((pid) => !likes.includes(pid))
+        if (pid.length) {
+          const likeRes = await Axios.post('/api/users/addLike', { pid })
+          newLikes = likeRes.data.userLikes
+        }
+      }
+
+      let newCart = cart
+      const getCart: IUserCart[] = getStorageData('piic_cart')
+      if (getCart.length) {
+        const orders = getCart.filter(
+          (order) =>
+            cart.find(
+              (uOrder) =>
+                order.pid === uOrder.pid &&
+                JSON.stringify(order.option) === JSON.stringify(uOrder.option)
+            ) === undefined
+        )
+        if (orders.length) {
+          const cartRes = await Axios.post('/api/users/addCart', { orders })
+          newCart = cartRes.data.userCart
+        }
+      }
+
+      localStorage.removeItem('piic_likes')
+      localStorage.removeItem('piic_cart')
+
+      const userData = { ...response.data, likes: newLikes, cart: newCart }
+
+      return userData
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
@@ -61,7 +96,9 @@ export const userAddLike = createAsyncThunk(
   async (pid: string[], { rejectWithValue }) => {
     try {
       const response = await Axios.post('/api/users/addLike', { pid })
-      return response.data.userLikes
+      const { userLikes } = response.data
+
+      return userLikes
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
@@ -73,7 +110,9 @@ export const userDeleteLike = createAsyncThunk(
   async (pid: string[], { rejectWithValue }) => {
     try {
       const response = await Axios.post('/api/users/deleteLike', { pid })
-      return response.data.userLikes
+      const { userLikes } = response.data
+
+      return userLikes
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
@@ -85,7 +124,9 @@ export const userAddCart = createAsyncThunk(
   async (orders: IUserCart[], { rejectWithValue }) => {
     try {
       const response = await Axios.post('/api/users/addCart', { orders })
-      return response.data.userCart
+      const { userCart } = response.data
+
+      return userCart
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
@@ -97,7 +138,9 @@ export const userUpdateCart = createAsyncThunk(
   async (body: IUpdateCartBody, { rejectWithValue }) => {
     try {
       const response = await Axios.post('/api/users/updateCart', body)
-      return response.data.userCart
+      const { userCart } = response.data
+
+      return userCart
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
@@ -109,12 +152,25 @@ export const userDeleteCart = createAsyncThunk(
   async (dropIndex: number[], { rejectWithValue }) => {
     try {
       const response = await Axios.post('/api/users/deleteCart', { dropIndex })
-      return response.data.userCart
+      const { userCart } = response.data
+
+      return userCart
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
   }
 )
+
+const getStorageData = (itemName: string): any[] => {
+  const getItems = localStorage.getItem(itemName)
+  return !getItems ? [] : JSON.parse(getItems)
+}
+
+const updateStorageData = (itemName: string, data: any[]) => {
+  data.length
+    ? localStorage.setItem('itemName', JSON.stringify(data))
+    : localStorage.removeItem('itemName')
+}
 
 // Slice
 const initialState: IUserState = {
@@ -135,8 +191,7 @@ export const userSlice = createSlice({
       if (state.isLogin && state.userData) {
         state.storage.likes = state.userData.likes
       } else {
-        const getItems = localStorage.getItem('piic_likes')
-        const getLikes: string[] = !getItems ? [] : JSON.parse(getItems)
+        const getLikes: string[] = getStorageData('piic_likes')
         state.storage.likes = getLikes
       }
     },
@@ -152,9 +207,7 @@ export const userSlice = createSlice({
       const newLikes = state.storage.likes.filter(
         (pid) => !action.payload.includes(pid)
       )
-      newLikes.length
-        ? localStorage.setItem('piic_likes', JSON.stringify(newLikes))
-        : localStorage.removeItem('piic_likes')
+      updateStorageData('piic_likes', newLikes)
       state.storage.likes = newLikes
     },
     // 장바구니 가져오기
@@ -162,8 +215,7 @@ export const userSlice = createSlice({
       if (state.isLogin && state.userData) {
         state.storage.cart = state.userData.cart
       } else {
-        const getItems = localStorage.getItem('piic_cart')
-        const getCart: IUserCart[] = !getItems ? [] : JSON.parse(getItems)
+        const getCart: IUserCart[] = getStorageData('piic_cart')
         state.storage.cart = getCart
       }
     },
@@ -189,9 +241,7 @@ export const userSlice = createSlice({
       const newCart = state.storage.cart.filter(
         (_, index) => !action.payload.includes(index)
       )
-      newCart.length
-        ? localStorage.setItem('piic_cart', JSON.stringify(newCart))
-        : localStorage.removeItem('piic_cart')
+      updateStorageData('piic_cart', newCart)
       state.storage.cart = newCart
     },
   },

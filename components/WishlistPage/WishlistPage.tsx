@@ -30,8 +30,9 @@ const WishlistPage = () => {
     if (confirm('정말로 삭제하시겠습니까?')) {
       if (user.isLogin) {
         dispatch(userDeleteLike([pid]))
+      } else {
+        dispatch(deleteStorageLikes([pid]))
       }
-      dispatch(deleteStorageLikes([pid]))
       setProducts(products.filter((product) => product._id !== pid))
     }
   }
@@ -47,8 +48,10 @@ const WishlistPage = () => {
       if (deletePids.length) {
         if (user.isLogin) {
           dispatch(userDeleteLike(deletePids))
+        } else {
+          dispatch(deleteStorageLikes(deletePids))
         }
-        dispatch(deleteStorageLikes(deletePids))
+
         setProducts(
           products.filter((product) => !deletePids.includes(product._id))
         )
@@ -62,8 +65,9 @@ const WishlistPage = () => {
 
       if (user.isLogin) {
         dispatch(userDeleteLike(deletePids))
+      } else {
+        dispatch(deleteStorageLikes(deletePids))
       }
-      dispatch(deleteStorageLikes(deletePids))
       setProducts([])
     }
   }

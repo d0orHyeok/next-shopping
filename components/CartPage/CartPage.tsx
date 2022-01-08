@@ -68,8 +68,9 @@ const CartPage = () => {
     ) {
       if (user.isLogin) {
         dispatch(userUpdateCart(update))
+      } else {
+        dispatch(updateStorageCart(update))
       }
-      dispatch(updateStorageCart(update))
     }
     setUserProducts(
       userProducts.map((userProduct, index) => {
@@ -92,16 +93,18 @@ const CartPage = () => {
     }
     const body = {
       index,
-      update: { ...userCart[index], qty: userCart[index].qty + addValue },
+      update: { ...userCart[index], qty: updateQty },
     }
+    console.log('----', body)
     if (user.isLogin) {
       dispatch(userUpdateCart(body))
+    } else {
+      dispatch(updateStorageCart(body))
     }
-    dispatch(updateStorageCart(body))
     setUserProducts(
-      userProducts.map((userProduct, index) => {
-        if (index === update.index) {
-          return { ...update.update, ...userProduct }
+      userProducts.map((userProduct, i) => {
+        if (i === index) {
+          return { ...userProduct, qty: userProduct.qty + addValue }
         } else {
           return userProduct
         }
@@ -121,8 +124,9 @@ const CartPage = () => {
     if (confirm('정말로 삭제하시겠습니까?')) {
       if (user.isLogin) {
         dispatch(userDeleteCart(dropIndex))
+      } else {
+        dispatch(deleteStorageCart(dropIndex))
       }
-      dispatch(deleteStorageCart(dropIndex))
       setUserProducts(userProducts.filter((_, index) => index !== dropIndex[0]))
     }
   }
@@ -143,11 +147,12 @@ const CartPage = () => {
         return
       }
 
-      setUserProducts(newUserProducts)
       if (user.isLogin) {
         dispatch(userDeleteCart(dropIndex))
+      } else {
+        dispatch(deleteStorageCart(dropIndex))
       }
-      dispatch(deleteStorageCart(dropIndex))
+      setUserProducts(newUserProducts)
     }
   }
 
@@ -156,8 +161,9 @@ const CartPage = () => {
       const dropIndex = userCart.map((_, index) => index)
       if (user.isLogin) {
         dispatch(userDeleteCart(dropIndex))
+      } else {
+        dispatch(deleteStorageCart(dropIndex))
       }
-      dispatch(deleteStorageCart(dropIndex))
 
       setUserProducts([])
     }
@@ -190,7 +196,7 @@ const CartPage = () => {
         console.log(error)
         alert('장바구니 정보를 불러오는데 실패했습니다.')
       })
-  }, [userCart])
+  }, [])
 
   useEffect(() => {
     const length = userCart.length
@@ -351,7 +357,9 @@ const CartPage = () => {
                       {delivery.delivery.toLocaleString('ko-KR')}
                     </div>
                     <div className={cx('product-price', 'basic', 'media2-n')}>
-                      {userProduct.product.price.toLocaleString('ko-KR')}
+                      {(
+                        userProduct.qty * userProduct.product.price
+                      ).toLocaleString('ko-KR')}
                     </div>
                     <div className={cx('product-select', 'basic', 'media3-n')}>
                       <button

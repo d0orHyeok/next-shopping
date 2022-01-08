@@ -32,10 +32,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
       const pid = [product._id]
       if (user.isLogin) {
         isDelete ? dispatch(userDeleteLike(pid)) : dispatch(userAddLike(pid))
+      } else {
+        isDelete
+          ? dispatch(deleteStorageLikes(pid))
+          : dispatch(addStorageLikes(pid))
       }
-      isDelete
-        ? dispatch(deleteStorageLikes(pid))
-        : dispatch(addStorageLikes(pid))
     },
     [product]
   )

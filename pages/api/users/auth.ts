@@ -32,7 +32,6 @@ handler.post<IAuthExtendedRequest>((req, res) => {
         image: user.image,
         likes: user.likes,
         cart: user.cart,
-        history: user.history,
         tokenExp: user.tokenExp,
       })
     })
@@ -46,7 +45,6 @@ handler.post<IAuthExtendedRequest>((req, res) => {
       image: req.user.image,
       likes: req.user.likes,
       cart: req.user.cart,
-      history: req.user.history,
       tokenExp: req.user.tokenExp,
     })
   }
