@@ -10,11 +10,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Badge } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useAppDispatch, useAppSelector } from '@redux/hooks'
-import {
-  selectUser,
-  IUserState,
-  getStorageCart,
-} from '@redux/features/userSlice'
+import { selectUser, IUserState, getLikesCart } from '@redux/features/userSlice'
 import React, { useEffect, useRef, useState } from 'react'
 import DaumPostCodeModal from '@components/utils/DaumPostCodeModal/DaumPostCodeModal'
 import Axios from 'axios'
@@ -23,6 +19,12 @@ import { IUserCart } from '@models/User'
 import OrderCard from './section/OrderCard'
 import * as delivery from 'public/data/delivery'
 import Payment from './section/Payment'
+import { ParsedUrlQuery } from 'querystring'
+
+interface IOrderPageQuery extends ParsedUrlQuery {
+  orders: string
+  cartIndex: 'all' | string | string[]
+}
 
 const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
@@ -71,7 +73,7 @@ const OrderPage = () => {
   })
 
   useEffect(() => {
-    dispatch(getStorageCart())
+    dispatch(getLikesCart())
   }, [])
 
   useEffect(() => {
@@ -86,29 +88,34 @@ const OrderPage = () => {
   }, [user])
 
   useEffect(() => {
-    const { cartIndex } = router.query
+    const { cartIndex, orders } = router.query as IOrderPageQuery
 
-    if (cartIndex !== undefined) {
-      let orders: IUserCart[] = []
+    let reqOrders: IUserCart[] = []
 
+    if (orders !== undefined) {
+      reqOrders = JSON.parse(orders)
+    } else if (cartIndex !== undefined) {
       if (cartIndex === 'all') {
-        orders = user.storage.cart
+        reqOrders = user.storage.cart
       } else {
-        orders = user.storage.cart.filter((_, index) =>
+        reqOrders = user.storage.cart.filter((_, index) =>
           Array.isArray(cartIndex)
             ? cartIndex.includes(index.toString())
             : cartIndex === index.toString()
         )
       }
-
-      Axios.post('/api/product/findProductsByOrders', { orders })
-        .then((res) => setUserProducts(res.data.userProducts))
-        .catch((error) => {
-          console.log(error)
-          alert('오류가 발생하여 결제를 진행할 수 없습니다.')
-          router.back()
-        })
+    } else {
+      alert('잘못된 접근입니다.')
+      return router.back()
     }
+
+    Axios.post('/api/product/findProductsByOrders', { orders: reqOrders })
+      .then((res) => setUserProducts(res.data.userProducts))
+      .catch((error) => {
+        console.log(error)
+        alert('오류가 발생하여 결제를 진행할 수 없습니다.')
+        router.back()
+      })
   }, [router.query, user.storage])
 
   useEffect(() => {

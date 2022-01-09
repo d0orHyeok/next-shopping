@@ -20,6 +20,7 @@ import { useAppSelector, useAppDispatch } from '@redux/hooks'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import AddCartModal from '@components/utils/AddCartModal/AddCartModal'
 import { IUserCart } from '@models/User'
+import { useRouter } from 'next/router'
 
 interface ISelect {
   color: IColor | null
@@ -33,6 +34,7 @@ interface IProductOrderProps {
 const ProductOrder = ({ product }: IProductOrderProps) => {
   const dispatch = useAppDispatch()
   const user: IUserState = useAppSelector(selectUser)
+  const router = useRouter()
 
   const [open, setOpen] = useState(false)
   const [isLike, setIsLike] = useState(false)
@@ -68,6 +70,15 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
       }
       setOpen(true)
     }
+  }
+
+  const handleClickBuy = () => {
+    if (!orders.length) {
+      return alert('상품을 선택해 주세요.')
+    }
+
+    const orderQuery = JSON.stringify(orders)
+    router.push({ pathname: '/user/order', query: { orders: orderQuery } })
   }
 
   const handleColorClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -268,7 +279,9 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
             <button className={styles.cart} onClick={handleCartClick}>
               장바구니
             </button>
-            <button className={styles.buy}>구매하기</button>
+            <button className={styles.buy} onClick={handleClickBuy}>
+              구매하기
+            </button>
           </div>
         </div>
       </div>

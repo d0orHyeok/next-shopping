@@ -13,7 +13,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       '/login'
     )
 
-    return redirect ? { redirect: redirect, props: {} } : { props: {} }
+    return redirect ? { redirect: redirect } : { props: {} }
   }
 )
 
