@@ -12,28 +12,28 @@ interface IUserNavProps {
 const UserNav = ({ clasName, sx }: IUserNavProps) => {
   return (
     <nav className={clasName} style={sx}>
-      <div className={cx('nav-item')}>
+      <div className={cx('nav-item')} style={{ marginTop: 0 }}>
         <h3 className={cx('nav-title')}>쇼핑 정보</h3>
         <ul>
           <li>
             <Link href="#">주문/배송</Link>
           </li>
           <li>
-            <Link href="#">취소</Link>
+            <Link href="#">취소/반품</Link>
           </li>
         </ul>
       </div>
-      <div className={cx('nav-item')}>
+      <div className={cx('nav-item')} style={{ marginBottom: 0 }}>
         <h3 className={cx('nav-title')}>활동 정보</h3>
         <ul>
           <li>
-            <Link href="#">회원정보 수정</Link>
+            <Link href="#">회원정보수정</Link>
           </li>
           <li>
             <Link href="#">회원탈퇴</Link>
           </li>
           <li>
-            <Link href="#">배송 주소 관리</Link>
+            <Link href="#">배송주소관리</Link>
           </li>
           <li>
             <Link href="/user/wishlist">위시리스트</Link>

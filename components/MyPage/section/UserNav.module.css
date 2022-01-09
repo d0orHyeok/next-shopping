@@ -1,3 +1,9 @@
+.nav-item a {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
 .nav-item {
   margin-top: 1rem;
   margin-bottom: 2rem;
