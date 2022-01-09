@@ -1,7 +1,7 @@
 .wrapper {
-  max-width: var(--header-maxWidth);
+  max-width: calc(var(--header-maxWidth) + 6rem);
+  padding: 3rem;
   margin: 0 auto;
-  padding: 3rem 0;
   font-family: var(--product-font);
 }
 

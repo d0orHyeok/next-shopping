@@ -1,9 +1,9 @@
 .wrapper {
   font-family: var(--product-font);
-  max-width: var(--header-maxWidth);
+  max-width: calc(var(--header-maxWidth) + 6rem);
+  padding: 1rem 3rem;
   width: 100%;
   margin: 0 auto;
-  padding: 1rem 0;
 }
 
 .wrapper a,
@@ -190,12 +190,6 @@
 
 .product-container {
   margin: 3rem 0;
-}
-
-@media only screen and (max-width: 1500px) {
-  .wrapper {
-    padding: 1rem 40px;
-  }
 }
 
 @media only screen and (max-width: 992px) {

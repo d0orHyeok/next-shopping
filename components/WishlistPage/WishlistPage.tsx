@@ -14,7 +14,7 @@ const cx = classNames.bind(styles)
 import Link from 'next/link'
 import Pagination from '@components/utils/Pagination/Pagination'
 import * as delivery from 'public/data/delivery'
-import UserNav from './section/UserNav'
+import UserNav from '@components/MyPage/section/UserNav'
 
 const displayNum = 10
 

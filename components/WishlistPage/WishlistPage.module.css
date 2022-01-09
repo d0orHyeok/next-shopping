@@ -1,8 +1,8 @@
 .wrapper {
-  max-width: var(--header-maxWidth);
+  max-width: calc(var(--header-maxWidth) + 6rem);
+  padding: 3rem;
   width: 100%;
   margin: 0 auto;
-  padding: 3rem 0;
   font-family: var(--product-font);
 }
 
@@ -44,6 +44,7 @@
   width: 180px;
   flex-shrink: 0;
   margin-right: 40px;
+  padding-top: 1rem;
 }
 
 /* 담긴 상품 */
@@ -152,12 +153,6 @@
 
 .media2-b {
   display: none;
-}
-
-@media only screen and (max-width: 1500px) {
-  .wrapper {
-    padding: 3rem 1rem;
-  }
 }
 
 @media only screen and (max-width: 993px) {
