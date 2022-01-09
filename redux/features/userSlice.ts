@@ -155,8 +155,8 @@ const getStorageData = (itemName: string): any[] => {
 
 const updateStorageData = (itemName: string, data: any[]) => {
   data.length
-    ? localStorage.setItem('itemName', JSON.stringify(data))
-    : localStorage.removeItem('itemName')
+    ? localStorage.setItem(itemName, JSON.stringify(data))
+    : localStorage.removeItem(itemName)
 }
 
 // Slice
