@@ -16,10 +16,10 @@ const UserNav = ({ clasName, sx }: IUserNavProps) => {
         <h3 className={cx('nav-title')}>쇼핑 정보</h3>
         <ul>
           <li>
-            <Link href="#">주문/배송</Link>
+            <Link href="/user/mypage/orders">주문/배송</Link>
           </li>
           <li>
-            <Link href="#">취소/반품</Link>
+            <Link href="/user/mypage/cancel">취소/반품</Link>
           </li>
         </ul>
       </div>
@@ -27,13 +27,13 @@ const UserNav = ({ clasName, sx }: IUserNavProps) => {
         <h3 className={cx('nav-title')}>활동 정보</h3>
         <ul>
           <li>
-            <Link href="#">회원정보수정</Link>
+            <Link href="/user/mypage/change">회원정보수정</Link>
           </li>
           <li>
-            <Link href="#">회원탈퇴</Link>
+            <Link href="/user/mypage/secession">회원탈퇴</Link>
           </li>
           <li>
-            <Link href="#">배송주소관리</Link>
+            <Link href="/user/mypage/addr">배송주소관리</Link>
           </li>
           <li>
             <Link href="/user/wishlist">위시리스트</Link>

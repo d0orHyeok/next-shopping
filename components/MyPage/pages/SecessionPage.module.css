@@ -1,0 +1,46 @@
+.userCheck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.checkBtn {
+  width: 60px;
+}
+
+.inputBox {
+  display: flex;
+}
+
+.inputBox .input {
+  margin-right: 10px;
+}
+
+.btn {
+  border: 1px solid lightgray;
+  cursor: pointer;
+  background-color: inherit;
+  transition: 0.2s ease all;
+}
+
+.btn:hover {
+  border-color: black;
+}
+
+.blackBtn {
+  background-color: rgb(5, 5, 5);
+  color: white;
+}
+
+.wrapper {
+  margin: 3rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secessionBtn {
+  font-size: 1rem;
+  padding: 1rem 2rem;
+}

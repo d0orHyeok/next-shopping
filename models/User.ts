@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dayjs from 'dayjs'
 
-const saltRounds = 10
+export const saltRounds = 10
 
 interface IOption {
   color: IColor
@@ -37,6 +37,9 @@ export interface IUserDocument extends Document, IUser {
   generateToken: (
     callback: (err: Error | null, user?: IUserDocument) => void
   ) => void
+  changePassword: (
+    callback: (err: Error | null, success?: boolean) => void
+  ) => void
 }
 
 export interface IUserModel extends Model<IUserDocument> {
@@ -64,7 +67,7 @@ const userSchema: Schema = new Schema(
     },
     image: {
       type: String,
-      default: '',
+      default: '/temp_user.png',
     },
     likes: [{ type: Schema.Types.ObjectId, ref: 'Product', default: [] }],
     cart: [
@@ -134,6 +137,17 @@ userSchema.methods.generateToken = function (
   this.save(function (err: Error | null, user: IUserDocument) {
     if (err) return callback(err)
     callback(null, user)
+  })
+}
+
+userSchema.methods.changePassword = function (
+  newPassword: string,
+  callback: (err: Error | null, isMatch?: boolean) => void
+) {
+  bcrypt.compare(newPassword, this.password, function (err, isMatch) {
+    if (err) return callback(err)
+
+    if (isMatch) return callback(null, false)
   })
 }
 

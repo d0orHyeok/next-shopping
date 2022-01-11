@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Link from 'next/link'
 import Axios from 'axios'
 import { useRouter } from 'next/router'
 
@@ -231,7 +230,9 @@ const RegisterPage = () => {
               <div className={cx('terms-item')}>
                 <h2 className={cx('terms-title')}>
                   이용약관
-                  <Link href="/scenter/policy">전문보기</Link>
+                  <a href="/scenter/policy" target="_blank">
+                    전문보기
+                  </a>
                 </h2>
                 <div className={cx('terms-content')}>
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Et
@@ -262,7 +263,9 @@ const RegisterPage = () => {
               <div className={cx('terms-item')}>
                 <h2 className={cx('terms-title')}>
                   개인정보처리방침
-                  <Link href="/scenter/privacyAndTerms">전문보기</Link>
+                  <a href="/scenter/privacyAndTerms" target="_blank">
+                    전문보기
+                  </a>
                 </h2>
                 <div className={cx('terms-content')}>
                   Lorem, ipsum dolor sit amet consectetur adipisicing elit.

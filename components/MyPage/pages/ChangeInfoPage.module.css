@@ -1,0 +1,129 @@
+.userCheck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.checkBtn {
+  width: 60px;
+}
+
+.inputBox {
+  display: flex;
+}
+
+.inputBox .label,
+.inputBox .input {
+  margin-right: 10px;
+}
+
+.btn {
+  border: 1px solid lightgray;
+  cursor: pointer;
+  background-color: inherit;
+  transition: 0.2s ease all;
+}
+
+.btn:hover {
+  border-color: black;
+}
+
+.blackBtn {
+  background-color: rgb(5, 5, 5);
+  color: white;
+}
+
+.wrapper {
+  margin: 3rem 0;
+  font-family: var(--product-font);
+}
+
+.info,
+.change {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info {
+  margin-bottom: 3rem;
+}
+
+.imageBox,
+.imageBox img {
+  width: 80px;
+  height: 80px;
+}
+
+.imageBox {
+  margin-right: 3rem;
+}
+
+.imageBox img {
+  object-fit: cover;
+}
+
+.flexBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+}
+
+.nameBox {
+  margin-bottom: 1rem;
+}
+
+.changeBtn {
+  width: 120px;
+  padding: 6px 0;
+}
+
+.changeBtn:last-child {
+  margin-top: 3px;
+}
+
+/* 비밀번호변경 */
+
+.change.pw {
+  display: none;
+  flex-direction: column;
+}
+
+.change.pw h3 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.change.pw .inputBox {
+  margin-bottom: 1rem;
+}
+
+.change.pw .input,
+.passwordChangeBtn {
+  max-width: 220px;
+  width: 100%;
+}
+
+.passwordChangeBtn {
+  padding: 6px 0;
+  font-size: 1rem;
+}
+
+/* 사진변경 */
+.change.image {
+  flex-direction: column;
+}
+
+@media only screen and (max-width: 480px) {
+  .info {
+    flex-direction: column;
+  }
+
+  .imageBox {
+    margin: 0;
+    margin-bottom: 1rem;
+  }
+}

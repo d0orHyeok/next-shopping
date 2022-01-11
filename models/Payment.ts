@@ -4,6 +4,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose'
 interface Payment {
   receipt_id: string
   order_id: string
+  order_state: '상품준비중' | '배송중' | '배송완료'
   password: string
   payment_name: string
   item_name: string[]
@@ -30,6 +31,10 @@ const paymentSchema: Schema = new Schema({
   },
   order_id: {
     type: String,
+  },
+  order_state: {
+    type: String,
+    default: '상품준비중',
   },
   user_id: {
     type: Schema.Types.ObjectId,

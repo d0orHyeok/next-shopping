@@ -148,6 +148,27 @@ export const userDeleteCart = createAsyncThunk(
   }
 )
 
+export const userChangeInfo = createAsyncThunk(
+  'userChangeInfo',
+  async (changeData: {}, { rejectWithValue }) => {
+    try {
+      const response = await Axios.post('/api/users/changeInfo', changeData)
+      return response.data
+    } catch (err) {
+      return rejectWithValue(err.response.data)
+    }
+  }
+)
+
+export const userSecession = createAsyncThunk('userSecession', async () => {
+  try {
+    const response = await Axios.get('/api/users/secession')
+    return response.data
+  } catch (err) {
+    return err
+  }
+})
+
 const getStorageData = (itemName: string): any[] => {
   const getItems = localStorage.getItem(itemName)
   return !getItems ? [] : JSON.parse(getItems)
@@ -275,6 +296,16 @@ export const userSlice = createSlice({
     },
     [getLikesCart.rejected.type]: (state, action) => {
       state.storage = action.payload
+    },
+    [userChangeInfo.fulfilled.type]: (state, action) => {
+      const { image } = action.payload
+      if (image && state.userData) {
+        state.userData.image = image
+      }
+    },
+    [userSecession.fulfilled.type]: (state) => {
+      state.isLogin = false
+      state.userData = null
     },
   },
 })

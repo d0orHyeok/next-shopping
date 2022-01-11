@@ -55,7 +55,7 @@ const page = ({ page }: IMypageParams) => {
       <Head>
         <title>{pageName[index]} | PIIC</title>
       </Head>
-      <MyPageLayout>{drawPage[index]}</MyPageLayout>
+      <MyPageLayout title={pageName[index]}>{drawPage[index]}</MyPageLayout>
     </>
   )
 }

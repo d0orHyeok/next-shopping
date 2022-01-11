@@ -6,23 +6,23 @@ import Axios from 'axios'
 import styles from './UploadImages.module.css'
 
 interface UploadImageProps {
-  productImages?: string[]
+  defaultImages?: string[]
   maxNum?: 1 | 2 | 3 | 4 | 5
   onChangeHandler?: (images: any) => void
 }
 
 const UploadImages = ({
-  productImages,
+  defaultImages,
   maxNum = 1,
   onChangeHandler,
 }: UploadImageProps) => {
   const [Images, setImages] = useState<string[]>([])
 
   useEffect(() => {
-    if (productImages) {
-      setImages(productImages)
+    if (defaultImages) {
+      setImages(defaultImages)
     }
-  }, [productImages])
+  }, [defaultImages])
 
   const onDropHandler = (files: any) => {
     if (Images.length === maxNum) {
@@ -35,11 +35,15 @@ const UploadImages = ({
     }
     formData.append('file', files[0])
 
+    console.log(files[0])
+
     Axios.post('/api/upload/image', formData, config).then((res) => {
       if (res.data.success) {
         setImages([...Images, res.data.filePath])
         if (onChangeHandler) {
-          onChangeHandler([...Images, res.data.filePath])
+          onChangeHandler(
+            maxNum === 1 ? res.data.filePath : [...Images, res.data.filePath]
+          )
         }
       } else {
         console.log('err')
