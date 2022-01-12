@@ -1,4 +1,157 @@
 .wrapper {
-  margin: 3rem 0;
   font-family: var(--product-font);
+}
+
+.th {
+  font-weight: bold;
+}
+
+.fix {
+  font-size: 0.7rem;
+  line-height: 0.7rem;
+  border: 1px solid lightgray;
+  background-color: rgb(99, 99, 201);
+  color: white;
+  padding: 3px;
+}
+
+/* 버튼박스 */
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid lightgray;
+  padding: 3rem 0;
+}
+
+.btn {
+  border: 1px solid lightgray;
+  color: black;
+  cursor: pointer;
+  background-color: inherit;
+  transition: 0.2s ease all;
+  font-family: var(--product-font);
+}
+
+.btn:hover {
+  border-color: black;
+}
+
+.blackBtn {
+  background-color: rgb(5, 5, 5);
+  color: white;
+}
+
+.listBtn {
+  font-size: 0.9rem;
+  padding: 1rem;
+}
+
+.changeBtn {
+  padding: 4px 8px;
+}
+
+/* 설명박스 */
+.desc {
+  padding: 3rem 0;
+}
+
+.desc ul li {
+  display: flex;
+  font-size: 0.8rem;
+  line-height: 0.8rem;
+  margin-bottom: 0.8rem;
+  align-items: center;
+  color: gray;
+}
+
+.desc-num {
+  border: 1px solid lightgray;
+  font-size: 0.7rem;
+  line-height: 0.7rem;
+  padding: 2px 4px;
+  margin: 0 0.5rem;
+  background-color: lightsteelblue;
+  color: white;
+}
+
+/* 배송지등록 */
+
+.inputBox {
+  display: flex;
+  padding: 1rem 0;
+  border-bottom: 1px solid lightgray;
+}
+
+.label {
+  margin-top: 0.5rem;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.input {
+  height: 2rem;
+  border: 1px solid lightgray;
+}
+
+.input:focus {
+  outline: none;
+  border-color: black;
+}
+
+.inputs-addr .input {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.inputs-addr .btn {
+  padding: auto 0.5rem;
+  height: 2rem;
+}
+
+.inputs-addr .input:last-child {
+  margin-bottom: 0;
+}
+
+.inputs-addr span {
+  font-size: 0.85rem;
+  color: gray;
+}
+
+.input-postcode {
+  width: 100px;
+}
+
+.input-address {
+  width: 350px;
+}
+
+.inputs-phone .input {
+  width: 80px;
+}
+
+.check-inputBox {
+  color: gray;
+  justify-content: flex-end;
+}
+
+.check-inputBox input {
+  margin-right: 0.5rem;
+}
+
+.add-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-bottom: 1px solid lightgray;
+  padding: 3rem 0;
+}
+
+.add-listBtn {
+  font-size: 0.9rem;
+  padding: 1rem 2rem;
+}
+
+.add-listBtn:first-child {
+  margin-right: 0.5rem;
 }

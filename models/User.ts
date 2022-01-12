@@ -11,6 +11,14 @@ interface IOption {
   size: string
 }
 
+export interface IDeliveryAddr {
+  fix: boolean
+  addressName: string
+  picker: string
+  phone: string
+  address: string
+}
+
 export interface IUserCart {
   pid: string
   qty: number
@@ -23,6 +31,7 @@ export interface IUser {
   password: string
   role: 0 | 1 | 2
   image: string
+  deliveryAddrs: IDeliveryAddr[]
   likes: string[]
   cart: IUserCart[]
   token: string
@@ -69,6 +78,15 @@ const userSchema: Schema = new Schema(
       type: String,
       default: '/temp_user.png',
     },
+    deliveryAddrs: [
+      {
+        fix: { type: Boolean },
+        addressName: { type: String },
+        picker: { type: String },
+        phone: { type: String },
+        address: { type: String },
+      },
+    ],
     likes: [{ type: Schema.Types.ObjectId, ref: 'Product', default: [] }],
     cart: [
       {

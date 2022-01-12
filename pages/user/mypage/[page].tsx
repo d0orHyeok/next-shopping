@@ -55,7 +55,12 @@ const page = ({ page }: IMypageParams) => {
       <Head>
         <title>{pageName[index]} | PIIC</title>
       </Head>
-      <MyPageLayout title={pageName[index]}>{drawPage[index]}</MyPageLayout>
+      <MyPageLayout
+        title={pageName[index]}
+        contentStyle={index === 2 ? { minWidth: '655px' } : {}}
+      >
+        {drawPage[index]}
+      </MyPageLayout>
     </>
   )
 }

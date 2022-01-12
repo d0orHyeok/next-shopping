@@ -10,9 +10,14 @@ const cx = classNames.bind(styles)
 interface IMyPageProps {
   title?: string
   children?: React.ReactNode
+  contentStyle?: React.CSSProperties
 }
 
-const MyPageLayout = ({ children, title = '마이페이지' }: IMyPageProps) => {
+const MyPageLayout = ({
+  children,
+  title = '마이페이지',
+  contentStyle,
+}: IMyPageProps) => {
   const [draw, setDraw] = useState(false)
 
   const toggleDrawer =
@@ -40,7 +45,7 @@ const MyPageLayout = ({ children, title = '마이페이지' }: IMyPageProps) => 
             <UserNav sx={{ paddingTop: '1rem' }} />
           </div>
 
-          <div className={styles.content}>
+          <div className={styles.content} style={contentStyle}>
             <h2 className={cx('subTitle', 'underline')}>
               <button className={cx('drawerBtn')} onClick={toggleDrawer(true)}>
                 <MenuIcon />

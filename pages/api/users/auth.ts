@@ -34,6 +34,7 @@ handler.post<IAuthExtendedRequest>((req, res) => {
     name: userData.name,
     role: userData.role,
     image: userData.image,
+    deliveryAddrs: userData.deliveryAddrs,
     likes: userData.likes,
     cart: userData.cart,
     tokenExp: userData.tokenExp,

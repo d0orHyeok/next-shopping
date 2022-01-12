@@ -1,5 +1,5 @@
 import { IUpdateCartBody } from './../../pages/api/users/updateCart'
-import { IUserCart } from '@models/User'
+import { IUserCart, IDeliveryAddr } from '@models/User'
 import { IAuthUserData } from './../../pages/api/users/auth'
 import { RootState } from '@redux/store'
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
@@ -169,6 +169,20 @@ export const userSecession = createAsyncThunk('userSecession', async () => {
   }
 })
 
+export const userUpdateDeliveryAddrs = createAsyncThunk(
+  'userUpdateDeliveryAddrs',
+  async (newDeliveryAddrs: IDeliveryAddr[], { rejectWithValue }) => {
+    try {
+      const response = await Axios.post('/api/users/updateDeliveryAddrs', {
+        update: newDeliveryAddrs,
+      })
+      return response.data.newDeliveryAddrs
+    } catch (err) {
+      return rejectWithValue(err.response.data)
+    }
+  }
+)
+
 const getStorageData = (itemName: string): any[] => {
   const getItems = localStorage.getItem(itemName)
   return !getItems ? [] : JSON.parse(getItems)
@@ -306,6 +320,9 @@ export const userSlice = createSlice({
     [userSecession.fulfilled.type]: (state) => {
       state.isLogin = false
       state.userData = null
+    },
+    [userUpdateDeliveryAddrs.fulfilled.type]: (state, action) => {
+      if (state.userData) state.userData.deliveryAddrs = action.payload
     },
   },
 })
