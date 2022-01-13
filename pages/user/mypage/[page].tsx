@@ -9,6 +9,7 @@ import OrderCancelPage from '@components/MyPage/pages/OrderCancelPage'
 import OrderCheckPage from '@components/MyPage/pages/OrderCheckPage'
 import SecessionPage from '@components/MyPage/pages/SecessionPage'
 import WishlistPage from '@components/WishlistPage/WishlistPage'
+import { getPayments } from '@redux/features/paymentSlice'
 
 interface IMypageParams extends ParsedUrlQuery {
   page: string
@@ -36,6 +37,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     if (!pageList.includes(page)) {
       return { redirect: { permanent: false, destination: '/404' } }
+    }
+
+    if (page === 'orders' || page === 'cancel') {
+      const user = await store.getState().user
+      await store.dispatch(getPayments(user.userData._id))
     }
 
     return { props: { page } }

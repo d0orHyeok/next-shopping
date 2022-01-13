@@ -1,0 +1,74 @@
+.wrapper {
+  position: relative;
+  font-family: var(--product-font);
+}
+
+.title {
+  font-size: 1.15rem;
+  line-height: 1.15rem;
+  font-weight: bold;
+  padding: 10px 0;
+}
+
+.title.absolute {
+  padding: 0;
+  position: absolute;
+  margin-top: calc(-1.15rem - 13px);
+}
+
+.title span {
+  color: gray;
+  font-size: 0.95rem;
+}
+
+/* 주문처리현황 */
+
+.orderState {
+  padding: 1.5rem 0;
+  margin-bottom: 3rem;
+}
+
+.process {
+  padding: 3rem 0;
+  background-color: whitesmoke;
+}
+
+.process ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.process-item {
+  text-align: center;
+}
+
+.process-item-title {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.process-item-num {
+  font-size: 1.3rem;
+}
+
+.process .blank {
+  color: gray;
+}
+
+.process .blank svg {
+  color: inherit;
+}
+
+/* 주문내역 */
+
+.orderList {
+  border-top: 3px solid black;
+}
+
+@media only screen and (max-width: 993px) {
+  .title.absolute {
+    margin-left: 120px;
+    transform: translateY(-6px);
+  }
+}

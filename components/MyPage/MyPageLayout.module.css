@@ -36,7 +36,7 @@
 
 .subTitle {
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   padding: 10px 0;
   width: 100%;
 }
@@ -51,7 +51,7 @@
 
 .content .subTitle {
   position: relative;
-  margin-top: 1.3rem;
+  margin-top: 1.15rem;
 }
 
 .content .subTitle button {
