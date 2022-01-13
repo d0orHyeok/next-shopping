@@ -122,7 +122,7 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
           <li>
             <div
               className={cx('memberBtn')}
-              onClick={() => router.push('/user/wishlist')}
+              onClick={() => router.push('/user/mypage/wishlist')}
             >
               <FavoriteBorderOutlinedIcon fontSize="large" />
               <span>위시리스트</span>

@@ -14,7 +14,6 @@ export interface IUserState {
   isLogin: boolean
   userData: IAuthUserData | null
   storage: {
-    likes: string[]
     cart: IUserCart[]
   }
 }
@@ -199,7 +198,6 @@ const initialState: IUserState = {
   isLogin: false,
   userData: null,
   storage: {
-    likes: [],
     cart: [],
   },
 }
@@ -208,21 +206,6 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // 위시리스트 업데이트
-    addStorageLikes(state, action: PayloadAction<string[]>) {
-      const newLikes = Array.from(
-        new Set(state.storage.likes.concat(action.payload))
-      )
-      localStorage.setItem('piic_likes', JSON.stringify(newLikes))
-      state.storage.likes = newLikes
-    },
-    deleteStorageLikes(state, action: PayloadAction<string[]>) {
-      const newLikes = state.storage.likes.filter(
-        (pid) => !action.payload.includes(pid)
-      )
-      updateStorageData('piic_likes', newLikes)
-      state.storage.likes = newLikes
-    },
     // 장바구니 업데이트
     addStorageCart(state, action: PayloadAction<IUserCart[]>) {
       const newCart = [...state.storage.cart, ...action.payload]
@@ -254,7 +237,6 @@ export const userSlice = createSlice({
     [userAuth.fulfilled.type]: (state, action) => {
       state.isLogin = true
       state.userData = action.payload
-      state.storage.likes = action.payload.likes
       state.storage.cart = action.payload.cart
     },
     [userAuth.rejected.type]: (state) => {
@@ -277,13 +259,11 @@ export const userSlice = createSlice({
     [userAddLike.fulfilled.type]: (state, action) => {
       if (state.userData) {
         state.userData.likes = action.payload
-        state.storage.likes = action.payload
       }
     },
     [userDeleteLike.fulfilled.type]: (state, action) => {
       if (state.userData) {
         state.userData.likes = action.payload
-        state.storage.likes = action.payload
       }
     },
     // userAddCart
@@ -327,13 +307,8 @@ export const userSlice = createSlice({
   },
 })
 
-export const {
-  addStorageLikes,
-  deleteStorageLikes,
-  addStorageCart,
-  updateStorageCart,
-  deleteStorageCart,
-} = userSlice.actions
+export const { addStorageCart, updateStorageCart, deleteStorageCart } =
+  userSlice.actions
 export const selectUser = (state: RootState) => state.user
 
 export default userSlice.reducer

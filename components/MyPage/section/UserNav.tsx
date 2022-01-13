@@ -36,10 +36,7 @@ const UserNav = ({ clasName, sx }: IUserNavProps) => {
             <Link href="/user/mypage/addr">배송주소관리</Link>
           </li>
           <li>
-            <Link href="/user/wishlist">위시리스트</Link>
-          </li>
-          <li>
-            <Link href="/user/cart">장바구니</Link>
+            <Link href="/user/mypage/wishlist">위시리스트</Link>
           </li>
         </ul>
       </div>

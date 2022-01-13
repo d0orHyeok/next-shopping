@@ -11,8 +11,6 @@ import {
   IUserState,
   userAddLike,
   userDeleteLike,
-  addStorageLikes,
-  deleteStorageLikes,
   addStorageCart,
   userAddCart,
 } from '@redux/features/userSlice'
@@ -47,14 +45,11 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
 
   const handleLikeClick = useCallback(
     (isDelete: boolean) => {
-      const pid = [product._id]
-      if (user.isLogin) {
-        isDelete ? dispatch(userDeleteLike(pid)) : dispatch(userAddLike(pid))
-      } else {
-        isDelete
-          ? dispatch(deleteStorageLikes(pid))
-          : dispatch(addStorageLikes(pid))
+      if (!user.isLogin) {
+        return alert('로그인 시 이용가능합니다.')
       }
+      const pid = [product._id]
+      isDelete ? dispatch(userDeleteLike(pid)) : dispatch(userAddLike(pid))
     },
     [product]
   )
@@ -154,10 +149,12 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
   }
 
   useEffect(() => {
-    user.storage.likes.includes(product._id)
-      ? setIsLike(true)
-      : setIsLike(false)
-  }, [user])
+    if (user.isLogin && user.userData) {
+      user.userData.likes.includes(product._id)
+        ? setIsLike(true)
+        : setIsLike(false)
+    }
+  }, [user.userData?.likes])
 
   return (
     <>

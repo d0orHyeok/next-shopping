@@ -156,7 +156,7 @@ const Navbar = ({
               {/* Like, 찜 */}
               <li
                 className={cx('wishlist')}
-                onClick={() => router.push('/user/wishlist')}
+                onClick={() => router.push('/user/mypage/wishlist')}
               >
                 <Tooltip title="위시리스트" placeholder="bottom">
                   <IconButton type="button" color="inherit" sx={{ p: '5px' }}>

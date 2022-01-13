@@ -1,50 +1,11 @@
-.wrapper {
-  max-width: calc(var(--header-maxWidth) + 6rem);
-  padding: 3rem;
-  width: 100%;
-  margin: 0 auto;
+.content {
   font-family: var(--product-font);
 }
 
-.wrapper a {
+.content a {
   color: inherit;
   text-decoration: inherit;
-}
-
-.heading {
-  margin-top: 3rem;
-  margin-bottom: 4rem;
-}
-
-.heading h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  text-align: center;
-}
-
-.wrapper h2 {
-  font-weight: bold;
-  font-size: 1.3rem;
-  padding: 10px 0;
-}
-
-.main {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-}
-
-.main > * {
-  border-top: 3px solid black;
-  width: 100%;
-}
-
-.nav {
-  max-width: 180px;
-  width: 180px;
-  flex-shrink: 0;
-  margin-right: 40px;
-  padding-top: 1rem;
+  cursor: pointer;
 }
 
 /* 담긴 상품 */

@@ -10,8 +10,6 @@ import {
   IUserState,
   userAddLike,
   userDeleteLike,
-  addStorageLikes,
-  deleteStorageLikes,
 } from '@redux/features/userSlice'
 import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
@@ -30,20 +28,19 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const handleLikeClick = useCallback(
     (isDelete: boolean) => {
       const pid = [product._id]
-      if (user.isLogin) {
-        isDelete ? dispatch(userDeleteLike(pid)) : dispatch(userAddLike(pid))
-      } else {
-        isDelete
-          ? dispatch(deleteStorageLikes(pid))
-          : dispatch(addStorageLikes(pid))
+      if (!user.isLogin) {
+        return alert('로그인 시 이용가능합니다.')
       }
+      isDelete ? dispatch(userDeleteLike(pid)) : dispatch(userAddLike(pid))
     },
     [product]
   )
 
   useEffect(() => {
-    user.storage.likes.includes(product._id) ? setLike(true) : setLike(false)
-  }, [user])
+    if (user.isLogin && user.userData) {
+      user.userData.likes.includes(product._id) ? setLike(true) : setLike(false)
+    }
+  }, [user.userData?.likes])
 
   return (
     <>

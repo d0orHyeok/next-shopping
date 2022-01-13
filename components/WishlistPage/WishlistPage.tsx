@@ -4,7 +4,6 @@ import {
   IUserState,
   selectUser,
   userDeleteLike,
-  deleteStorageLikes,
 } from '@redux/features/userSlice'
 import { IProduct } from '@models/Product'
 import Axios from 'axios'
@@ -14,7 +13,6 @@ const cx = classNames.bind(styles)
 import Link from 'next/link'
 import Pagination from '@components/utils/Pagination/Pagination'
 import * as delivery from 'public/data/delivery'
-import UserNav from '@components/MyPage/section/UserNav'
 
 const displayNum = 10
 
@@ -30,8 +28,6 @@ const WishlistPage = () => {
     if (confirm('정말로 삭제하시겠습니까?')) {
       if (user.isLogin) {
         dispatch(userDeleteLike([pid]))
-      } else {
-        dispatch(deleteStorageLikes([pid]))
       }
       setProducts(products.filter((product) => product._id !== pid))
     }
@@ -48,8 +44,6 @@ const WishlistPage = () => {
       if (deletePids.length) {
         if (user.isLogin) {
           dispatch(userDeleteLike(deletePids))
-        } else {
-          dispatch(deleteStorageLikes(deletePids))
         }
 
         setProducts(
@@ -65,20 +59,18 @@ const WishlistPage = () => {
 
       if (user.isLogin) {
         dispatch(userDeleteLike(deletePids))
-      } else {
-        dispatch(deleteStorageLikes(deletePids))
       }
       setProducts([])
     }
   }
 
   useEffect(() => {
-    if (user.storage.likes.length && !products.length) {
+    if (user.userData && user.userData.likes.length && !products.length) {
       Axios.post('/api/product/findProductsByIds', {
-        ids: user.storage.likes,
+        ids: user.userData.likes,
       }).then((res) => setProducts(res.data.products))
     }
-  }, [user.storage.likes])
+  }, [user.userData?.likes])
 
   useEffect(() => {
     const length = products.length
@@ -91,138 +83,116 @@ const WishlistPage = () => {
 
   return (
     <>
-      <div className={styles.wrapper}>
-        {/* 페이지 제목 */}
-        <div className={styles.heading}>
-          <h1>위시리스트</h1>
-        </div>
-        <h2 className={styles.subTitle}>마이페이지</h2>
-        <div className={styles.main}>
-          {/* 유저 네비게이션 */}
-          <UserNav clasName={styles.nav} />
-
-          {/* 담긴 상품 */}
-          <div className={styles.content}>
-            <section className={cx('tag-container')}>
-              {/* 테이블 제목 */}
-              <ul>
-                <li className={cx('basic', 'media1')}>
-                  <input
-                    id="all"
-                    type="checkbox"
-                    value="all"
-                    checked={!checked.includes(false)}
-                    onChange={() =>
-                      setChecked(
-                        checked.map((_) =>
-                          checked.includes(false) ? true : false
-                        )
-                      )
-                    }
-                  />
-                </li>
-                <li className={cx('basic', 'media1')}></li>
-                <li className={styles.epic}>상품정보</li>
-                <li className={cx('basic', 'media1')}>배송비</li>
-                <li className={cx('basic', 'media1')}>가격</li>
-                <li className={cx('basic', 'media2-n')}>선택</li>
-              </ul>
-            </section>
-            {/* 테이블 아이템 */}
-            <section className={cx('product-container')}>
-              {products.map((product, index) => {
-                if (
-                  index + 1 <= pageIndex * displayNum &&
-                  index + 1 > (pageIndex - 1) * displayNum
-                ) {
-                  return (
-                    <div key={index} className={cx('product')}>
-                      <div className={cx('product-check', 'basic', 'media1')}>
-                        <input
-                          id={`p${index}`}
-                          type="checkbox"
-                          value={index}
-                          onChange={() =>
-                            setChecked(
-                              checked.map((check, i) =>
-                                i === index % displayNum ? !check : check
-                              )
-                            )
-                          }
-                          checked={
-                            checked.length ? checked[index % displayNum] : false
-                          }
-                        />
-                      </div>
-                      <div className={cx('product-img', 'basic')}>
-                        <Link href={`/product/detail/${product._id}`}>
-                          <img src={product.image} alt={product.name} />
-                        </Link>
-                      </div>
-                      <div className={cx('product-info', 'epic')}>
-                        <span className={cx('product-name')}>
-                          <Link href={`/product/detail/${product._id}`}>
-                            {product.name}
-                          </Link>
-                        </span>
-                        <span className={cx('product-option')}>
-                          {`[배송비] ${delivery.delivery.toLocaleString(
-                            'ko-KR'
-                          )}`}
-                        </span>
-                        <span className={cx('product-option')}>
-                          {`[가격] ${product.price.toLocaleString('ko-KR')}`}
-                        </span>
-                        <div className={cx('product-select', 'media2-b')}>
-                          <Link href={`/product/detail/${product._id}`}>
-                            <button>상품조회</button>
-                          </Link>
-                          <button
-                            onClick={() => handleClickDelete(product._id)}
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      </div>
-                      <div
-                        className={cx('product-delivery', 'basic', 'media1')}
-                      >
-                        {delivery.delivery.toLocaleString('ko-KR')}
-                      </div>
-                      <div className={cx('product-price', 'basic', 'media1')}>
-                        {product.price.toLocaleString('ko-KR')}
-                      </div>
-                      <div
-                        className={cx('product-select', 'basic', 'media2-n')}
-                      >
-                        <Link href={`/product/detail/${product._id}`}>
-                          <button>상품조회</button>
-                        </Link>
-                        <button onClick={() => handleClickDelete(product._id)}>
-                          삭제
-                        </button>
-                      </div>
-                    </div>
+      {/* 담긴 상품 */}
+      <div className={styles.content}>
+        <section className={cx('tag-container')}>
+          {/* 테이블 제목 */}
+          <ul>
+            <li className={cx('basic', 'media1')}>
+              <input
+                id="all"
+                type="checkbox"
+                value="all"
+                checked={!checked.includes(false)}
+                onChange={() =>
+                  setChecked(
+                    checked.map((_) => (checked.includes(false) ? true : false))
                   )
                 }
-              })}
-            </section>
-            {/* 상품 컨트롤 */}
-            <section className={cx('controls-container')}>
-              <div className={cx('selectControls')}>
-                <button onClick={handleAllDelete}>전체삭제</button>
-                <button className={cx('media1')} onClick={handleCheckedDelete}>
-                  선택상품삭제
-                </button>
-              </div>
-            </section>
-            <Pagination
-              itemNum={products.length}
-              displayNum={displayNum}
-              onChange={setPageIndex}
-            />
+              />
+            </li>
+            <li className={cx('basic', 'media1')}></li>
+            <li className={styles.epic}>상품정보</li>
+            <li className={cx('basic', 'media1')}>배송비</li>
+            <li className={cx('basic', 'media1')}>가격</li>
+            <li className={cx('basic', 'media2-n')}>선택</li>
+          </ul>
+        </section>
+        {/* 테이블 아이템 */}
+        <section className={cx('product-container')}>
+          {products.map((product, index) => {
+            if (
+              index + 1 <= pageIndex * displayNum &&
+              index + 1 > (pageIndex - 1) * displayNum
+            ) {
+              return (
+                <div key={index} className={cx('product')}>
+                  <div className={cx('product-check', 'basic', 'media1')}>
+                    <input
+                      id={`p${index}`}
+                      type="checkbox"
+                      value={index}
+                      onChange={() =>
+                        setChecked(
+                          checked.map((check, i) =>
+                            i === index % displayNum ? !check : check
+                          )
+                        )
+                      }
+                      checked={
+                        checked.length ? checked[index % displayNum] : false
+                      }
+                    />
+                  </div>
+                  <div className={cx('product-img', 'basic')}>
+                    <Link href={`/product/detail/${product._id}`}>
+                      <img src={product.image} alt={product.name} />
+                    </Link>
+                  </div>
+                  <div className={cx('product-info', 'epic')}>
+                    <span className={cx('product-name')}>
+                      <Link href={`/product/detail/${product._id}`}>
+                        {product.name}
+                      </Link>
+                    </span>
+                    <span className={cx('product-option')}>
+                      {`[배송비] ${delivery.delivery.toLocaleString('ko-KR')}`}
+                    </span>
+                    <span className={cx('product-option')}>
+                      {`[가격] ${product.price.toLocaleString('ko-KR')}`}
+                    </span>
+                    <div className={cx('product-select', 'media2-b')}>
+                      <Link href={`/product/detail/${product._id}`}>
+                        <button>상품조회</button>
+                      </Link>
+                      <button onClick={() => handleClickDelete(product._id)}>
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                  <div className={cx('product-delivery', 'basic', 'media1')}>
+                    {delivery.delivery.toLocaleString('ko-KR')}
+                  </div>
+                  <div className={cx('product-price', 'basic', 'media1')}>
+                    {product.price.toLocaleString('ko-KR')}
+                  </div>
+                  <div className={cx('product-select', 'basic', 'media2-n')}>
+                    <Link href={`/product/detail/${product._id}`}>
+                      <button>상품조회</button>
+                    </Link>
+                    <button onClick={() => handleClickDelete(product._id)}>
+                      삭제
+                    </button>
+                  </div>
+                </div>
+              )
+            }
+          })}
+        </section>
+        {/* 상품 컨트롤 */}
+        <section className={cx('controls-container')}>
+          <div className={cx('selectControls')}>
+            <button onClick={handleAllDelete}>전체삭제</button>
+            <button className={cx('media1')} onClick={handleCheckedDelete}>
+              선택상품삭제
+            </button>
           </div>
-        </div>
+        </section>
+        <Pagination
+          itemNum={products.length}
+          displayNum={displayNum}
+          onChange={setPageIndex}
+        />
       </div>
     </>
   )
