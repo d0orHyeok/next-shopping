@@ -5,9 +5,13 @@
 }
 
 .wrapper button {
-  border: none;
   background-color: inherit;
   cursor: pointer;
+}
+
+.wrapper .head button,
+.title button {
+  border: none;
 }
 
 .container {
@@ -172,7 +176,99 @@
   padding: 1rem;
 }
 
+.selectAddr {
+  display: flex;
+  background-color: rgb(214, 221, 226);
+}
+
+.selectAddrBtn {
+  font-family: var(--product-font);
+  font-size: 1rem;
+  width: 100%;
+  border: 1px solid lightgray;
+  font-weight: bold;
+  padding: 0.5rem 0;
+}
+
+.selectAddrBtn:first-child {
+  border-right: none;
+}
+
+.selectAddrBtn.switchBtn {
+  border-bottom: none;
+  background-color: white;
+}
+
+.address {
+  padding: 0 0.5rem;
+}
+
+.address-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dotted lightgray;
+  padding: 1rem;
+}
+
+.address-buttons h3 {
+  color: gray;
+}
+
+.addressListBtn {
+  border: 1px solid lightgray;
+  padding: 0.5rem;
+  transition: 0.2s all ease;
+  cursor: pointer;
+}
+
+.addressListBtn:hover {
+  border-color: black;
+}
+
+.address-select {
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.address-select span {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: rgb(50, 50, 50);
+}
+
+.address-select span:last-child {
+  margin-bottom: 0;
+}
+
+.address .address-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dotted lightgray;
+}
+
+.address .checkBtn {
+  border: 1px solid gray;
+  background-color: inherit;
+  color: gray;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  padding-top: 2px;
+}
+
+.address .checkBtn.checkedBtn {
+  background-color: lightskyblue;
+  border-color: lightskyblue;
+  color: white;
+}
+
+/* 직접입력 */
 .address-radio {
+  margin-top: 1rem;
   margin-bottom: 1.5rem;
 }
 

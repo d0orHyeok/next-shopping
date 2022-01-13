@@ -10,7 +10,12 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Badge } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useAppDispatch, useAppSelector } from '@redux/hooks'
-import { selectUser, IUserState, getLikesCart } from '@redux/features/userSlice'
+import {
+  selectUser,
+  IUserState,
+  getLikesCart,
+  userUpdateDeliveryAddrs,
+} from '@redux/features/userSlice'
 import React, { useEffect, useRef, useState } from 'react'
 import DaumPostCodeModal from '@components/utils/DaumPostCodeModal/DaumPostCodeModal'
 import Axios from 'axios'
@@ -20,6 +25,7 @@ import OrderCard from './section/OrderCard'
 import * as delivery from 'public/data/delivery'
 import Payment from './section/Payment'
 import { ParsedUrlQuery } from 'querystring'
+import CheckIcon from '@mui/icons-material/Check'
 
 interface IOrderPageQuery extends ParsedUrlQuery {
   orders: string
@@ -52,11 +58,14 @@ const OrderPage = () => {
   const [open, setOpen] = useState(false)
   const [showTextarea, setShowTextarea] = useState(false)
   const [isShow, setIsShow] = useState([true, true, false, true])
+  const [switchTab, setSwitchTab] = useState(true)
+  const [showAddrList, setShowAddrList] = useState(false)
   const [orderInfo, setOrderInfo] = useState({
     name: '',
     email: { email_id: '', email_domain: '' },
     phone: { phone1: '', phone2: '', phone3: '' },
   })
+  const [selectAddrIndex, setSelectAddrIndex] = useState(-1)
   const [addrInfo, setAddrInfo] = useState({
     name: '',
     address: { zonecode: '', baseAddress: '', extraAddress: '' },
@@ -84,6 +93,24 @@ const OrderPage = () => {
         name: user.userData.name,
         email: { email_id: email[0], email_domain: email[1] },
       })
+      const fixAddr = user.userData.deliveryAddrs.findIndex(
+        (addr) => addr.fix === true
+      )
+
+      if (fixAddr !== -1) {
+        const existPhone = user.userData.deliveryAddrs[fixAddr].phone.split('-')
+        setOrderInfo({
+          ...orderInfo,
+          phone: {
+            phone1: existPhone[0],
+            phone2: existPhone[1],
+            phone3: existPhone[2],
+          },
+        })
+      }
+
+      fixAddr !== -1 ? setSwitchTab(false) : setSwitchTab(true)
+      setSelectAddrIndex(fixAddr)
     }
   }, [user])
 
@@ -220,14 +247,14 @@ const OrderPage = () => {
     const { id } = event.target
 
     if (id === 'addr-new') {
-      setRadioCheck([true, false])
+      setRadioCheck([false, true])
       setAddrInfo({
         ...addrInfo,
         name: '',
         phone: { phone1: '', phone2: '', phone3: '' },
       })
     } else {
-      setRadioCheck([false, true])
+      setRadioCheck([true, false])
       setAddrInfo({ ...addrInfo, name: orderInfo.name, phone: orderInfo.phone })
     }
   }
@@ -283,6 +310,32 @@ const OrderPage = () => {
       orderInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
       return alert('주문자정보를 입력해주세요.')
     }
+
+    const email = `${orderInfo.email.email_id.trim()}@${orderInfo.email.email_domain.trim()}`
+    // eslint-disable-next-line no-useless-escape
+    const emailRegex = /^[a-z0-9\.\-_]+@([a-z0-9\-]+\.)+[a-z]{2,6}$/
+    if (!emailRegex.test(email)) {
+      return alert('잘못된 이메일정보 입니다.')
+    }
+
+    if (!switchTab && user.userData) {
+      if (selectAddrIndex === -1) {
+        setSwitchTab(true)
+        addrInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
+        return alert('선택된 배송지가 없습니다.\n배송정보를 입력해주세요.')
+      }
+
+      const { picker, phone, address } =
+        user.userData?.deliveryAddrs[selectAddrIndex]
+      return {
+        name: picker,
+        phone,
+        email,
+        address,
+        uid: user.userData?._id,
+      }
+    }
+
     if (
       addrInfo.name === '' ||
       addrInfo.address.zonecode === '' ||
@@ -291,6 +344,7 @@ const OrderPage = () => {
       addrInfo.phone.phone2 === '' ||
       addrInfo.phone.phone3 === ''
     ) {
+      setSwitchTab(true)
       addrInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
 
       return alert('배송정보를 입력해주세요.')
@@ -302,13 +356,10 @@ const OrderPage = () => {
     const nameRegex = /[^ㄱ-ㅎ|가-힣|a-z|A-Z|\s]/g
     const phoneRegex = /^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$/
     // eslint-disable-next-line no-useless-escape
-    const emailRegex = /^[a-z0-9\.\-_]+@([a-z0-9\-]+\.)+[a-z]{2,6}$/
-    // eslint-disable-next-line no-useless-escape
     const addressRegex = /^[가-힣a-zA-Z\s0-9\-\_\(\)]+$/
 
     const name = addrInfo.name.trim()
     const phone = `${addrInfo.phone.phone1}-${addrInfo.phone.phone2}-${addrInfo.phone.phone3}`
-    const email = `${orderInfo.email.email_id.trim()}@${orderInfo.email.email_domain.trim()}`
     const address = `${addrInfo.address.zonecode.trim()} ${addrInfo.address.baseAddress.trim()} ${addrInfo.address.extraAddress.trim()}`
 
     if (nameRegex.test(name)) {
@@ -317,11 +368,22 @@ const OrderPage = () => {
     if (!phoneRegex.test(phone)) {
       return alert('잘못된 휴대전화번호 입니다.')
     }
-    if (!emailRegex.test(email)) {
-      return alert('잘못된 이메일정보 입니다.')
-    }
+
     if (!addressRegex.test(address)) {
       return alert('주소를 바르게 입력해 주세요')
+    }
+
+    if (user.userData) {
+      const newAddr = {
+        fix: user.userData.deliveryAddrs.length !== 0 ? false : true,
+        picker: name,
+        addressName: '신규배송지',
+        address,
+        phone,
+      }
+
+      const updateAddrs = [...user.userData.deliveryAddrs, newAddr]
+      dispatch(userUpdateDeliveryAddrs(updateAddrs))
     }
 
     return {
@@ -468,108 +530,187 @@ const OrderPage = () => {
                     <label>택배</label>
                   </div>
                 </div>
-                <div className={cx('address')}>
-                  <div className={cx('address-radio')}>
-                    <ul>
-                      <li>
-                        <input
-                          id="addr-user"
-                          name="addr"
-                          type="radio"
-                          checked={radioCheck[0]}
-                          onChange={handleAddrRadioChange}
-                        />
-                        <label htmlFor="addr-user">주문자 정보와 동일</label>
-                      </li>
-                      <li>
-                        <input
-                          id="addr-new"
-                          name="addr"
-                          type="radio"
-                          checked={radioCheck[1]}
-                          onChange={handleAddrRadioChange}
-                        />
-                        <label htmlFor="addr-new">새로운 배송지</label>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className={cx('address-info')}>
-                    <div className={cx('infoBox')}>
-                      <span className={cx('label')}>받는사람 *</span>
-                      <div className={cx('inputBox')}>
-                        <input
-                          type="text"
-                          name="name"
-                          value={addrInfo.name}
-                          onChange={handleAddrInfoChange}
-                        />
-                      </div>
+                <div className={cx('selectAddr')}>
+                  <button
+                    className={cx('selectAddrBtn', !switchTab && 'switchBtn')}
+                    onClick={() => setSwitchTab(false)}
+                  >
+                    최근 배송지
+                  </button>
+                  <button
+                    className={cx('selectAddrBtn', switchTab && 'switchBtn')}
+                    onClick={() => setSwitchTab(true)}
+                  >
+                    직접입력
+                  </button>
+                </div>
+                {switchTab ? (
+                  <div className={cx('address')}>
+                    <div className={cx('address-radio')}>
+                      <ul>
+                        <li>
+                          <input
+                            id="addr-user"
+                            name="addr"
+                            type="radio"
+                            checked={radioCheck[0]}
+                            onChange={handleAddrRadioChange}
+                          />
+                          <label htmlFor="addr-user">주문자 정보와 동일</label>
+                        </li>
+                        <li>
+                          <input
+                            id="addr-new"
+                            name="addr"
+                            type="radio"
+                            checked={radioCheck[1]}
+                            onChange={handleAddrRadioChange}
+                          />
+                          <label htmlFor="addr-new">새로운 배송지</label>
+                        </li>
+                      </ul>
                     </div>
-                    <div className={cx('infoBox', 'addr')}>
-                      <span className={cx('label')}>주소 *</span>
-                      <div className={cx('inputBox')}>
-                        <div className={cx('addr-search')}>
+                    <div className={cx('address-info')}>
+                      <div className={cx('infoBox')}>
+                        <span className={cx('label')}>받는사람 *</span>
+                        <div className={cx('inputBox')}>
                           <input
                             type="text"
-                            placeholder="우편번호"
-                            id="zonecode"
-                            name="address"
-                            maxLength={5}
-                            value={addrInfo.address.zonecode}
+                            name="name"
+                            value={addrInfo.name}
                             onChange={handleAddrInfoChange}
                           />
-                          <button onClick={() => setOpen(true)}>
-                            주소검섹
-                          </button>
                         </div>
-                        <input
-                          type="text"
-                          placeholder="기본주소"
-                          id="baseAddress"
-                          name="address"
-                          value={addrInfo.address.baseAddress}
-                          onChange={handleAddrInfoChange}
-                        />
-                        <input
-                          type="text"
-                          placeholder="나머지주소"
-                          id="extraAddress"
-                          name="address"
-                          value={addrInfo.address.extraAddress}
-                          onChange={handleAddrInfoChange}
-                        />
                       </div>
-                    </div>
-                    <div className={cx('infoBox')}>
-                      <span className={cx('label')}>휴대전화 *</span>
-                      <div className={cx('phone', 'inputBox')}>
-                        <input
-                          type="text"
-                          id="phone1"
-                          name="phone"
-                          value={addrInfo.phone.phone1}
-                          onChange={handleAddrInfoChange}
-                        />
-                        <span>-</span>
-                        <input
-                          type="text"
-                          id="phone2"
-                          name="phone"
-                          value={addrInfo.phone.phone2}
-                          onChange={handleAddrInfoChange}
-                        />
-                        <span>-</span>
-                        <input
-                          type="text"
-                          id="phone3"
-                          name="phone"
-                          value={addrInfo.phone.phone3}
-                          onChange={handleAddrInfoChange}
-                        />
+                      <div className={cx('infoBox', 'addr')}>
+                        <span className={cx('label')}>주소 *</span>
+                        <div className={cx('inputBox')}>
+                          <div className={cx('addr-search')}>
+                            <input
+                              type="text"
+                              placeholder="우편번호"
+                              id="zonecode"
+                              name="address"
+                              maxLength={5}
+                              value={addrInfo.address.zonecode}
+                              onChange={handleAddrInfoChange}
+                            />
+                            <button onClick={() => setOpen(true)}>
+                              주소검섹
+                            </button>
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="기본주소"
+                            id="baseAddress"
+                            name="address"
+                            value={addrInfo.address.baseAddress}
+                            onChange={handleAddrInfoChange}
+                          />
+                          <input
+                            type="text"
+                            placeholder="나머지주소"
+                            id="extraAddress"
+                            name="address"
+                            value={addrInfo.address.extraAddress}
+                            onChange={handleAddrInfoChange}
+                          />
+                        </div>
+                      </div>
+                      <div className={cx('infoBox')}>
+                        <span className={cx('label')}>휴대전화 *</span>
+                        <div className={cx('phone', 'inputBox')}>
+                          <input
+                            type="text"
+                            id="phone1"
+                            name="phone"
+                            value={addrInfo.phone.phone1}
+                            onChange={handleAddrInfoChange}
+                          />
+                          <span>-</span>
+                          <input
+                            type="text"
+                            id="phone2"
+                            name="phone"
+                            value={addrInfo.phone.phone2}
+                            onChange={handleAddrInfoChange}
+                          />
+                          <span>-</span>
+                          <input
+                            type="text"
+                            id="phone3"
+                            name="phone"
+                            value={addrInfo.phone.phone3}
+                            onChange={handleAddrInfoChange}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className={cx('address')}>
+                    <div className={cx('address-buttons')}>
+                      <h3>{!showAddrList ? '' : '배송지를 선택해주세요.'}</h3>
+                      <button
+                        className={cx('addressListBtn')}
+                        onClick={() => setShowAddrList(!showAddrList)}
+                      >
+                        {!showAddrList ? '배송지목록' : '닫기'}
+                      </button>
+                    </div>
+                    {!showAddrList ? (
+                      selectAddrIndex !== -1 && (
+                        <div className={cx('address-select')}>
+                          <span>{`${
+                            user.userData?.deliveryAddrs[selectAddrIndex].fix
+                              ? '[기본] '
+                              : ''
+                          }${
+                            user.userData?.deliveryAddrs[selectAddrIndex].picker
+                          }`}</span>
+                          <span>
+                            {
+                              user.userData?.deliveryAddrs[selectAddrIndex]
+                                .address
+                            }
+                          </span>
+                          <span>
+                            {
+                              user.userData?.deliveryAddrs[selectAddrIndex]
+                                .phone
+                            }
+                          </span>
+                        </div>
+                      )
+                    ) : (
+                      <ul className={cx('address-list')}>
+                        {user.userData?.deliveryAddrs.map((addr, index) => (
+                          <li key={index}>
+                            <div className={cx('address-select')}>
+                              <span>{`${addr.fix ? '[기본] ' : ''}${
+                                addr.picker
+                              }`}</span>
+                              <span>{addr.address}</span>
+                              <span>{addr.phone}</span>
+                            </div>
+                            <button
+                              className={cx(
+                                'checkBtn',
+                                selectAddrIndex === index && 'checkedBtn'
+                              )}
+                              onClick={() => {
+                                setSelectAddrIndex(index)
+                                setShowAddrList(false)
+                              }}
+                            >
+                              <CheckIcon />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
               <div
                 className={cx(
