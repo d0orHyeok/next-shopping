@@ -23,8 +23,8 @@
 }
 
 .nav {
-  max-width: 180px;
-  width: 100%;
+  min-width: 180px;
+  width: 180px;
   margin-right: 40px;
 }
 
@@ -90,5 +90,21 @@
   }
   .drawerBtn {
     visibility: visible;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .title {
+    font-size: 2.35rem;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .drawerBtn span {
+    display: none;
   }
 }

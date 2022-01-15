@@ -16,6 +16,8 @@ handler.post(async (req, res) => {
     }
 
     const payments = await Payment.find({ user_id: user_id })
+      .sort({ purchased_at: -1 })
+      .populate('orders.pid')
 
     return res.status(200).json({ success: true, payments })
   } catch (error) {

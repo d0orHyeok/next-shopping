@@ -11,6 +11,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
+import { IProduct } from '@models/Product'
+import Link from 'next/link'
 
 const cx = classNames.bind(styles)
 
@@ -64,33 +66,71 @@ const MyPage = () => {
       <h1 className={cx('title')}>최근 주문내역</h1>
       <section className={cx('orderList')}>
         <div className={cx('table')}>
-          <TableContainer sx={{ minWidth: '650px' }}>
+          <TableContainer sx={{ marginBottom: '3rem' }}>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">
-                    <span>주문일자</span>
-                    <span>{'[주문번호]'}</span>
+                  <TableCell
+                    align="center"
+                    className={cx('tableCell', 'id', 'head')}
+                  >
+                    <ul className={cx('order-id')}>
+                      <li>주문일자</li>
+                      <li>{'[주문번호]'}</li>
+                    </ul>
                   </TableCell>
-                  <TableCell align="center">상품정보</TableCell>
-                  <TableCell align="center">수량</TableCell>
-                  <TableCell align="center">주문금액</TableCell>
-                  <TableCell align="center">주문상태</TableCell>
-                  <TableCell align="center">취소/교환/반품</TableCell>
+                  <TableCell
+                    align="center"
+                    className={cx('tableCell', 'info', 'head')}
+                  >
+                    <p>상품정보</p>
+                    <div className={cx('mediaCell')}>
+                      <span>주문상태</span>
+                      <span>취소/교환/반품</span>
+                    </div>
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    className={cx('tableCell', 'qty', 'head')}
+                  >
+                    수량
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    className={cx('tableCell', 'price', 'head')}
+                  >
+                    주문금액
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    className={cx('tableCell', 'orderState', 'head')}
+                  >
+                    주문상태
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    className={cx('tableCell', 'refundState', 'head')}
+                  >
+                    취소/교환/반품
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {paymentState.payments.map((payment, index) => {
+                  if (index > 9) {
+                    return
+                  }
+
                   let orderState = ''
                   switch (payment.order_state) {
                     case 'complete':
                       orderState = '배송완료'
                       break
                     case 'delivery':
-                      orderState = '배송완료'
+                      orderState = '배송중'
                       break
                     case 'ready':
-                      orderState = '배송완료'
+                      orderState = '상품준비중'
                       break
                   }
                   let refundState = '-'
@@ -105,19 +145,101 @@ const MyPage = () => {
                       refundState = '반품'
                       break
                   }
-                  return (
-                    <TableRow key={index}>
-                      <TableCell align="center">
-                        <span>{payment.purchased_at}</span>
-                        <span>{payment.order_id}</span>
-                      </TableCell>
-                      <TableCell align="center">정보</TableCell>
-                      <TableCell align="center">0</TableCell>
-                      <TableCell align="center">10000</TableCell>
-                      <TableCell align="center">{orderState}</TableCell>
-                      <TableCell align="center">{refundState}</TableCell>
-                    </TableRow>
-                  )
+                  return payment.orders.map((order, orderIndex) => {
+                    const product: IProduct = order.pid
+                    return (
+                      <TableRow key={index}>
+                        {!orderIndex ? (
+                          <TableCell
+                            align="center"
+                            rowSpan={payment.orders.length}
+                            className={cx('tableCell', 'id')}
+                          >
+                            <div className={cx('order-id')}>
+                              <span style={{ marginBottom: '0.5rem' }}>
+                                {payment.purchased_at}
+                              </span>
+                              <span>{payment.order_id}</span>
+                            </div>
+                          </TableCell>
+                        ) : (
+                          <></>
+                        )}
+                        <TableCell
+                          align="center"
+                          className={cx('tableCell', 'info')}
+                        >
+                          <div className={cx('order-info')}>
+                            <div className={cx('order-info-imgBox')}>
+                              <Link href={`/product/detail/${order.pid._id}`}>
+                                <a>
+                                  <img src={product.image} alt={product.name} />
+                                </a>
+                              </Link>
+                            </div>
+                            <div className={cx('order-info-content')}>
+                              <Link href={`/product/detail/${order.pid._id}`}>
+                                <a className={cx('product-name')}>
+                                  {product.name}
+                                </a>
+                              </Link>
+                              <span className={cx('product-option')}>
+                                {`[옵션] ${order.option.color.colorName}/${order.option.size}`}
+                              </span>
+                              <span
+                                className={cx(
+                                  'product-option',
+                                  'product-option-qty'
+                                )}
+                              >
+                                {`[수량] ${order.qty}`}
+                              </span>
+                              <span
+                                className={cx(
+                                  'product-option',
+                                  'product-option-price'
+                                )}
+                              >
+                                {`[금액] ${(
+                                  order.qty * order.pid.price
+                                ).toLocaleString('ko-KR')}`}
+                              </span>
+                            </div>
+                          </div>
+                          <div className={cx('mediaCell')}>
+                            <span>{orderState}</span>
+                            <span>{refundState}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell
+                          align="center"
+                          className={cx('tableCell', 'qty')}
+                        >
+                          {order.qty}
+                        </TableCell>
+                        <TableCell
+                          align="center"
+                          className={cx('tableCell', 'price')}
+                        >
+                          {(order.qty * order.pid.price).toLocaleString(
+                            'ko-KR'
+                          )}
+                        </TableCell>
+                        <TableCell
+                          align="center"
+                          className={cx('tableCell', 'orderState')}
+                        >
+                          {orderState}
+                        </TableCell>
+                        <TableCell
+                          align="center"
+                          className={cx('tableCell', 'refundState')}
+                        >
+                          {refundState}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })
                 })}
               </TableBody>
             </Table>

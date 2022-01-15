@@ -71,29 +71,31 @@ export const paymentSlice = createSlice({
     [getPayments.fulfilled.type]: (state, action) => {
       state.state = true
       const payments: IPayment[] = action.payload
+      state.payments = payments
       payments.forEach((payment) => {
+        const addNum = payment.orders.length
         if (payment.refund_state === null) {
           switch (payment.order_state) {
             case 'ready':
-              state.number.ready += 1
+              state.number.ready += addNum
               break
             case 'delivery':
-              state.number.delivery += 1
+              state.number.delivery += addNum
               break
             case 'complete':
-              state.number.complete += 1
+              state.number.complete += addNum
               break
           }
         } else {
           switch (payment.refund_state) {
             case 'cancel':
-              state.number.cancel += 1
+              state.number.cancel += addNum
               break
             case 'change':
-              state.number.change += 1
+              state.number.change += addNum
               break
             case 'back':
-              state.number.back += 1
+              state.number.back += addNum
               break
           }
         }

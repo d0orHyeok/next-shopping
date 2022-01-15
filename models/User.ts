@@ -1,12 +1,12 @@
 import { IColor } from './Product'
-import mongoose, { Schema, Document, Model } from 'mongoose'
+import mongoose, { Schema, Document, Model, PopulatedDoc } from 'mongoose'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dayjs from 'dayjs'
 
 export const saltRounds = 10
 
-interface IOption {
+export interface IOption {
   color: IColor
   size: string
 }
@@ -20,7 +20,7 @@ export interface IDeliveryAddr {
 }
 
 export interface IUserCart {
-  pid: string
+  pid: PopulatedDoc<string | Document>
   qty: number
   option: IOption
 }
