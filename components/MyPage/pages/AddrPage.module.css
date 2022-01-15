@@ -2,8 +2,48 @@
   font-family: var(--product-font);
 }
 
-.th {
+.tableCell {
+  padding: 1rem 0;
+}
+
+.tableCell.head {
   font-weight: bold;
+}
+
+.tableCell.checkbox {
+  width: 30px;
+}
+
+.tableCell.addressName,
+.tableCell.picker {
+  width: 100px;
+}
+
+.tableCell.phone {
+  width: 120px;
+}
+
+.tableCell.edit {
+  width: 60px;
+}
+
+.tableCell.address .media {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+
+.tableCell.address .media .block {
+  margin: 0 0.5rem;
+}
+
+.address-addressName {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .fix {
@@ -92,11 +132,17 @@
 .input {
   height: 2rem;
   border: 1px solid lightgray;
+  max-width: 160px;
+  width: 100%;
 }
 
 .input:focus {
   outline: none;
   border-color: black;
+}
+
+.inputs-addr {
+  width: 100%;
 }
 
 .inputs-addr .input {
@@ -106,7 +152,7 @@
 
 .inputs-addr .btn {
   padding: auto 0.5rem;
-  height: 2rem;
+  height: 36px;
 }
 
 .inputs-addr .input:last-child {
@@ -116,22 +162,34 @@
 .inputs-addr span {
   font-size: 0.85rem;
   color: gray;
+  width: 60px;
 }
 
-.input-postcode {
-  width: 100px;
+.input-zonecode {
+  max-width: 100px;
 }
 
 .input-address {
-  width: 350px;
+  max-width: 350px;
+}
+
+.inputs-phone {
+  display: flex;
+  align-items: center;
+}
+
+.inputs-phone span {
+  margin: 0 4px;
 }
 
 .inputs-phone .input {
-  width: 80px;
+  max-width: 80px;
+  width: 100%;
 }
 
 .check-inputBox {
   color: gray;
+  align-items: center;
   justify-content: flex-end;
 }
 
@@ -154,4 +212,80 @@
 
 .add-listBtn:first-child {
   margin-right: 0.5rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .tableCell {
+    font-size: 0.8rem;
+  }
+
+  .tableCell.address {
+    padding: 0.5rem 0;
+  }
+
+  .tableCell.address .media {
+    display: flex;
+  }
+
+  .address-addressName {
+    flex-direction: row;
+  }
+
+  .tableCell.addressName,
+  .tableCell.picker,
+  .tableCell.phone {
+    display: none;
+  }
+
+  .listBtn {
+    font-size: 0.8rem;
+  }
+
+  .desc ul li {
+    font-size: 0.75rem;
+    line-height: 0.75rem;
+  }
+
+  /* 등록 / 수정 */
+  .inputs-addr .btn,
+  .inputs-addr li span {
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .label {
+    width: 80px;
+    font-size: 0.9rem;
+  }
+  .inputs-addr li {
+    display: flex;
+  }
+
+  .inputs-addr li span {
+    margin-top: calc(1rem - 0.325rem);
+  }
+
+  .check-inputBox label {
+    font-size: 0.85rem;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .inputs-addr li span {
+    display: none;
+  }
+
+  .inputs-phone span {
+    visibility: hidden;
+    margin: 0;
+  }
+
+  .listBtn {
+    padding: 0.5rem;
+  }
+
+  .desc ul li {
+    font-size: 0.7rem;
+    line-height: 0.7rem;
+  }
 }

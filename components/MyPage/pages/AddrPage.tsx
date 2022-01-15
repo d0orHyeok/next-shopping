@@ -224,11 +224,15 @@ const AddrPage = () => {
       <div className={cx('wrapper')}>
         {!isAdd ? (
           <>
-            <TableContainer sx={{ minWidth: '650px' }}>
+            <TableContainer>
               <Table aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ width: '13px' }}>
+                    <TableCell
+                      align="center"
+                      className={cx('tableCell', 'checkbox', 'head')}
+                      sx={{ width: '13px' }}
+                    >
                       <input
                         type="checkbox"
                         name="checkAll"
@@ -237,32 +241,38 @@ const AddrPage = () => {
                       />
                     </TableCell>
                     <TableCell
-                      className={styles.th}
-                      sx={{ width: '120px' }}
+                      className={cx('tableCell', 'addressName', 'head')}
                       align="center"
                     >
                       배송지명
                     </TableCell>
                     <TableCell
-                      className={styles.th}
-                      sx={{ width: '120px' }}
+                      className={cx('tableCell', 'picker', 'head')}
                       align="center"
                     >
                       수령인
                     </TableCell>
                     <TableCell
-                      className={styles.th}
-                      sx={{ width: '140px' }}
+                      className={cx('tableCell', 'phone', 'head')}
                       align="center"
                     >
                       휴대전화
                     </TableCell>
-                    <TableCell className={styles.th} align="center">
-                      주소
+                    <TableCell
+                      className={cx('tableCell', 'address', 'head')}
+                      align="center"
+                    >
+                      <ul>
+                        <li className={cx('media')}>
+                          <span>{'[ 배송지명'}</span>
+                          <span className={cx('block')}></span>
+                          <span>{'수령인 ]'}</span>
+                        </li>
+                        <li>주소</li>
+                      </ul>
                     </TableCell>
                     <TableCell
-                      className={styles.th}
-                      sx={{ width: '80px' }}
+                      className={cx('tableCell', 'edit', 'head')}
                       align="center"
                     >
                       수정
@@ -272,7 +282,10 @@ const AddrPage = () => {
                 <TableBody>
                   {deliveryAddrs.map((addr, index) => (
                     <TableRow key={index}>
-                      <TableCell>
+                      <TableCell
+                        className={cx('tableCell', 'checkbox')}
+                        align="center"
+                      >
                         <input
                           type="checkbox"
                           name="checkbox"
@@ -280,14 +293,52 @@ const AddrPage = () => {
                           onChange={onChangeCheckbox(index)}
                         />
                       </TableCell>
-                      <TableCell align="center">
-                        {addr.fix && <span className={cx('fix')}>기본</span>}{' '}
-                        {addr.addressName}
+                      <TableCell
+                        className={cx('tableCell', 'addressName')}
+                        align="center"
+                      >
+                        <div className={cx('address-addressName')}>
+                          {addr.fix && <span className={cx('fix')}>기본</span>}
+                          <span>{addr.addressName}</span>
+                        </div>
                       </TableCell>
-                      <TableCell align="center">{addr.picker}</TableCell>
-                      <TableCell align="center">{addr.phone}</TableCell>
-                      <TableCell align="center">{addr.address}</TableCell>
-                      <TableCell align="center">
+                      <TableCell
+                        className={cx('tableCell', 'picker')}
+                        align="center"
+                      >
+                        {addr.picker}
+                      </TableCell>
+                      <TableCell
+                        className={cx('tableCell', 'phone')}
+                        align="center"
+                      >
+                        {addr.phone}
+                      </TableCell>
+                      <TableCell
+                        className={cx('tableCell', 'address')}
+                        align="center"
+                      >
+                        <ul>
+                          <li
+                            className={cx('media')}
+                            style={{ marginBottom: '0.5rem' }}
+                          >
+                            <div className={cx('address-addressName')}>
+                              {addr.fix && (
+                                <span className={cx('fix')}>기본</span>
+                              )}
+                              <span>{addr.addressName}</span>
+                            </div>
+                            <span className={cx('block')}></span>
+                            <span>{addr.picker}</span>
+                          </li>
+                          <li>{addr.address}</li>
+                        </ul>
+                      </TableCell>
+                      <TableCell
+                        className={cx('tableCell', 'edit')}
+                        align="center"
+                      >
                         <button
                           className={cx('btn', 'changeBtn')}
                           onClick={() => onClickEditAddr(index)}
