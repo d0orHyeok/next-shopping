@@ -2,14 +2,19 @@ import { authCheckServerSide } from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import Head from 'next/head'
 import MyPageLayout from '@components/MyPage/MyPageLayout'
-import { getPayments } from '@redux/features/paymentSlice'
 import HistoryPage, {
   IHistoryPageProps,
 } from '@components/MyPage/pages/HistoryPage'
 import { ParsedUrlQuery } from 'querystring'
+import dayjs from 'dayjs'
+import Axios from 'axios'
+import { IUserState } from '@redux/features/userSlice'
 
 interface IHistoryPageQuery extends ParsedUrlQuery {
-  mode?: 'all' | 'refund'
+  mode?: 'order' | 'refund'
+  order_state?: string
+  date_start?: string
+  date_end?: string
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
@@ -20,25 +25,55 @@ export const getServerSideProps = wrapper.getServerSideProps(
       return { redirect: redirect }
     }
 
-    const user = await store.getState().user
-    await store.dispatch(getPayments(user.userData._id))
+    const user: IUserState = await store.getState().user
 
-    const { mode } = context.query as IHistoryPageQuery
+    const today = dayjs(Date.now())
+
+    const { mode, order_state, date_start, date_end } =
+      context.query as IHistoryPageQuery
+
+    const data = {
+      mode: mode ? mode : 'order',
+      order_state: order_state ? order_state : '',
+      date_start: date_start
+        ? date_start
+        : today.subtract(3, 'month').format('YYYY-MM-DD'),
+      date_end: date_end ? date_end : today.format('YYYY-MM-DD'),
+    }
+
+    const response = await Axios.post('/api/payment/getPayments', {
+      user_id: user.userData ? user.userData._id : '',
+      ...data,
+    })
+
+    const payments = response.data.payments ? response.data.payments : []
 
     return {
-      props: { mode: mode ? mode : 'all' },
+      props: { payments, ...data },
     }
   }
 )
 
-const history = ({ mode }: IHistoryPageProps) => {
+const history = ({
+  payments,
+  mode,
+  order_state,
+  date_start,
+  date_end,
+}: IHistoryPageProps) => {
   return (
     <>
       <Head>
         <title>마이페이지 | PIIC</title>
       </Head>
       <MyPageLayout title={'주문조회'} contentTitleUnderline={false}>
-        <HistoryPage mode={mode} />
+        <HistoryPage
+          payments={payments}
+          mode={mode}
+          order_state={order_state}
+          date_start={date_start}
+          date_end={date_end}
+        />
       </MyPageLayout>
     </>
   )

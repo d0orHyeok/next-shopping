@@ -1,7 +1,5 @@
 import styles from './HistoryPage.module.css'
 import classNames from 'classnames/bind'
-import { useAppSelector } from '@redux/hooks'
-import { IPaymentState, selectPayment } from '@redux/features/paymentSlice'
 import {
   Table,
   TableBody,
@@ -12,43 +10,33 @@ import {
 } from '@mui/material'
 import { IProduct } from '@models/Product'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/router'
-import { ParsedUrlQuery } from 'querystring'
+import { IPayment } from '@models/Payment'
 
 export interface IHistoryPageProps {
-  mode: 'all' | 'refund'
-}
-
-interface IHistoryPageQuery extends ParsedUrlQuery {
-  mode?: string
-  order_state?: string
-  date_start?: string
-  date_end?: string
+  payments: IPayment[]
+  mode: 'order' | 'refund'
+  order_state: string
+  date_start: string
+  date_end: string
 }
 
 const cx = classNames.bind(styles)
 const today = dayjs(Date.now())
 
-const HistoryPage = ({ mode }: IHistoryPageProps) => {
-  const paymentState: IPaymentState = useAppSelector(selectPayment)
+const HistoryPage = ({
+  payments,
+  mode,
+  order_state,
+  date_start,
+  date_end,
+}: IHistoryPageProps) => {
   const router = useRouter()
 
-  const [orderState, setOrderState] = useState('')
-  const [date, setDate] = useState({
-    dateStart: today.subtract(3, 'month').format('YYYY-MM-DD'),
-    dateEnd: today.format('YYYY-MM-DD'),
-  })
-
-  useEffect(() => {
-    const { order_state, date_start, date_end } =
-      router.query as IHistoryPageQuery
-
-    if (order_state) setOrderState(order_state)
-    if (date_start && date_end)
-      setDate({ dateStart: date_start, dateEnd: date_end })
-  }, [router.query])
+  const [orderState, setOrderState] = useState(order_state)
+  const [date, setDate] = useState({ dateStart: date_start, dateEnd: date_end })
 
   const { dateStart, dateEnd } = date
 
@@ -111,7 +99,7 @@ const HistoryPage = ({ mode }: IHistoryPageProps) => {
               className={cx(
                 'btn',
                 'historyBtn',
-                mode === 'all' && 'historyBtn-select'
+                mode === 'order' && 'historyBtn-select'
               )}
             >
               주문내역조회
@@ -146,13 +134,20 @@ const HistoryPage = ({ mode }: IHistoryPageProps) => {
                 value={orderState}
                 onChange={handleChangeOrderState}
               >
-                <option value="">전체 주문처리상태</option>
-                <option value="ready">상품준비중</option>
-                <option value="delivery">배송중</option>
-                <option value="complete">배송완료</option>
-                <option value="cancel">취소</option>
-                <option value="change">교환</option>
-                <option value="back">반품</option>
+                <option value="">주문처리상태</option>
+                {mode === 'order' ? (
+                  <>
+                    <option value="ready">상품준비중</option>
+                    <option value="delivery">배송중</option>
+                    <option value="complete">배송완료</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="cancel">취소</option>
+                    <option value="change">교환</option>
+                    <option value="back">반품</option>
+                  </>
+                )}
               </select>
             </div>
             <div className={cx('filter-period')}>
@@ -288,36 +283,33 @@ const HistoryPage = ({ mode }: IHistoryPageProps) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paymentState.payments.map((payment, index) => {
-                  if (index > 9) {
-                    return
-                  }
-
-                  let orderState = ''
-                  switch (payment.order_state) {
-                    case 'complete':
-                      orderState = '배송완료'
-                      break
-                    case 'delivery':
-                      orderState = '배송중'
-                      break
-                    case 'ready':
-                      orderState = '상품준비중'
-                      break
-                  }
-                  let refundState = '-'
-                  switch (payment.refund_state) {
-                    case 'cancel':
-                      refundState = '취소'
-                      break
-                    case 'change':
-                      refundState = '교환'
-                      break
-                    case 'back':
-                      refundState = '반품'
-                      break
-                  }
+                {payments.map((payment) => {
                   return payment.orders.map((order, orderIndex) => {
+                    let orderState = ''
+                    switch (order.order_state) {
+                      case 'complete':
+                        orderState = '배송완료'
+                        break
+                      case 'delivery':
+                        orderState = '배송중'
+                        break
+                      case 'ready':
+                        orderState = '상품준비중'
+                        break
+                    }
+                    let refundState = '-'
+                    switch (order.refund_state) {
+                      case 'cancel':
+                        refundState = '취소'
+                        break
+                      case 'change':
+                        refundState = '교환'
+                        break
+                      case 'back':
+                        refundState = '반품'
+                        break
+                    }
+
                     const product: IProduct = order.pid
                     return (
                       <TableRow key={`${product.name}${orderIndex}`}>

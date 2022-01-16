@@ -2,8 +2,9 @@ import { authCheckServerSide } from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import Head from 'next/head'
 import MyPageLayout from '@components/MyPage/MyPageLayout'
-import MyPage from '@components/MyPage/pages/MyPage'
-import { getPayments } from '@redux/features/paymentSlice'
+import MyPage, { IMyPageIndexProps } from '@components/MyPage/pages/MyPage'
+import { IUserState } from '@redux/features/userSlice'
+import Axios from 'axios'
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
@@ -13,21 +14,26 @@ export const getServerSideProps = wrapper.getServerSideProps(
       return { redirect: redirect }
     }
 
-    const user = await store.getState().user
-    await store.dispatch(getPayments(user.userData._id))
+    const user: IUserState = await store.getState().user
 
-    return { props: {} }
+    const response = await Axios.post('/api/payment/getPayments', {
+      user_id: user.userData ? user.userData._id : '',
+    })
+
+    const payments = response.data.payments ? response.data.payments : []
+
+    return { props: { payments } }
   }
 )
 
-const mypage = () => {
+const mypage = ({ payments }: IMyPageIndexProps) => {
   return (
     <>
       <Head>
         <title>마이페이지 | PIIC</title>
       </Head>
       <MyPageLayout>
-        <MyPage />
+        <MyPage payments={payments} />
       </MyPageLayout>
     </>
   )

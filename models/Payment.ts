@@ -2,11 +2,14 @@ import { IUserCart } from '@models/User'
 import dayjs from 'dayjs'
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
+interface IPaymentOrder extends IUserCart {
+  order_state: 'ready' | 'delivery' | 'complete'
+  refund_state: 'cancel' | 'change' | 'back' | null
+}
+
 interface Payment {
   receipt_id: string
   order_id: string
-  order_state: 'ready' | 'delivery' | 'complete'
-  refund_state: 'cancel' | 'change' | 'back' | null
   password: string
   payment_name: string
   item_name: string[]
@@ -17,7 +20,7 @@ interface Payment {
   card_no: string
   purchased_at: string
   receipt_url: string
-  orders: IUserCart[]
+  orders: IPaymentOrder[]
   refund_prieod: string
 }
 
@@ -34,14 +37,6 @@ const paymentSchema: Schema = new Schema({
   },
   order_id: {
     type: String,
-  },
-  order_state: {
-    type: String,
-    default: 'ready',
-  },
-  refund_state: {
-    type: String,
-    default: null,
   },
   user_id: {
     type: Schema.Types.ObjectId,
@@ -88,6 +83,14 @@ const paymentSchema: Schema = new Schema({
           colorHex: { type: String },
         },
         size: { type: String },
+      },
+      order_state: {
+        type: String,
+        default: 'ready',
+      },
+      refund_state: {
+        type: String,
+        default: null,
       },
     },
   ],

@@ -97,22 +97,30 @@ const OrderPage = () => {
         (addr) => addr.fix === true
       )
 
+      const userOrderInfo = {
+        name: user.userData.name,
+        email: { email_id: email[0], email_domain: email[1] },
+      }
+
       if (fixAddr !== -1) {
         const existPhone = user.userData.deliveryAddrs[fixAddr].phone.split('-')
         setOrderInfo({
           ...orderInfo,
+          ...userOrderInfo,
           phone: {
             phone1: existPhone[0],
             phone2: existPhone[1],
             phone3: existPhone[2],
           },
         })
+      } else {
+        setOrderInfo({ ...orderInfo, ...userOrderInfo })
       }
 
       fixAddr !== -1 ? setSwitchTab(false) : setSwitchTab(true)
       setSelectAddrIndex(fixAddr)
     }
-  }, [user])
+  }, [user.userData])
 
   useEffect(() => {
     const { cartIndex, orders } = router.query as IOrderPageQuery
