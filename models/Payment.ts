@@ -1,4 +1,5 @@
 import { IUserCart } from '@models/User'
+import dayjs from 'dayjs'
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
 interface Payment {
@@ -17,6 +18,7 @@ interface Payment {
   purchased_at: string
   receipt_url: string
   orders: IUserCart[]
+  refund_prieod: string
 }
 
 export interface IPayment extends Payment {
@@ -89,6 +91,10 @@ const paymentSchema: Schema = new Schema({
       },
     },
   ],
+  refund_prieod: {
+    type: Date,
+    default: dayjs(Date.now()).add(7, 'day').format('YYYY-MM-DD'),
+  },
 })
 
 export default (mongoose.models.Payment as IPaymentModel) ||

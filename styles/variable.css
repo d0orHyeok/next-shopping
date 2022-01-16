@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
 
 :root {
-  --header-maxWidth: 1400px;
+  --header-maxWidth: 1500px;
   --header-background: white;
   --preHeader-background: rgb(245, 245, 245);
   --header-mainColor: black;

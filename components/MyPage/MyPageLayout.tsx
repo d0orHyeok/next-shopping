@@ -11,12 +11,14 @@ interface IMyPageProps {
   title?: string
   children?: React.ReactNode
   contentStyle?: React.CSSProperties
+  contentTitleUnderline?: boolean
 }
 
 const MyPageLayout = ({
   children,
   title = '마이페이지',
   contentStyle,
+  contentTitleUnderline = true,
 }: IMyPageProps) => {
   const [draw, setDraw] = useState(false)
 
@@ -46,7 +48,9 @@ const MyPageLayout = ({
           </div>
 
           <div className={styles.content} style={contentStyle}>
-            <h2 className={cx('subTitle', 'underline')}>
+            <h2
+              className={cx('subTitle', contentTitleUnderline && 'underline')}
+            >
               <button className={cx('drawerBtn')} onClick={toggleDrawer(true)}>
                 <MenuIcon />
                 <span>마이페이지</span>

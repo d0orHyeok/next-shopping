@@ -1,0 +1,337 @@
+.wrapper {
+  font-family: var(--product-font);
+
+  --filter-height: 25px;
+}
+
+.wrapper a {
+  text-decoration: inherit;
+  cursor: pointer;
+}
+
+.btn {
+  border: 1px solid lightgray;
+  background-color: inherit;
+  cursor: pointer;
+  transition: 0.2s ease all;
+  font-family: var(--product-font);
+}
+
+.btn:hover {
+  border-color: black;
+}
+
+.select {
+  margin-top: -30px;
+  margin-bottom: 3rem;
+}
+
+.select-history {
+  display: flex;
+  align-items: center;
+}
+
+.historyBtn {
+  font-size: 1rem;
+  text-align: center;
+  height: 60px;
+  line-height: 60px;
+  max-width: 180px;
+  width: 100%;
+  background-color: whitesmoke;
+  color: gray;
+}
+
+.historyBtn:first-child {
+  border-right: none;
+}
+
+.historyBtn:hover {
+  border-color: lightgray;
+}
+
+.historyBtn-select {
+  border-bottom: none;
+  background-color: inherit;
+  color: black;
+}
+
+.select-order {
+  margin: 2rem 0;
+  padding: 2rem;
+  background-color: whitesmoke;
+}
+
+.select-order-filter {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 2px solid lightgray;
+  padding: 0.5rem 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.select-order-filter > * {
+  margin: 0.5rem 0;
+}
+
+.filter-state,
+.filter-period {
+  margin-right: 0.5rem;
+}
+
+.filter-state select {
+  border: 1px solid lightgray;
+  height: var(--filter-height);
+}
+
+.filter-block {
+  margin: 0 0.5rem;
+  width: 1px;
+  height: 12px;
+  background-color: gray;
+}
+
+.periodBtn {
+  height: var(--filter-height);
+  border-radius: 2px;
+}
+
+.filter-datePicker {
+  margin: 0;
+}
+
+.filter-datePicker > * {
+  margin: 0.5rem 0;
+  height: var(--filter-height);
+}
+
+.datePicker {
+  border: 1px solid lightgray;
+}
+
+.filter-datePicker span {
+  margin: 0 4px;
+}
+
+.dateBtn {
+  margin-left: 6px;
+  border-radius: 3px;
+  background-color: slategray;
+  color: white;
+  border: none;
+}
+
+.dateBtn:active {
+  background-color: rgb(76, 87, 99);
+}
+
+.select-order-desc {
+  font-size: 0.85rem;
+  color: gray;
+}
+
+.select-order-desc ol {
+  list-style: circle;
+  list-style-position: inside;
+}
+
+.select-order-desc ol li {
+  margin-bottom: 4px;
+}
+
+.select-order-desc ol li:last-child {
+  margin-bottom: 0;
+}
+
+/* 주문내역 */
+.title {
+  font-size: 1.15rem;
+  line-height: 1.15rem;
+  font-weight: bold;
+  padding: 10px 0;
+}
+
+.orderList {
+  border-top: 3px solid black;
+}
+
+.table th,
+.table td {
+  font-family: var(--product-font);
+  padding: 1rem 0;
+}
+.table th {
+  font-weight: bold;
+}
+.tableCell {
+  font-size: 0.85rem;
+}
+
+.tableCell.id {
+  min-width: 180px;
+}
+
+.tableCell.id.head .order-id {
+  flex-direction: row;
+}
+.tableCell.id.head .order-id span:first-child {
+  margin-right: 4px;
+}
+
+.order-id {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tableCell.info {
+  min-width: 260px;
+}
+
+.tableCell.info .mediaCell {
+  display: none;
+  border-top: 1px dotted lightgray;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  width: 100%;
+}
+
+.order-info {
+  display: flex;
+}
+
+.order-info-imgBox {
+  width: 100px;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+.order-info-imgBox img {
+  width: 100%;
+  transition: 0.2s ease all;
+}
+
+.order-info-imgBox img:hover {
+  opacity: 66%;
+}
+
+.order-info-content {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.order-info-content .product-name {
+  color: black;
+  margin-bottom: 4px;
+}
+
+.order-info-content .product-option {
+  color: gray;
+  font-size: 0.8rem;
+}
+
+.tableCell.price {
+  font-weight: bold;
+  min-width: 75px;
+}
+
+.product-option.product-option-qty,
+.product-option.product-option-price {
+  display: none;
+}
+
+.tableCell.orderState {
+  min-width: 75px;
+}
+
+.tableCell.refundState {
+  min-width: 60px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .product-option.product-option-qty {
+    display: block;
+  }
+
+  .tableCell.qty {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 993px) {
+  .select {
+    margin-top: 1rem;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .historyBtn {
+    font-size: 0.9rem;
+    width: 150px;
+  }
+  /* table */
+  .title {
+    font-size: 1.05rem;
+  }
+  .tableCell {
+    font-size: 0.8rem;
+  }
+  .tableCell.id.head .order-id {
+    flex-direction: column;
+  }
+  .tableCell.id {
+    min-width: 100px;
+  }
+  .product-option.product-option-price {
+    display: block;
+  }
+  .tableCell.price,
+  .tableCell.orderState,
+  .tableCell.refundState {
+    display: none;
+  }
+
+  .tableCell.info .mediaCell {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .historyBtn:first-child {
+    width: 100px;
+  }
+
+  .datePicker,
+  .filter-state select {
+    width: 100px;
+  }
+
+  /* table */
+  .tableCell {
+    font-size: 0.75rem;
+  }
+
+  .title.absolute {
+    margin-left: 120px;
+    transform: translateY(-6px);
+  }
+
+  .order-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .order-info-imgBox {
+    margin-bottom: 0.5rem;
+  }
+
+  .tableCell.info {
+    min-width: 100px;
+  }
+}

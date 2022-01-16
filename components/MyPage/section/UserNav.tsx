@@ -16,10 +16,17 @@ const UserNav = ({ clasName, sx }: IUserNavProps) => {
         <h3 className={cx('nav-title')}>쇼핑 정보</h3>
         <ul>
           <li>
-            <Link href="/user/mypage/orders">주문/배송</Link>
+            <Link href="/user/mypage/history">주문/배송</Link>
           </li>
           <li>
-            <Link href="/user/mypage/cancel">취소/반품</Link>
+            <Link
+              href={{
+                pathname: '/user/mypage/history',
+                query: { mode: 'refund' },
+              }}
+            >
+              취소/반품
+            </Link>
           </li>
         </ul>
       </div>
