@@ -60,7 +60,9 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
     const newPayment = new Payment({
       receipt_id,
       order_id,
+      order_name: data.order_name,
       user_id: req.user._id,
+      delivery_info: data.delivery_info,
       payment_name: name,
       price,
       method,

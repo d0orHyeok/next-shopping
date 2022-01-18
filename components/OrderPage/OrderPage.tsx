@@ -336,11 +336,11 @@ const OrderPage = () => {
 
       const { picker, phone, address } =
         user.userData?.deliveryAddrs[selectAddrIndex]
+
+      const delivery_info = { picker, phone, email, address }
       return {
-        name: picker,
-        phone,
-        email,
-        address,
+        order_name: orderInfo.name,
+        delivery_info,
         uid: user.userData?._id,
       }
     }
@@ -367,11 +367,11 @@ const OrderPage = () => {
     // eslint-disable-next-line no-useless-escape
     const addressRegex = /^[가-힣a-zA-Z\s0-9\-\_\(\)]+$/
 
-    const name = addrInfo.name.trim()
+    const picker = addrInfo.name.trim()
     const phone = `${addrInfo.phone.phone1}-${addrInfo.phone.phone2}-${addrInfo.phone.phone3}`
     const address = `${addrInfo.address.zonecode.trim()} ${addrInfo.address.baseAddress.trim()} ${addrInfo.address.extraAddress.trim()}`
 
-    if (nameRegex.test(name)) {
+    if (nameRegex.test(picker)) {
       return alert('이름을 올바르게 입력해주세요.')
     }
     if (!phoneRegex.test(phone)) {
@@ -385,7 +385,7 @@ const OrderPage = () => {
     if (user.userData) {
       const newAddr = {
         fix: user.userData.deliveryAddrs.length !== 0 ? false : true,
-        picker: name,
+        picker,
         addressName: '신규배송지',
         address,
         phone,
@@ -395,11 +395,11 @@ const OrderPage = () => {
       dispatch(userUpdateDeliveryAddrs(updateAddrs))
     }
 
+    const delivery_info = { picker, phone, email, address }
+
     return {
-      name,
-      phone,
-      email,
-      address,
+      order_name: orderInfo.name,
+      delivery_info,
       uid: user.userData?._id,
     }
   }

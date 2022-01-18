@@ -10,7 +10,14 @@ interface IPaymentOrder extends IUserCart {
 interface Payment {
   receipt_id: string
   order_id: string
-  password: string
+  order_name: string
+  user_id: string
+  delivery_info: {
+    picker: string
+    phone: string
+    email: string
+    address: string
+  }
   payment_name: string
   item_name: string[]
   price: number
@@ -38,12 +45,18 @@ const paymentSchema: Schema = new Schema({
   order_id: {
     type: String,
   },
+  order_name: {
+    type: String,
+  },
   user_id: {
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-  password: {
-    type: String,
+  delivery_info: {
+    picker: { type: String },
+    phone: { type: String },
+    email: { type: String },
+    address: { type: String },
   },
   payment_name: {
     type: String,

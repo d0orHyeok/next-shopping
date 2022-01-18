@@ -40,10 +40,10 @@ const Payment = (props) => {
         }
       }),
       user_info: {
-        username: orderUserData.name,
-        email: orderUserData.email,
-        addr: orderUserData.address,
-        phone: orderUserData.phone,
+        username: orderUserData.delivery_info.picker,
+        email: orderUserData.delivery_info.email,
+        addr: orderUserData.delivery_info.address,
+        phone: orderUserData.delivery_info.phone,
       },
       order_id: `${dayjs(Date.now()).format(
         'YYYYMMDD'
@@ -91,8 +91,13 @@ const Payment = (props) => {
         //결제가 정상적으로 완료되면 수행됩니다
         //비즈니스 로직을 수행하기 전에 결제 유효성 검증을 하시길 추천합니다.
         console.log('--- 결제 완료 ---')
+
         Axios.post('/api/payment/validation', {
-          data,
+          data: {
+            ...data,
+            order_name: orderUserData.order_name,
+            delivery_info: orderUserData.delivery_info,
+          },
           orders,
         }).then((res) => {
           onSuccess && onSuccess(res.data.order_id)
