@@ -15,6 +15,7 @@ import {
   IUserState,
   getLikesCart,
   userUpdateDeliveryAddrs,
+  userDeleteCart,
 } from '@redux/features/userSlice'
 import React, { useEffect, useRef, useState } from 'react'
 import DaumPostCodeModal from '@components/utils/DaumPostCodeModal/DaumPostCodeModal'
@@ -404,6 +405,22 @@ const OrderPage = () => {
   }
 
   const onPaymentSuccess = (order_id: string) => {
+    const { cartIndex } = router.query as IOrderPageQuery
+
+    let dropIndex: number[] = []
+
+    if (user.userData) {
+      if (cartIndex === 'all') {
+        dropIndex = user.userData.cart.map((_, index) => index)
+      }
+    } else {
+      dropIndex = Array.isArray(cartIndex)
+        ? cartIndex.map((index) => parseInt(index))
+        : [parseInt(cartIndex)]
+    }
+
+    dispatch(userDeleteCart(dropIndex))
+
     router.push({
       pathname: '/user/order/result',
       query: { order_id, result: '성공' },

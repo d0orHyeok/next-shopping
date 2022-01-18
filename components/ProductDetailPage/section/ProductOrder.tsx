@@ -154,7 +154,13 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
         ? setIsLike(true)
         : setIsLike(false)
     }
-  }, [user.userData?.likes])
+  }, [user.userData?.likes, router.asPath])
+
+  useEffect(() => {
+    setSelect({ color: null, size: null })
+    setOrders([])
+    setTotalQty(0)
+  }, [router.asPath])
 
   return (
     <>
