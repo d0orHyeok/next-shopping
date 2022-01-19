@@ -67,8 +67,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
               {`${product.price.toLocaleString('ko-KR')}`}
             </span>
           </li>
-          <li className={styles.reviewBox}>
+          <li className={styles.detailBox}>
             <span className={styles.review}>{product.reviews}</span>
+            <span className={styles.view}>조회수 {product.views}</span>
           </li>
         </ul>
       </div>

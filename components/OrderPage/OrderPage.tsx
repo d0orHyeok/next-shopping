@@ -417,7 +417,7 @@ const OrderPage = () => {
   }
 
   const onPaymentSuccess = (order_id: string) => {
-    const { cartIndex } = router.query as IOrderPageQuery
+    const { cartIndex, orders } = router.query as IOrderPageQuery
 
     let dropIndex: number[] = []
 
@@ -432,6 +432,14 @@ const OrderPage = () => {
     }
 
     dispatch(userDeleteCart(dropIndex))
+
+    const parseOrders: IUserCart[] = JSON.parse(orders)
+    parseOrders.forEach((order) => {
+      Axios.post('/api/product/updateProduct', {
+        pid: order.pid,
+        update: { $inc: { sold: order.qty } },
+      })
+    })
 
     router.push({
       pathname: '/user/order/result',

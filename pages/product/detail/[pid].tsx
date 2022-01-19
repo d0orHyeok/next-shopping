@@ -18,6 +18,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
     const response = await Axios.post('/api/product/getProductDetail', { pid })
     const productDetail = response.data.productDetail
 
+    const update = { $inc: { views: 1 } }
+    await Axios.post('/api/product/updateProduct', { pid, update })
+
     return { props: { productDetail } }
   }
 )

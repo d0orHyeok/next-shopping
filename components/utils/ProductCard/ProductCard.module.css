@@ -20,11 +20,8 @@
 }
 
 .card-description {
+  padding-top: 1rem;
   font-family: var(--product-font);
-}
-
-.card-description > * {
-  margin-top: 1rem;
 }
 
 .card-description .name {
@@ -50,19 +47,28 @@
 
 .card-description .priceBox {
   font-size: 1.25rem;
+  margin: 0;
 }
 
-.card-description .reviewBox {
+.card-description .detailBox {
+  margin-top: 0.5rem;
   font-size: 0.8rem;
   color: gray;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.card-description .reviewBox::before {
+.card-description .review::before {
   content: '리뷰 ';
 }
 
-.card-description .reviewBox::after {
+.card-description .review::after {
   content: '건';
+}
+
+.card-description .view {
+  margin-right: 1rem;
 }
 
 @media only screen and (max-width: 768px) {
@@ -78,8 +84,20 @@
     font-size: 1.1rem;
   }
 
-  .card-description .reviewBox {
+  .card-description .detailBox {
     font-size: 0.75rem;
     color: gray;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .card-description .detailBox {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .card-description .detailBox .review {
+    margin-bottom: 4px;
   }
 }
