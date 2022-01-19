@@ -36,6 +36,8 @@ export interface IUser {
   cart: IUserCart[]
   token: string
   tokenExp: number
+  createdAt: Date
+  updateAt: Date
 }
 
 export interface IUserDocument extends Document, IUser {

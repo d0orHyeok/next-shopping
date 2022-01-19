@@ -8,7 +8,7 @@ const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 handler.post(async (req, res) => {
   try {
-    const tomorrow = dayjs(Date.now()).add(1, 'day')
+    const today = dayjs(Date.now())
     const { user_id, order_state, date_start, date_end, mode } = req.body
 
     if (!user_id) {
@@ -29,8 +29,7 @@ handler.post(async (req, res) => {
     } else {
       query = query.find({
         purchased_at: {
-          $gte: tomorrow.subtract(3, 'month').format('YYYY-MM-DD'),
-          $lt: tomorrow.format('YYYY-MM-DD'),
+          $gte: today.subtract(3, 'month').format('YYYY-MM-DD'),
         },
       })
     }

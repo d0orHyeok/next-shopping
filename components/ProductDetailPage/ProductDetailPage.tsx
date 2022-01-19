@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import ProductOrder from './section/ProductOrder'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DetailCheck from './section/DetailCheck'
+import ReviewSection from './section/ReviewSection'
 
 const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
   const { product } = productDetail
@@ -16,7 +17,7 @@ const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
     <>
       <div className={styles.wrapper}>
         {/* 본문 */}
-        <div className={cx('product')}>
+        <section className={cx('product')}>
           {/* 상품 상세정보 */}
           <div className={cx('product-content')}>
             <div className={styles.imgBox}>
@@ -60,7 +61,10 @@ const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
           <div className={cx('product-order')}>
             <ProductOrder product={product} />
           </div>
-        </div>
+        </section>
+
+        {/* 리뷰 영역 */}
+        <ReviewSection pid={product._id} />
       </div>
     </>
   )

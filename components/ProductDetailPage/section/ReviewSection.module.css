@@ -1,0 +1,10 @@
+/* 리뷰 */
+.write-content {
+  width: 100%;
+  height: 100px;
+  padding: 0.5rem;
+}
+
+.write-content:focus {
+  outline: none;
+}

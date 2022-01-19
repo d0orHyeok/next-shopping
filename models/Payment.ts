@@ -2,7 +2,7 @@ import { IUserCart } from '@models/User'
 import dayjs from 'dayjs'
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
-interface IPaymentOrder extends IUserCart {
+export interface IPaymentOrder extends IUserCart {
   order_state: 'ready' | 'delivery' | 'complete'
   refund_state: 'cancel' | 'change' | 'back' | null
 }
