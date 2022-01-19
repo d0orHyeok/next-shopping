@@ -42,7 +42,7 @@
 }
 
 .underline {
-  border-bottom: 3px solid black;
+  border-bottom: 2px solid black;
 }
 
 .content {
@@ -102,9 +102,5 @@
 @media only screen and (max-width: 480px) {
   .title {
     font-size: 2.2rem;
-  }
-
-  .drawerBtn span {
-    display: none;
   }
 }

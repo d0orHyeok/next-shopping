@@ -26,7 +26,7 @@ const DetailPage = ({ productDetail }: IDetailPageProps) => {
   return (
     <>
       <Head>
-        <title>ProductName | PIIC</title>
+        <title>{productDetail.product.name} | PIIC</title>
         <meta
           name="description"
           content={

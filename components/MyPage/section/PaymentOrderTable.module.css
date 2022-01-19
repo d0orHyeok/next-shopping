@@ -1,0 +1,167 @@
+.container {
+  font-family: var(--product-font);
+}
+
+.container a {
+  text-decoration: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+
+.table th,
+.table td {
+  font-family: var(--product-font);
+  padding: 1rem 0;
+}
+.table th {
+  font-weight: bold;
+}
+.tableCell {
+  font-size: 0.85rem;
+}
+
+.tableCell.id {
+  min-width: 180px;
+}
+
+.tableCell.id.head .order-id {
+  flex-direction: row;
+}
+.tableCell.id.head .order-id span:first-child {
+  margin-right: 4px;
+}
+
+.order-id {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tableCell.info {
+  min-width: 260px;
+}
+
+.tableCell.info .mediaCell {
+  display: none;
+  border-top: 1px dotted lightgray;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  width: 100%;
+}
+
+.order-info {
+  display: flex;
+}
+
+.order-info-imgBox {
+  width: 100px;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+.order-info-imgBox img {
+  width: 100%;
+  transition: 0.2s ease all;
+}
+
+.order-info-imgBox img:hover {
+  opacity: 66%;
+}
+
+.order-info-content {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.order-info-content .product-name {
+  color: black;
+  margin-bottom: 4px;
+}
+
+.order-info-content .product-option {
+  color: gray;
+  font-size: 0.8rem;
+}
+
+.tableCell.price {
+  font-weight: bold;
+  min-width: 75px;
+}
+
+.product-option.product-option-qty,
+.product-option.product-option-price {
+  display: none;
+}
+
+.tableCell.orderState {
+  min-width: 75px;
+}
+
+.tableCell.refundState {
+  min-width: 60px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .product-option.product-option-qty {
+    display: block;
+  }
+
+  .tableCell.qty {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 993px) {
+}
+
+@media only screen and (max-width: 768px) {
+  .tableCell {
+    font-size: 0.8rem;
+  }
+  .tableCell.id.head .order-id {
+    flex-direction: column;
+  }
+  .tableCell.id {
+    min-width: 100px;
+  }
+  .product-option.product-option-price {
+    display: block;
+  }
+  .tableCell.price,
+  .tableCell.orderState,
+  .tableCell.refundState {
+    display: none;
+  }
+
+  .tableCell.info .mediaCell {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .tableCell {
+    font-size: 0.75rem;
+  }
+
+  .title.absolute {
+    margin-left: 120px;
+    transform: translateY(-6px);
+  }
+
+  .order-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .order-info-imgBox {
+    margin-bottom: 0.5rem;
+  }
+
+  .tableCell.info {
+    min-width: 100px;
+  }
+}

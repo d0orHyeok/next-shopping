@@ -17,6 +17,7 @@ interface Payment {
     phone: string
     email: string
     address: string
+    message: string
   }
   payment_name: string
   item_name: string[]
@@ -57,6 +58,7 @@ const paymentSchema: Schema = new Schema({
     phone: { type: String },
     email: { type: String },
     address: { type: String },
+    message: { type: String },
   },
   payment_name: {
     type: String,

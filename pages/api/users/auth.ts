@@ -22,7 +22,7 @@ handler.post<IAuthExtendedRequest>((req, res) => {
       }
       res.setHeader(
         'Set-Cookie',
-        `w_auth=${user.token}; Max-Age=3600; Path=/; HttpOnly; Secure; SameSite=None`
+        `w_auth=${user.token}; Max-Age=10800; Path=/; HttpOnly; Secure; SameSite=None`
       )
       userData = user
     })

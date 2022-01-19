@@ -32,7 +32,7 @@ const mypage = ({ payments }: IMyPageIndexProps) => {
       <Head>
         <title>마이페이지 | PIIC</title>
       </Head>
-      <MyPageLayout>
+      <MyPageLayout contentTitleUnderline={false}>
         <MyPage payments={payments} />
       </MyPageLayout>
     </>

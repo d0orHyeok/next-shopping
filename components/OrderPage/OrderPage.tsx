@@ -337,7 +337,13 @@ const OrderPage = () => {
       const { picker, phone, address } =
         user.userData?.deliveryAddrs[selectAddrIndex]
 
-      const delivery_info = { picker, phone, email, address }
+      const delivery_info = {
+        picker,
+        phone,
+        email,
+        address,
+        message: addrInfo.message,
+      }
       return {
         order_name: orderInfo.name,
         delivery_info,
@@ -395,7 +401,13 @@ const OrderPage = () => {
       dispatch(userUpdateDeliveryAddrs(updateAddrs))
     }
 
-    const delivery_info = { picker, phone, email, address }
+    const delivery_info = {
+      picker,
+      phone,
+      email,
+      address,
+      message: addrInfo.message,
+    }
 
     return {
       order_name: orderInfo.name,
