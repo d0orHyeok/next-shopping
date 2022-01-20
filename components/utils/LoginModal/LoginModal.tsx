@@ -113,6 +113,9 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
                   type="password"
                   autoComplete="on"
                   value={password}
+                  onKeyPress={(event) => {
+                    event.key === 'Enter' && onClickLogin()
+                  }}
                 />
               </div>
               <div className={styles.buttonWrapper}>

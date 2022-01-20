@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Dropzone from 'react-dropzone'
 import AddIcon from '@mui/icons-material/Add'
-import { Grid } from '@mui/material'
 import Axios from 'axios'
 import styles from './UploadImages.module.css'
 
@@ -9,12 +8,18 @@ interface UploadImageProps {
   defaultImages?: string[]
   maxNum?: 1 | 2 | 3 | 4 | 5
   onChangeHandler?: (images: any) => void
+  showDirection?: 'row' | 'column'
+  dropzoneStyle?: React.CSSProperties
+  imgStyle?: React.CSSProperties
 }
 
 const UploadImages = ({
   defaultImages,
   maxNum = 1,
   onChangeHandler,
+  showDirection = 'row',
+  dropzoneStyle,
+  imgStyle,
 }: UploadImageProps) => {
   const [Images, setImages] = useState<string[]>([])
 
@@ -69,48 +74,39 @@ const UploadImages = ({
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} style={{ flexDirection: showDirection }}>
       <Dropzone onDrop={onDropHandler}>
         {({ getRootProps, getInputProps }) => (
-          <section>
-            <div className={styles.dropwrap} {...getRootProps()}>
-              <input {...getInputProps()} />
-              <AddIcon style={{ fontSize: '2.5rem' }} />
-            </div>
-          </section>
+          <div
+            className={styles.dropwrap}
+            {...getRootProps()}
+            style={dropzoneStyle}
+          >
+            <input {...getInputProps()} />
+            <AddIcon />
+          </div>
         )}
       </Dropzone>
-      {maxNum !== 1 ? (
-        <>
-          <Grid container spacing={1} style={{ marginLeft: '1rem' }}>
-            {Images.map((image, index) => (
-              <Grid key={index} item xs={6}>
-                <div onClick={() => deleteHandler(image)}>
-                  <img
-                    className={styles.displayImage}
-                    src={`${image}`}
-                    alt="product"
-                  />
-                </div>
-              </Grid>
-            ))}
-          </Grid>
-        </>
-      ) : (
-        Images.map((image, index) => (
-          <Grid key={index} item xs={12}>
+      {Images.length ? (
+        <div className={styles.imgContainer}>
+          {Images.map((image, index) => (
             <div
-              style={{ marginLeft: '1rem' }}
+              key={index}
+              className={styles.imgBox}
+              style={imgStyle}
               onClick={() => deleteHandler(image)}
             >
               <img
                 className={styles.displayImage}
+                style={imgStyle}
                 src={`${image}`}
                 alt="product"
               />
             </div>
-          </Grid>
-        ))
+          ))}
+        </div>
+      ) : (
+        <></>
       )}
     </div>
   )

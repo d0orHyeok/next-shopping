@@ -8,26 +8,28 @@ import auth, { IAuthExtendedRequest } from '@middlewares/auth'
 const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 handler.use(auth)
-
 handler.post<IAuthExtendedRequest>(async (req, res) => {
   try {
-    if (!req.body.review) {
+    const { review_id, pid } = req.body
+
+    if (!review_id || !pid) {
       return res
         .status(400)
         .json({ success: false, message: '잘못된 요청입니다.' })
     }
 
-    const review = new Review(req.body.review)
-    await review.save()
+    const deletedReview = await Review.findOneAndDelete({
+      _id: review_id,
+      user_id: req.user._id,
+    }).exec()
 
-    await Product.findOneAndUpdate(
-      { _id: review.pid },
-      { $inc: { reviews: 1 } }
-    )
+    if (deletedReview) {
+      await Product.findOneAndUpdate({ _id: pid }, { $inc: { reviews: -1 } })
+    }
 
-    res.status(200).json({ success: true, review })
+    res.status(200).json({ success: true })
   } catch (error) {
-    res.status(500).json({ success: false, message: '리뷰등록 실패.', error })
+    res.status(500).json({ success: false, message: '리뷰삭제 실패.', error })
   }
 })
 

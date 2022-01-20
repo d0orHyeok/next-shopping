@@ -6,9 +6,9 @@ import React, { useState } from 'react'
 import ProductOrder from './section/ProductOrder'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DetailCheck from './section/DetailCheck'
-import ReviewSection from './section/ReviewSection'
+import ReviewSection from '@components/ReviewSection/ReviewSection'
 
-const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
+const ProductDetailPage = ({ productDetail, reviews }: IDetailPageProps) => {
   const { product } = productDetail
 
   const [viewMore, setViewMore] = useState(false)
@@ -64,7 +64,7 @@ const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
         </section>
 
         {/* 리뷰 영역 */}
-        <ReviewSection pid={product._id} />
+        <ReviewSection pid={product._id} reviews={reviews} />
       </div>
     </>
   )

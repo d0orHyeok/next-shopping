@@ -238,7 +238,7 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
             <h2 className={styles.subTitle}>대표 이미지 *</h2>
             <UploadImages
               onChangeHandler={updateImage}
-              productImages={product && [product.image]}
+              defaultImages={product && [product.image]}
             />
             <h2 className={styles.subTitle}>
               추가 이미지 {subImages.length} / {5}
@@ -246,7 +246,7 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
             <UploadImages
               onChangeHandler={updateSubImages}
               maxNum={5}
-              productImages={product && product.subImages}
+              defaultImages={product && product.subImages}
             />
           </div>
 

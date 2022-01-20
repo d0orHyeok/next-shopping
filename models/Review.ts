@@ -1,9 +1,9 @@
 import { IOption } from './User'
-import mongoose, { Schema, Document, Model } from 'mongoose'
+import mongoose, { Schema, Document, Model, PopulatedDoc } from 'mongoose'
 
 interface Review {
-  user_id: string
-  pid: string
+  user_id: PopulatedDoc<string | Document>
+  pid: PopulatedDoc<string | Document>
   option: IOption
   score: number
   images: string[]
@@ -14,6 +14,7 @@ interface Review {
     top: string
     bottom: string
   }
+  likes: string[]
 }
 
 export interface IReview extends Review {
@@ -51,6 +52,7 @@ const review: Schema = new Schema(
       top: { type: String },
       bottom: { type: String },
     },
+    likes: { type: Array, default: [] },
   },
   { timestamps: true }
 )

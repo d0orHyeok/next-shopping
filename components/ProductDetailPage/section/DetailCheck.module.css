@@ -2,20 +2,31 @@
   cursor: default;
 }
 
-.container ul {
+.container > ul {
+  width: 100%;
   display: flex;
   align-items: center;
   border-bottom: 1px solid black;
-  padding: 8px;
 }
 
 .container .title {
+  padding: 0.5rem 0;
   width: 100px;
+  flex-shrink: 0;
   font-weight: bold;
   text-align: center;
 }
 
+.container .itemList {
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .container .item {
+  padding: 0.5rem 0;
   position: relative;
   width: 100px;
   text-align: left;

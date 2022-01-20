@@ -1,6 +1,6 @@
 import { IUserCart } from '@models/User'
 import dayjs from 'dayjs'
-import mongoose, { Schema, Document, Model } from 'mongoose'
+import mongoose, { Schema, Document, Model, PopulatedDoc } from 'mongoose'
 
 export interface IPaymentOrder extends IUserCart {
   order_state: 'ready' | 'delivery' | 'complete'
@@ -11,7 +11,7 @@ interface Payment {
   receipt_id: string
   order_id: string
   order_name: string
-  user_id: string
+  user_id: PopulatedDoc<string | Document>
   delivery_info: {
     picker: string
     phone: string
