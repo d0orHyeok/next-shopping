@@ -111,7 +111,7 @@ const paymentSchema: Schema = new Schema({
   ],
   refund_prieod: {
     type: Date,
-    default: dayjs(Date.now()).add(7, 'day').format('YYYY-MM-DD'),
+    default: dayjs(Date.now()).add(7, 'day'),
   },
 })
 

@@ -118,6 +118,29 @@
   min-width: 60px;
 }
 
+.refundControls {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.refundBtn {
+  color: inherit;
+  background-color: inherit;
+  border: 1px solid lightgray;
+  cursor: pointer;
+  padding: 0.5rem;
+  font-family: var(--product-font);
+  font-size: 0.9rem;
+  width: 120px;
+  transition: 0.2s ease all;
+}
+.refundBtn:hover {
+  border-color: black;
+  color: black;
+}
+
 /* section, desc */
 .section-desc {
   padding: 3rem 1rem;

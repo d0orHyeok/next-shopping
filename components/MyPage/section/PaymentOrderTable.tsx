@@ -1,7 +1,6 @@
 import styles from './PaymentOrderTable.module.css'
 import classNames from 'classnames/bind'
 import {
-  Link,
   Table,
   TableBody,
   TableCell,
@@ -9,6 +8,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
+import Link from 'next/link'
 import { IPayment } from '@models/Payment'
 import { IProduct } from '@models/Product'
 import Pagination from '@components/utils/Pagination/Pagination'
