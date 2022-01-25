@@ -52,6 +52,7 @@ const ReviewSection = ({ style, pid, reviews }: IReviewSectionProps) => {
   const user: IUserState = useAppSelector(selectUser)
 
   // 리뷰 등록시 쓰이는 state
+
   const [writeOpen, setWriteOpen] = useState(false)
   const [userPaymentOption, setUserPaymentOption] = useState<null | IOption>(
     null
@@ -848,12 +849,16 @@ const ReviewSection = ({ style, pid, reviews }: IReviewSectionProps) => {
           </div>
         </section>
       </div>
-      <EditReviewModal
-        review={editReview}
-        open={openEdit}
-        onClose={() => setOpenEdit(false)}
-        onSubmit={successEditReview}
-      />
+      {productReviews.length ? (
+        <EditReviewModal
+          review={editReview}
+          open={openEdit}
+          onClose={() => setOpenEdit(false)}
+          onSubmit={successEditReview}
+        />
+      ) : (
+        <></>
+      )}
     </>
   )
 }

@@ -1,8 +1,9 @@
-import { IPaymentDocument } from './../../../models/Payment'
+import { IPaymentOrder } from './../../../models/Payment'
 import nextConnect from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import database from '@middlewares/database'
 import Payment from '@models/Payment'
+import Review from '@models/Review'
 import auth, { IAuthExtendedRequest } from '@middlewares/auth'
 import dayjs from 'dayjs'
 
@@ -24,19 +25,45 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
         .json({ success: false, message: '잘못된 요청입니다.' })
     }
 
-    const payment: IPaymentDocument | null = await Payment.find({
+    const payments = await Payment.find({
       user_id: user._id,
       purchased_at: {
         $gte: dayjs(Date.now()).subtract(1, 'month').format('YYYY-MM-DD'),
       },
-    })
-      .findOne({ 'orders.pid': pid })
-      .exec()
+      'orders.pid': pid,
+    }).exec()
 
-    if (payment) {
-      const order = payment.orders.find((order) => order.pid.toString() === pid)
+    if (payments.length) {
+      const reviews = await Review.find({
+        user_id: req.user._id,
+        pid: pid,
+      }).exec()
 
-      return res.status(200).json({ success: true, option: order?.option })
+      let paymentOrders: IPaymentOrder[] = []
+      payments.forEach((payment) => {
+        paymentOrders = [
+          ...paymentOrders,
+          ...payment.orders.filter(
+            (order: IPaymentOrder) => order.pid.toString() === pid
+          ),
+        ]
+      })
+
+      const newReviewedOrders = paymentOrders.filter(
+        (order) =>
+          !reviews.find(
+            (review) =>
+              JSON.stringify(order.option) === JSON.stringify(review.option)
+          )
+      )
+
+      if (!newReviewedOrders.length) {
+        return res.status(200).json({ success: true, option: null })
+      }
+
+      return res
+        .status(200)
+        .json({ success: true, option: newReviewedOrders[0].option })
     } else {
       return res.status(400).json({
         success: false,
