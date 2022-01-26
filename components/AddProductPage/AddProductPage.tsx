@@ -30,6 +30,7 @@ interface InputValue {
   elastic: string
   opacity: string
   season: string[]
+  event_name: string
 }
 
 interface AddProductPageProps {
@@ -43,6 +44,7 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
     colorName: '',
     colorHex: '#ffffff',
   })
+  const [eventList, setEventList] = useState<string[]>([])
   const [colorOptions, setColorOptions] = useState<IColor[]>([])
   const [inputValue, setInputValue] = useState<InputValue>({
     image: product === undefined ? '' : product.image,
@@ -57,6 +59,7 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
     elastic: product === undefined ? '' : product.elastic,
     opacity: product === undefined ? '' : product.opacity,
     season: product === undefined ? [] : product.season,
+    event_name: product === undefined ? '' : product.event_name,
   })
 
   const {
@@ -72,19 +75,32 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
     elastic,
     opacity,
     season,
+    event_name,
   } = inputValue
 
   useEffect(() => {
-    Axios.get('/api/product/getColors').then((res) => {
-      res.data.colors && setColorOptions(res.data.colors)
-    })
+    Axios.get('/api/product/getColors')
+      .then((res) => {
+        res.data.colors && setColorOptions(res.data.colors)
+      })
+      .catch((err) => console.log(err))
+    Axios.get('/api/product/getEventNames')
+      .then((res) => {
+        res.data.eventNames && setEventList(res.data.eventNames)
+      })
+      .catch((err) => console.log(err))
   }, [])
 
   // 이미지 업데이트시 함수들
   const updateImage = (newImages: any) => {
+    const setImage = !newImages.length
+      ? ''
+      : Array.isArray(newImages)
+      ? newImages[0]
+      : newImages
     setInputValue({
       ...inputValue,
-      image: newImages[0] ? newImages[0] : '',
+      image: setImage,
     })
   }
 
@@ -160,6 +176,12 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
     }
   }
 
+  const handleSelectEvnetOption = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setInputValue({ ...inputValue, event_name: event.target.value })
+  }
+
   // 상품 등록시 함수
   const addProuct = () => {
     if (
@@ -180,7 +202,15 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
       alert('모든 항목을 입력해주세요')
       return
     }
-    Axios.post('/api/product/add', inputValue)
+
+    if (event_name.trim().length < 2) {
+      return alert('두글자 이상의 이벤트명을 입력해주세요.')
+    }
+
+    const body =
+      event_name.length > 1 ? { ...inputValue, is_event: true } : inputValue
+
+    Axios.post('/api/product/add', body)
       .then((res) => {
         res.data?.message ? alert(res.data.message) : alert('등록되었습니다.')
         router.push('/admin/products')
@@ -210,7 +240,17 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
       return
     }
 
-    const body = { pid: product?._id, update: inputValue }
+    if (event_name.trim().length < 2) {
+      return alert('두글자 이상의 이벤트명을 입력해주세요.')
+    }
+
+    const body = {
+      pid: product?._id,
+      update: {
+        ...inputValue,
+        is_event: event_name.length >= 2 ? true : false,
+      },
+    }
 
     Axios.post('/api/product/updateProduct', body)
       .then(() => {
@@ -446,11 +486,35 @@ const AddProductPage = ({ product }: AddProductPageProps) => {
                     onChange={handleChangeSeason}
                     checked={season.find((s) => s === item) !== undefined}
                   />
-                  {season}
+                  {item}
                 </label>
               ))}
             </div>
           </div>
+          <Divider>Event</Divider>
+          {/* 이벤트명 */}
+          <TextField
+            sx={{ maxWidth: '320px', width: '100%' }}
+            label="이벤트명"
+            helperText="이벤트, 콜라보 상품일 경우 입력"
+            id="event_name"
+            name="event_name"
+            value={event_name}
+            onChange={handleChangeInputValue}
+          />
+          <select
+            name="event_name_list"
+            id="event_name_list"
+            onChange={handleSelectEvnetOption}
+            style={{ maxWidth: '320px', width: '100%' }}
+          >
+            <option value="">--- 진행중인 이벤트 및 콜라보 ---</option>
+            {eventList.map((eventName) => (
+              <option key={eventName} value={eventName}>
+                {eventName}
+              </option>
+            ))}
+          </select>
           {product === undefined ? (
             <button type="button" onClick={addProuct} className={styles.addBtn}>
               상품 등록

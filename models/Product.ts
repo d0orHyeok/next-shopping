@@ -22,6 +22,8 @@ interface Product {
   reviews: number
   views: number
   likes: string[]
+  is_event: boolean
+  event_name: string
 }
 
 export interface IProduct extends Product {
@@ -87,6 +89,8 @@ const productSchema: Schema = new Schema(
       type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
       default: [],
     },
+    is_event: { type: Boolean, default: false },
+    event_name: { type: String },
   },
   { timestamps: true }
 )

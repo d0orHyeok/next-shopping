@@ -27,7 +27,7 @@ const UploadImages = ({
     if (defaultImages) {
       setImages(defaultImages)
     }
-  }, [defaultImages])
+  }, [])
 
   const onDropHandler = (files: any) => {
     if (Images.length === maxNum) {
@@ -39,8 +39,6 @@ const UploadImages = ({
       headers: { 'content-type': 'multipart/form-data' },
     }
     formData.append('file', files[0])
-
-    console.log(files[0])
 
     Axios.post('/api/upload/image', formData, config).then((res) => {
       if (res.data.success) {

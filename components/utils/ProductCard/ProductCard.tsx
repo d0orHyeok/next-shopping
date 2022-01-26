@@ -47,13 +47,21 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className={cx('card-wrapper')}>
         <div className={cx('thumbnail')}>
           <Link href={`/product/detail/${product._id}`}>
-            <img src={product.image} alt={product.name} />
+            <a>
+              <img src={product.image} alt={product.name} />
+            </a>
           </Link>
         </div>
 
         <ul className={cx('card-description')}>
           <li className={styles.name}>
-            <Link href={`/product/detail/${product._id}`}>{product.name}</Link>
+            <Link href={`/product/detail/${product._id}`}>
+              <a>
+                {!product.is_event
+                  ? product.name
+                  : `[PIIC X ${product.event_name}] ${product.name}`}
+              </a>
+            </Link>
             <IconButton
               className={cx('button', like && 'like')}
               aria-label="like"

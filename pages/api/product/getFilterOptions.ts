@@ -20,16 +20,18 @@ handler.use(database)
 
 handler.post(async (req, res) => {
   try {
-    const { keyword, category, colors, fit, season } = req.body
+    const { keyword, category, colors, fit, season, is_event } = req.body
 
-    if (category ^ keyword) {
+    if (category ^ keyword ^ is_event) {
       return res.status(400).json({ success: false, message: '잘못된 요청' })
     }
 
     const buildQuery = () => {
       return category
         ? Product.find().all('category', category)
-        : Product.find({ name: { $regex: keyword, $options: 'i' } })
+        : keyword
+        ? Product.find({ name: { $regex: keyword, $options: 'i' } })
+        : Product.find({ is_event: true })
     }
 
     const buildFilterQuery = () => {

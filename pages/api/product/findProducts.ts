@@ -8,16 +8,18 @@ handler.use(database)
 
 handler.post(async (req, res) => {
   try {
-    const { sort, category, colors, fit, season, keyword } = req.body
+    const { sort, category, colors, fit, season, keyword, is_event } = req.body
 
     // 잘못된 요청일 경우
-    if (keyword ^ category) {
+    if (keyword ^ category ^ is_event) {
       return res.status(400).json({ success: false, message: '잘못된 요청' })
     }
 
     let query = category
       ? Product.find().all('category', category)
-      : Product.find({ name: { $regex: keyword, $options: 'i' } })
+      : keyword
+      ? Product.find({ name: { $regex: keyword, $options: 'i' } })
+      : Product.find({ is_event: true })
 
     // 정렬옵션이 있으면 그에 맞게 설정
     const sortOption = !sort || sort?.sold ? { sold: -1, createdAt: -1 } : sort

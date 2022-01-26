@@ -6,9 +6,10 @@ import { ISubCategoryPageQuery } from 'pages/product/[mainCategory]/[subCategory
 
 interface PreMenuProps {
   sx?: React.CSSProperties
+  is_event?: boolean
 }
 
-const PreMenu = ({ sx }: PreMenuProps) => {
+const PreMenu = ({ sx, is_event = false }: PreMenuProps) => {
   const router = useRouter()
   const { mainCategory, subCategory, itemCategory, keyword } =
     router.query as ISubCategoryPageQuery
@@ -18,6 +19,13 @@ const PreMenu = ({ sx }: PreMenuProps) => {
       <li>
         <Link href="/">HOME</Link>
       </li>
+      {is_event ? (
+        <li>
+          <Link href="/product/event">EVENT</Link>
+        </li>
+      ) : (
+        <></>
+      )}
       {keyword && (
         <li>
           <Link href="/product/search">상품검색</Link>
