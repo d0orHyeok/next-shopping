@@ -17,10 +17,12 @@ handler.post(async (req, res) => {
 
     const buildQuery = () => {
       return category[0] === 'best'
-        ? Product.find().sort({ sold: -1, createdAt: -1 }).limit(10)
+        ? Product.find()
+            .sort({ sold: -1, reviews: -1, views: -1, createdAt: -1 })
+            .limit(10)
         : Product.find()
             .all('category', [category[0]])
-            .sort({ sold: -1, createdAt: -1 })
+            .sort({ sold: -1, reviews: -1, views: -1, createdAt: -1 })
             .limit(10)
     }
 

@@ -166,7 +166,11 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
     <>
       <div className={cx('wrapper')}>
         <div className={cx('desc')}>
-          <h1 className={styles.name}>{product.name}</h1>
+          <h1 className={styles.name}>
+            {!product.is_event
+              ? product.name
+              : `[PIIC X ${product.event_name}] ${product.name}`}
+          </h1>
           <p className={styles.price}>{product.price}</p>
         </div>
         <Divider sx={{ margin: '1rem 1%', width: '98%' }} />

@@ -98,11 +98,15 @@ const productSchema: Schema = new Schema(
 productSchema.index(
   {
     sold: 'text',
+    reviews: 'text',
+    views: 'text',
     createdAt: 'text',
   },
   {
     weights: {
-      sold: 5,
+      sold: 10,
+      reviews: 5,
+      views: 3,
       createdAt: 3,
     },
   }

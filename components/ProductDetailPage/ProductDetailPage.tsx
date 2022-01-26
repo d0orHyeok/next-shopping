@@ -24,7 +24,11 @@ const ProductDetailPage = ({ productDetail, reviews }: IDetailPageProps) => {
               <img src={product.image} alt={product.name} />
             </div>
             <div className={cx('product-info')}>
-              <h1 className={styles.title}>{product.name}</h1>
+              <h1 className={styles.title}>
+                {!product.is_event
+                  ? product.name
+                  : `[PIIC X ${product.event_name}] ${product.name}`}
+              </h1>
               <p>{product.description}</p>
             </div>
             <h2 className={styles.subTitle}>Product View</h2>

@@ -23,12 +23,12 @@ handler.get(async (req, res) => {
         const request =
           category === 'best'
             ? Product.find()
-                .sort({ sold: -1, createdAt: -1 })
+                .sort({ sold: -1, reviews: -1, views: -1, createdAt: -1 })
                 .limit(limit)
                 .exec()
             : Product.find()
                 .all('category', [category])
-                .sort({ sold: -1, createdAt: -1 })
+                .sort({ sold: -1, reviews: -1, views: -1, createdAt: -1 })
                 .limit(limit)
                 .exec()
         return request

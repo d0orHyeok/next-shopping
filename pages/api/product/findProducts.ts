@@ -22,7 +22,10 @@ handler.post(async (req, res) => {
       : Product.find({ is_event: true })
 
     // 정렬옵션이 있으면 그에 맞게 설정
-    const sortOption = !sort || sort?.sold ? { sold: -1, createdAt: -1 } : sort
+    const sortOption =
+      !sort || sort?.sold
+        ? { sold: -1, reviews: -1, views: -1, createdAt: -1 }
+        : sort
 
     query = query.sort(sortOption)
 

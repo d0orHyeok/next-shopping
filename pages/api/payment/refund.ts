@@ -4,7 +4,13 @@ import database from '@middlewares/database'
 import { RestClient } from '@bootpay/server-rest-client'
 import config from 'appConfig/config'
 import Payment from '@models/Payment'
+import Product from '@models/Product'
 import auth, { IAuthExtendedRequest } from '@middlewares/auth'
+
+interface IUpdate {
+  pid: string
+  update: any
+}
 
 RestClient.setConfig(config.pay_app_rest_id, config.pay_app_privateKey)
 
@@ -45,10 +51,21 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
       return res.status(500).json({ sucess: false, message: '환불요청 실패' })
     }
 
-    payment.orders.forEach(
-      (_, index) => (payment.orders[index].refund_state = 'cancel')
-    )
+    const updates: IUpdate[] = []
+    payment.orders.forEach((order, index) => {
+      payment.orders[index].refund_state = 'cancel'
+      updates.push({
+        pid: order.pid,
+        update: { $inc: { sold: -1 * order.qty } },
+      })
+    })
     await payment.save()
+
+    await Promise.all(
+      updates.map((update) =>
+        Product.findOneAndUpdate({ _id: update.pid }, update.update).exec()
+      )
+    )
 
     return res.status(200).json({ success: true })
   } catch (error) {
@@ -56,10 +73,21 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
     if (error.message === '이미 취소된 거래건 입니다.') {
       const payment = await Payment.findOne({ _id: payment_id }).exec()
       if (payment !== null) {
-        payment.orders.forEach(
-          (_, index) => (payment.orders[index].refund_state = 'cancel')
-        )
+        const updates: IUpdate[] = []
+        payment.orders.forEach((order, index) => {
+          payment.orders[index].refund_state = 'cancel'
+          updates.push({
+            pid: order.pid,
+            update: { $inc: { sold: -1 * order.qty } },
+          })
+        })
         await payment.save()
+
+        await Promise.all(
+          updates.map((update) =>
+            Product.findOneAndUpdate({ _id: update.pid }, update.update).exec()
+          )
+        )
       }
     }
     return res.status(500).json({

@@ -45,9 +45,9 @@ const Payment = (props) => {
         addr: orderUserData.delivery_info.address,
         phone: orderUserData.delivery_info.phone,
       },
-      order_id: `${dayjs(Date.now()).format(
-        'YYYYMMDD'
-      )}-${orderUserData.uid.substring(0, 10)}`, //고유 주문번호로, 생성하신 값을 보내주셔야 합니다.
+      order_id: `${dayjs(Date.now()).format('YYYYMMDD')}-${Math.random()
+        .toString(36)
+        .substring(2, 10)}`, //고유 주문번호로, 생성하신 값을 보내주셔야 합니다.
       params: {},
       account_expire_at: dayjs(Date.now()).add(1, 'day').format('YYYY-MM-DD'), // 가상계좌 입금기간 제한 ( yyyy-mm-dd 포멧으로 입력해주세요. 가상계좌만 적용됩니다. )
       extra: {

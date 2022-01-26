@@ -28,7 +28,8 @@ const RefundModal = ({ payment, open, onClose }: IRefundModalProps) => {
     })
       .then(() => {
         alert('환불되었습니다.')
-        return onClose()
+        onClose()
+        window.location.reload()
       })
       .catch((err) => {
         alert(
