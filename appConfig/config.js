@@ -1,4 +1,6 @@
 const prod = process.env.NODE_ENV === 'production'
 module.exports = {
-  backendUrl: prod ? 'http://localhost:3000' : 'http://localhost:3000',
+  backendUrl: prod
+    ? 'https://next-shopping-seven.vercel.app/'
+    : 'http://localhost:3000',
 }

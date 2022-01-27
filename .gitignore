@@ -37,5 +37,3 @@ yarn-error.log*
 # husky option
 husky.json
 
-# 업로드
-/public/images

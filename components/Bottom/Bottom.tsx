@@ -102,7 +102,7 @@ const Bottom = () => {
         <section className={cx('copy')}>
           <h3>
             Copyright by PIIC All Right Reserved.
-            <span>JangHyeok Kim</span>
+            <span>JH Kim</span>
           </h3>
         </section>
         <section className={cx('info')}>
