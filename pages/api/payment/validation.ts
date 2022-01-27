@@ -2,17 +2,25 @@ import nextConnect from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import database from '@middlewares/database'
 import { RestClient } from '@bootpay/server-rest-client'
-import config from 'appConfig/config'
 import Payment from '@models/Payment'
 import auth, { IAuthExtendedRequest } from '@middlewares/auth'
 
-RestClient.setConfig(config.pay_app_rest_id, config.pay_app_privateKey)
+const restID: string | undefined = process.env.PAY_APP_REST_ID
+const privateKEy: string | undefined = process.env.PAY_APP_PRIVATEKEY
 
 const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 handler.use(auth)
 handler.post<IAuthExtendedRequest>(async (req, res) => {
   try {
+    if (!restID || !privateKEy) {
+      throw new Error(
+        'Please define the restID & privateKEy  environment variable inside .env.local'
+      )
+    }
+
+    RestClient.setConfig(restID, privateKEy)
+
     const { data, orders } = req.body
 
     if (data === undefined || orders === undefined) {

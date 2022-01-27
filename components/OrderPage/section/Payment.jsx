@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import config from 'appConfig/config'
 import Axios from 'axios'
 
 const Payment = (props) => {
@@ -22,7 +21,7 @@ const Payment = (props) => {
 
     window.BootPay.request({
       price: '100',
-      application_id: config.pay_app_id,
+      application_id: process.env.NEXT_PUBLIC_PAY_APP_ID,
       name: orders.length === 1 ? orders[0].product.name : 'PIIC 상품 결제', //결제창에서 보여질 이름
       pg: 'danal',
       method: 'card', //결제수단, 입력하지 않으면 결제수단 선택부터 화면이 시작합니다.
