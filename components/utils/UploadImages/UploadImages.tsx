@@ -95,6 +95,7 @@ const UploadImages = ({
               onClick={() => deleteHandler(image)}
             >
               <img
+                loading="lazy"
                 className={styles.displayImage}
                 style={imgStyle}
                 src={`${image}`}

@@ -136,7 +136,11 @@ const WishlistPage = () => {
                   </div>
                   <div className={cx('product-img', 'basic')}>
                     <Link href={`/product/detail/${product._id}`}>
-                      <img src={product.image} alt={product.name} />
+                      <img
+                        loading="lazy"
+                        src={product.image}
+                        alt={product.name}
+                      />
                     </Link>
                   </div>
                   <div className={cx('product-info', 'epic')}>

@@ -141,7 +141,11 @@ const PaymentOrderTable = ({ payments }: IPaymentOrderTableProps) => {
                           <div className={cx('order-info-imgBox')}>
                             <Link href={`/product/detail/${order.pid._id}`}>
                               <a>
-                                <img src={product.image} alt={product.name} />
+                                <img
+                                  loading="lazy"
+                                  src={product.image}
+                                  alt={product.name}
+                                />
                               </a>
                             </Link>
                           </div>

@@ -294,6 +294,7 @@ const CartPage = () => {
                     <div className={cx('product-img', 'basic')}>
                       <Link href={`/product/detail/${userProduct.product._id}`}>
                         <img
+                          loading="lazy"
                           src={userProduct.product.image}
                           alt={userProduct.product.name}
                         />

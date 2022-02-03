@@ -749,7 +749,7 @@ const ReviewSection = ({ style, pid, reviews }: IReviewSectionProps) => {
                     <div className={cx('review-main-imgContainer')}>
                       {review.images.map((image, imageIndex) => (
                         <div key={imageIndex} className={cx('imgBox')}>
-                          <img src={image} alt="reviewImg" />
+                          <img loading="lazy" src={image} alt="reviewImg" />
                         </div>
                       ))}
                     </div>

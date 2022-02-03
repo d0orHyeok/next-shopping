@@ -48,7 +48,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className={cx('thumbnail')}>
           <Link href={`/product/detail/${product._id}`}>
             <a>
-              <img src={product.image} alt={product.name} />
+              <img loading="lazy" src={product.image} alt={product.name} />
             </a>
           </Link>
         </div>

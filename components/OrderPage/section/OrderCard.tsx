@@ -11,7 +11,7 @@ const OrderCard = ({ userProduct }: IOrderCardProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.imgBox}>
-        <img src={product.image} alt={product.name} />
+        <img loading="lazy" src={product.image} alt={product.name} />
       </div>
       <div className={styles.content}>
         <div className={styles.title}>{product.name}</div>

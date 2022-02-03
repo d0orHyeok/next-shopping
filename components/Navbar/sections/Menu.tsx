@@ -115,7 +115,11 @@ const Menu = ({ passDraw }: MenuProps) => {
                             'ko-KR'
                           )}`}
                         >
-                          <img src={product.image} alt={product.name} />
+                          <img
+                            loading="lazy"
+                            src={product.image}
+                            alt={product.name}
+                          />
                         </li>
                       </Link>
                     )

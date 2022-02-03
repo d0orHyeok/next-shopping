@@ -177,7 +177,11 @@ const ChangeInfoPage = () => {
       <div className={styles.info}>
         <div className={cx('imageBox')}>
           {user.userData?.image && (
-            <img src={user.userData.image} alt={user.userData.name} />
+            <img
+              loading="lazy"
+              src={user.userData.image}
+              alt={user.userData.name}
+            />
           )}
         </div>
         <div className={cx('inputBox', 'flexBox')}>

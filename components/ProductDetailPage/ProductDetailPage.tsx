@@ -21,7 +21,7 @@ const ProductDetailPage = ({ productDetail, reviews }: IDetailPageProps) => {
           {/* 상품 상세정보 */}
           <div className={cx('product-content')}>
             <div className={styles.imgBox}>
-              <img src={product.image} alt={product.name} />
+              <img loading="lazy" src={product.image} alt={product.name} />
             </div>
             <div className={cx('product-info')}>
               <h1 className={styles.title}>
@@ -46,10 +46,19 @@ const ProductDetailPage = ({ productDetail, reviews }: IDetailPageProps) => {
                   {[
                     product.subImages.length ? (
                       product.subImages.map((image, index) => (
-                        <img key={index} src={image} alt={image} />
+                        <img
+                          loading="lazy"
+                          key={index}
+                          src={image}
+                          alt={image}
+                        />
                       ))
                     ) : (
-                      <img src={product.image} alt={product.name} />
+                      <img
+                        loading="lazy"
+                        src={product.image}
+                        alt={product.name}
+                      />
                     ),
                   ]}
                 </div>
