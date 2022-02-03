@@ -8,7 +8,7 @@ import { backendUrl } from 'appConfig/config'
 import router from 'next/router'
 
 Axios.defaults.baseURL = backendUrl
-Axios.defaults.withCredentials = true // front, backend 간 쿠키공유
+// Axios.defaults.withCredentials = true // front, backend 간 쿠키공유
 
 export interface IUserState {
   isLogin: boolean
