@@ -11,7 +11,6 @@ import {
   IUserState,
   userAddLike,
   userDeleteLike,
-  addStorageCart,
   userAddCart,
 } from '@redux/features/userSlice'
 import { useAppSelector, useAppDispatch } from '@redux/hooks'
@@ -60,8 +59,6 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
     } else {
       if (user.isLogin) {
         dispatch(userAddCart(orders))
-      } else {
-        dispatch(addStorageCart(orders))
       }
       setOpen(true)
     }

@@ -3,10 +3,8 @@ import { useAppSelector, useAppDispatch } from '@redux/hooks'
 import {
   IUserState,
   selectUser,
-  deleteStorageCart,
   userDeleteCart,
   userUpdateCart,
-  updateStorageCart,
 } from '@redux/features/userSlice'
 import { IProduct } from '@models/Product'
 import { IUserCart } from '@models/User'
@@ -34,7 +32,7 @@ const CartPage = () => {
   const dispatch = useAppDispatch()
   const user: IUserState = useAppSelector(selectUser)
   const userCart: IUserCart[] = useAppSelector(
-    (state) => state.user.storage.cart
+    (state) => state.user.userData?.cart
   )
 
   const [update, setUpdate] = useState<IUpdate>({
@@ -68,8 +66,6 @@ const CartPage = () => {
     ) {
       if (user.isLogin) {
         dispatch(userUpdateCart(update))
-      } else {
-        dispatch(updateStorageCart(update))
       }
     }
     setUserProducts(
@@ -97,8 +93,6 @@ const CartPage = () => {
     }
     if (user.isLogin) {
       dispatch(userUpdateCart(body))
-    } else {
-      dispatch(updateStorageCart(body))
     }
     setUserProducts(
       userProducts.map((userProduct, i) => {
@@ -123,8 +117,6 @@ const CartPage = () => {
     if (confirm('정말로 삭제하시겠습니까?')) {
       if (user.isLogin) {
         dispatch(userDeleteCart(dropIndex))
-      } else {
-        dispatch(deleteStorageCart(dropIndex))
       }
       setUserProducts(userProducts.filter((_, index) => index !== dropIndex[0]))
     }
@@ -148,8 +140,6 @@ const CartPage = () => {
 
       if (user.isLogin) {
         dispatch(userDeleteCart(dropIndex))
-      } else {
-        dispatch(deleteStorageCart(dropIndex))
       }
       setUserProducts(newUserProducts)
     }
@@ -160,8 +150,6 @@ const CartPage = () => {
       const dropIndex = userCart.map((_, index) => index)
       if (user.isLogin) {
         dispatch(userDeleteCart(dropIndex))
-      } else {
-        dispatch(deleteStorageCart(dropIndex))
       }
 
       setUserProducts([])
@@ -187,9 +175,9 @@ const CartPage = () => {
   }
 
   useEffect(() => {
-    if (user.storage.cart.length && !userProducts.length) {
+    if (user.userData?.cart.length && !userProducts.length) {
       Axios.post('/api/product/findProductsByOrders', {
-        orders: user.storage.cart,
+        orders: user.userData?.cart,
       })
         .then((res) => setUserProducts(res.data.userProducts))
         .catch((error) => {
@@ -197,7 +185,7 @@ const CartPage = () => {
           alert('장바구니 정보를 불러오는데 실패했습니다.')
         })
     }
-  }, [user.storage.cart])
+  }, [user.userData?.cart])
 
   useEffect(() => {
     const length = userCart.length

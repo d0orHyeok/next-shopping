@@ -7,7 +7,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
     const redirect = await authCheckServerSide(store, context, false)
 
-    return redirect ? { redirect: redirect, props: {} } : { props: {} }
+    if (redirect) {
+      return { redirect: redirect }
+    }
+
+    return { props: {} }
   }
 )
 

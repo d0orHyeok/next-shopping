@@ -13,33 +13,9 @@ Axios.defaults.baseURL = backendUrl
 export interface IUserState {
   isLogin: boolean
   userData: IAuthUserData | null
-  storage: {
-    cart: IUserCart[]
-  }
 }
 
 // Async Action
-export const getLikesCart = createAsyncThunk(`getLikesCart`, async () => {
-  const storageLikes: string[] = getStorageData('piic_likes')
-  const storageCart: IUserCart[] = getStorageData('piic_cart')
-  let data = { likes: storageLikes, cart: storageCart }
-  try {
-    if (storageLikes || storageCart) {
-      const response = await Axios.post('/api/users/mergeStorageData', {
-        storageLikes,
-        storageCart,
-      })
-      data = response.data.mergeData
-
-      localStorage.removeItem('piic_likes')
-      localStorage.removeItem('piic_cart')
-    }
-    return data
-  } catch (err) {
-    return data
-  }
-})
-
 export const userAddLike = createAsyncThunk(
   `userAddLike`,
   async (pid: string[], { rejectWithValue }) => {
@@ -145,24 +121,10 @@ export const userUpdateDeliveryAddrs = createAsyncThunk(
   }
 )
 
-const getStorageData = (itemName: string): any[] => {
-  const getItems = localStorage.getItem(itemName)
-  return !getItems ? [] : JSON.parse(getItems)
-}
-
-const updateStorageData = (itemName: string, data: any[]) => {
-  data.length
-    ? localStorage.setItem(itemName, JSON.stringify(data))
-    : localStorage.removeItem(itemName)
-}
-
 // Slice
 const initialState: IUserState = {
   isLogin: false,
   userData: null,
-  storage: {
-    cart: [],
-  },
 }
 
 export const userSlice = createSlice({
@@ -175,31 +137,6 @@ export const userSlice = createSlice({
     userLogout(state) {
       state.userData = null
       state.isLogin = false
-    },
-    // 장바구니 업데이트
-    addStorageCart(state, action: PayloadAction<IUserCart[]>) {
-      const newCart = [...state.storage.cart, ...action.payload]
-      localStorage.setItem('piic_cart', JSON.stringify(newCart))
-      state.storage.cart = newCart
-    },
-    updateStorageCart(state, action: PayloadAction<IUpdateCartBody>) {
-      const { index, update } = action.payload
-      const newCart = state.storage.cart.map((order, i) => {
-        if (i === index) {
-          return update
-        } else {
-          return order
-        }
-      })
-      localStorage.setItem('piic_cart', JSON.stringify(newCart))
-      state.storage.cart = newCart
-    },
-    deleteStorageCart(state, action: PayloadAction<number[]>) {
-      const newCart = state.storage.cart.filter(
-        (_, index) => !action.payload.includes(index)
-      )
-      updateStorageData('piic_cart', newCart)
-      state.storage.cart = newCart
     },
   },
   extraReducers: {
@@ -218,26 +155,17 @@ export const userSlice = createSlice({
     [userAddCart.fulfilled.type]: (state, action) => {
       if (state.userData) {
         state.userData.cart = action.payload
-        state.storage.cart = action.payload
       }
     },
     [userUpdateCart.fulfilled.type]: (state, action) => {
       if (state.userData) {
         state.userData.cart = action.payload
-        state.storage.cart = action.payload
       }
     },
     [userDeleteCart.fulfilled.type]: (state, action) => {
       if (state.userData) {
         state.userData.cart = action.payload
-        state.storage.cart = action.payload
       }
-    },
-    [getLikesCart.fulfilled.type]: (state, action) => {
-      state.storage = action.payload
-    },
-    [getLikesCart.rejected.type]: (state, action) => {
-      state.storage = action.payload
     },
     [userChangeInfo.fulfilled.type]: (state, action) => {
       const { image } = action.payload
@@ -255,13 +183,7 @@ export const userSlice = createSlice({
   },
 })
 
-export const {
-  auth,
-  userLogout,
-  addStorageCart,
-  updateStorageCart,
-  deleteStorageCart,
-} = userSlice.actions
+export const { auth, userLogout } = userSlice.actions
 export const selectUser = (state: RootState) => state.user
 
 export default userSlice.reducer

@@ -50,6 +50,13 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
     settoggleSubMenu(true)
   }
 
+  const pushLoginUser = (href: string) => {
+    if (!user.isLogin) {
+      return alert('로그인 후에 이용가능합니다.')
+    }
+    router.push(href)
+  }
+
   const drawLoginBox = () =>
     !session ? (
       <>
@@ -116,7 +123,7 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
           <li>
             <div
               className={cx('memberBtn')}
-              onClick={() => router.push('/user/cart')}
+              onClick={() => pushLoginUser('/user/cart')}
             >
               <ShoppingBagOutlinedIcon fontSize="large" />
               <span>장바구니</span>
@@ -125,7 +132,7 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
           <li>
             <div
               className={cx('memberBtn')}
-              onClick={() => router.push('/user/mypage/wishlist')}
+              onClick={() => pushLoginUser('/user/mypage/wishlist')}
             >
               <FavoriteBorderOutlinedIcon fontSize="large" />
               <span>위시리스트</span>

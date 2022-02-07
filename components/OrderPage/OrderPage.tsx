@@ -13,7 +13,6 @@ import { useAppDispatch, useAppSelector } from '@redux/hooks'
 import {
   selectUser,
   IUserState,
-  getLikesCart,
   userUpdateDeliveryAddrs,
   userDeleteCart,
 } from '@redux/features/userSlice'
@@ -83,10 +82,6 @@ const OrderPage = () => {
   })
 
   useEffect(() => {
-    dispatch(getLikesCart())
-  }, [])
-
-  useEffect(() => {
     if (user.isLogin && user.userData) {
       const email = user.userData.email.split('@')
       setOrderInfo({
@@ -130,11 +125,11 @@ const OrderPage = () => {
 
     if (orders !== undefined) {
       reqOrders = JSON.parse(orders)
-    } else if (cartIndex !== undefined) {
+    } else if (cartIndex !== undefined && user.userData) {
       if (cartIndex === 'all') {
-        reqOrders = user.storage.cart
+        reqOrders = user.userData.cart
       } else {
-        reqOrders = user.storage.cart.filter((_, index) =>
+        reqOrders = user.userData.cart.filter((_, index) =>
           Array.isArray(cartIndex)
             ? cartIndex.includes(index.toString())
             : cartIndex === index.toString()
@@ -152,7 +147,7 @@ const OrderPage = () => {
         alert('오류가 발생하여 결제를 진행할 수 없습니다.')
         router.back()
       })
-  }, [router.query, user.storage])
+  }, [router.query, user.userData])
 
   useEffect(() => {
     let price = 0
@@ -464,7 +459,7 @@ const OrderPage = () => {
             <h1 onClick={() => router.push('/')}>PIIC</h1>
             <div className={cx('user')}>
               <button onClick={() => router.push('/user/cart')}>
-                <StyledBadge badgeContent={user.storage?.cart.length}>
+                <StyledBadge badgeContent={user.userData?.cart.length}>
                   <ShoppingBagOutlinedIcon />
                 </StyledBadge>
               </button>
