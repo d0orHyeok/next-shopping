@@ -5,7 +5,6 @@ import Head from 'next/head'
 import { ParsedUrlQuery } from 'querystring'
 import Axios from 'axios'
 import { IProductDetail } from '@api/product/getProductDetail'
-import { IReview } from '@models/Review'
 
 interface IProductDetailPageQuery extends ParsedUrlQuery {
   pid: string
@@ -13,7 +12,6 @@ interface IProductDetailPageQuery extends ParsedUrlQuery {
 
 export interface IDetailPageProps {
   productDetail: IProductDetail
-  reviews: IReview[]
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
@@ -24,17 +22,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
     const response = await Axios.post('/api/product/getProductDetail', { pid })
     const productDetail = response.data.productDetail
 
-    const update = { $inc: { views: 1 } }
-    await Axios.post('/api/product/updateProduct', { pid, update })
-
-    const _response = await Axios.post('/api/review/getProductReviews', { pid })
-    const reviews = _response.data.reviews
-
-    return { props: { productDetail, reviews } }
+    return { props: { productDetail } }
   }
 )
 
-const DetailPage = ({ productDetail, reviews }: IDetailPageProps) => {
+const DetailPage = ({ productDetail }: IDetailPageProps) => {
   return (
     <>
       <Head>
@@ -50,7 +42,7 @@ const DetailPage = ({ productDetail, reviews }: IDetailPageProps) => {
           content={'nextjs,shop,website,PIIC,쇼핑,온라인쇼핑, 쇼핑몰, 의류, '}
         />
       </Head>
-      <ProductDetailPage productDetail={productDetail} reviews={reviews} />
+      <ProductDetailPage productDetail={productDetail} />
     </>
   )
 }

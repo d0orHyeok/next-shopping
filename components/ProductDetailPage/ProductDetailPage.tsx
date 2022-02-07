@@ -2,16 +2,32 @@ import styles from './ProductDetailPage.module.css'
 import classNames from 'classnames/bind'
 const cx = classNames.bind(styles)
 import { IDetailPageProps } from 'pages/product/detail/[pid]'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProductOrder from './section/ProductOrder'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DetailCheck from './section/DetailCheck'
 import ReviewSection from '@components/ReviewSection/ReviewSection'
+import Axios from 'axios'
+import { IReview } from '@models/Review'
 
-const ProductDetailPage = ({ productDetail, reviews }: IDetailPageProps) => {
+const ProductDetailPage = ({ productDetail }: IDetailPageProps) => {
   const { product } = productDetail
 
   const [viewMore, setViewMore] = useState(false)
+  const [reviews, setReviews] = useState<IReview[]>([])
+
+  useEffect(() => {
+    const update = { $inc: { views: 1 } }
+    Axios.post('/api/product/updateProduct', { pid: product._id, update })
+
+    Axios.post('/api/review/getProductReviews', { pid: product._id })
+      .then((res) => {
+        setReviews(res.data.reviews)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [product._id])
 
   return (
     <>
