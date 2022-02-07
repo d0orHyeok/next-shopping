@@ -1,20 +1,9 @@
 import styles from './LoginPage.module.css'
 import LoginModal from '@components/utils/LoginModal/LoginModal'
-import { useEffect, useState } from 'react'
-import { useAppSelector } from '@redux/hooks'
-import { selectUser, IUserState } from '@redux/features/userSlice'
-import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 const LoginPage = () => {
   const [open, setOpen] = useState(false)
-  const user: IUserState = useAppSelector(selectUser)
-  const router = useRouter()
-
-  useEffect(() => {
-    if (user.isLogin) {
-      router.back()
-    }
-  }, [user.isLogin])
 
   return (
     <>

@@ -45,6 +45,7 @@ export interface IUserDocument extends Document, IUser {
     password: string,
     callback: (err: Error | null, isMatch?: boolean) => void
   ) => void
+  asyncComparePassword: (password: string) => Promise<Error | boolean>
   generateToken: (
     callback: (err: Error | null, user?: IUserDocument) => void
   ) => void
@@ -144,6 +145,12 @@ userSchema.methods.comparePassword = function (
     if (err) return callback(err)
     callback(null, isMatch)
   })
+}
+
+userSchema.methods.asyncComparePassword = async function (
+  plainPassword: string
+): Promise<Error | boolean> {
+  return await bcrypt.compare(plainPassword, this.password)
 }
 
 userSchema.methods.generateToken = function (

@@ -3,17 +3,16 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import CloseIcon from '@mui/icons-material/Close'
 import IconButton from '@mui/material/IconButton'
 import LoginModal from '@components/utils/LoginModal/LoginModal'
-
+import { useSession, signOut } from 'next-auth/react'
 import styles from './SideNavBox.module.css'
 import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
-
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { IUserState, selectUser, userLogout } from '@redux/features/userSlice'
-import { useAppSelector, useAppDispatch } from '@redux/hooks'
+import { useAppDispatch, useAppSelector } from '@redux/hooks'
 import * as getCategory from '@libs/getCategory'
 import { useRouter } from 'next/router'
+import { IUserState, selectUser, userLogout } from '@redux/features/userSlice'
 
 const navCategory = ['best', ...getCategory.getMainCategorys()]
 
@@ -32,6 +31,16 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
   const [menuItem, setMenuItem] = useState('')
   const [subMenuItems, setSubMenuItems] = useState<string[]>([])
 
+  const { data: session } = useSession()
+
+  const logout = () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      dispatch(userLogout())
+      signOut({ redirect: false })
+      router.push('/')
+    }
+  }
+
   const handleOpenSubMenu = (mainCategory: string) => {
     setMenuItem(mainCategory)
     if (mainCategory !== 'best') {
@@ -42,7 +51,7 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
   }
 
   const drawLoginBox = () =>
-    !user.isLogin ? (
+    !session ? (
       <>
         <p className={cx('user-desc')}>
           환영합니다! PIIC에 가입하여 다양한 상품들을 둘러보세요
@@ -62,15 +71,9 @@ const DrawPage = ({ onClose }: DrawPageProops) => {
       </>
     ) : (
       <>
-        <p className={cx('user-desc')}>{user.userData?.name}님 환영합니다.</p>
+        <p className={cx('user-desc')}>{session.userData.name}님 환영합니다.</p>
         <div className={cx('userBtn-wrapper')}>
-          <button
-            onClick={() => {
-              dispatch(userLogout())
-              onClose(false)
-            }}
-            className={cx('userBtn', 'registerBtn')}
-          >
+          <button onClick={logout} className={cx('userBtn', 'registerBtn')}>
             로그아웃
           </button>
 

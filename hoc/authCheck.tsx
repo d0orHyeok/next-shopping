@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { userAuth } from '@redux/features/userSlice'
-import { useAppDispatch } from '@redux/hooks'
 import { useRouter } from 'next/router'
 import Loading from '@components/utils/Loading/Loading'
-import cookies from 'next-cookies'
 import { GetServerSidePropsContext } from 'next'
+import { useSession, getSession } from 'next-auth/react'
+import { useAppDispatch } from '@redux/hooks'
+import { auth } from '@redux/features/userSlice'
 
 // CSR에서 auth check를 수행하는 HOC
 export default function AuthCheck(
@@ -14,36 +14,37 @@ export default function AuthCheck(
 ) {
   function AuthenticationCheck(props: any) {
     const [isLoading, setIsLoading] = useState(true)
-    const dispatch = useAppDispatch()
     const router = useRouter()
+    const dispatch = useAppDispatch()
 
-    const checkPass = async () => {
-      try {
-        const res = await dispatch(userAuth()).unwrap()
-        if (adminRoute && !res.isAdmin) {
-          // admin이 아닌데 adminRoute에 접근한 경우
-          router.back()
-        } else {
-          if (option === false) {
-            // 로그인 했을때 접근할 수 없는 경우 (ex: 로그인, 회원가입 페이지)
+    const { data: session } = useSession()
+
+    useEffect(() => {
+      if (session !== undefined) {
+        dispatch(auth(!session ? null : session.userData))
+
+        if (session === null) {
+          if (option) {
+            // 로그인 필요
             router.back()
           } else {
             setIsLoading(false)
           }
-        }
-      } catch (err) {
-        if (option) {
-          // 로그인 필요
-          router.back()
         } else {
-          setIsLoading(false)
+          if (adminRoute && !session?.userData.isAdmin) {
+            // admin이 아닌데 adminRoute에 접근한 경우
+            router.back()
+          } else {
+            if (option === false) {
+              // 로그인 했을때 접근할 수 없는 경우 (ex: 로그인, 회원가입 페이지)
+              router.back()
+            } else {
+              setIsLoading(false)
+            }
+          }
         }
       }
-    }
-
-    useEffect(() => {
-      checkPass()
-    }, [])
+    }, [session])
 
     return <>{isLoading ? <Loading /> : <SpecificComponent {...props} />}</>
   }
@@ -57,7 +58,7 @@ interface IRedirectNotAuth {
 }
 
 export const authCheckServerSide = async (
-  store: any, // redux store
+  store: any,
   context: GetServerSidePropsContext, // context
   // null: all user | false: not login user | true: login user
   option: null | boolean,
@@ -68,12 +69,11 @@ export const authCheckServerSide = async (
     permanent: false,
     destination: destination,
   }
-  const { w_auth } = cookies(context)
-  if (w_auth) {
-    await store.dispatch(userAuth({ token: w_auth }))
-  }
-  const user = await store.getState().user
-  if (!user.userData) {
+  const session = await getSession(context)
+
+  await store.dispatch(auth(!session ? null : session.userData))
+
+  if (session === null) {
     // Auth 실패
     if (option) {
       // 로그인 필요
@@ -81,7 +81,7 @@ export const authCheckServerSide = async (
     }
   } else {
     // Auth 성공
-    if (adminRoute && !user.userData.isAdmin) {
+    if (adminRoute && !session.userData.isAdmin) {
       // admin이 아닌데 adminRoute에 접근한 경우
       return redirect
     } else {

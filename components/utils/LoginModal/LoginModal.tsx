@@ -1,12 +1,12 @@
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import Modal from '@mui/material/Modal'
-
+import { signIn, getSession } from 'next-auth/react'
 import styles from './LoginModal.module.css'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useAppDispatch } from '@redux/hooks'
-import { userLogin, userAuth } from '@redux/features/userSlice'
+import { auth } from '@redux/features/userSlice'
 
 interface inputValue {
   email: string
@@ -36,7 +36,7 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
     })
   }
 
-  const onClickLogin = () => {
+  const onClickLogin = async () => {
     if (email.trim().length === 0) {
       document.getElementById('email')?.focus()
       return
@@ -46,16 +46,22 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
       return
     }
 
-    dispatch(userLogin(inputValue))
-      .unwrap()
-      .then(() => {
-        dispatch(userAuth())
-        onClose()
-        location.reload()
-      })
-      .catch((err) => {
-        err.message ? alert(err.message) : alert('로그인에 실패했습니다.')
-      })
+    const response: undefined | any = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+
+    if (!response) {
+      return alert('로그인 실패')
+    } else {
+      if (response.error !== null) {
+        return alert(response.error)
+      }
+      const session = await getSession()
+      dispatch(auth(!session ? null : session.userData))
+      onClose()
+    }
   }
 
   return (

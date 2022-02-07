@@ -64,7 +64,7 @@ const history = ({
   return (
     <>
       <Head>
-        <title>마이페이지 | PIIC</title>
+        <title>주문조회 | PIIC</title>
       </Head>
       <MyPageLayout title={'주문조회'} contentTitleUnderline={false}>
         <HistoryPage

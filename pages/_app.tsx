@@ -5,6 +5,7 @@ import { wrapper } from '@redux/store'
 import '@styles/global.css'
 import '@styles/variable.css'
 import { useRouter } from 'next/router'
+import { SessionProvider } from 'next-auth/react'
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const pathname = useRouter().pathname
@@ -24,13 +25,15 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           content="nextjs,shop,website,PIIC,쇼핑,온라인쇼핑, 쇼핑몰, 의류"
         />
       </Head>
-      {pathname === '/' || pathname === '/user/order' ? (
-        <Component {...pageProps} />
-      ) : (
-        <Layout>
+      <SessionProvider session={pageProps.session}>
+        {pathname === '/' || pathname === '/user/order' ? (
           <Component {...pageProps} />
-        </Layout>
-      )}
+        ) : (
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        )}
+      </SessionProvider>
     </>
   )
 }

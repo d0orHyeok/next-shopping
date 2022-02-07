@@ -2,12 +2,19 @@ import nextConnect from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import database from '@middlewares/database'
 import auth, { IAuthExtendedRequest } from '@middlewares/auth'
-import { IUserDocument, IUser } from '@models/User'
+import { IUserDocument, IDeliveryAddr, IUserCart } from '@models/User'
 import dayjs from 'dayjs'
 
-export interface IAuthUserData extends IUser {
+export interface IAuthUserData {
   _id: string
   isAdmin: boolean
+  email: string
+  name: string
+  role: number
+  image: string
+  deliveryAddrs: IDeliveryAddr[]
+  likes: string[]
+  cart: IUserCart[]
 }
 
 const handler = nextConnect<NextApiRequest, NextApiResponse>()

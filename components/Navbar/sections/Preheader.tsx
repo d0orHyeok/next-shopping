@@ -4,20 +4,34 @@ import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
 import Link from 'next/link'
 import { useState } from 'react'
-import { selectUser, userLogout, IUserState } from '@redux/features/userSlice'
-import { useAppDispatch, useAppSelector } from '@redux/hooks'
+import { selectUser, IUserState, userLogout } from '@redux/features/userSlice'
+import { useAppSelector, useAppDispatch } from '@redux/hooks'
+import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 interface PreheaderProps {
   isHome?: boolean
 }
 
 const Preheader = ({ isHome }: PreheaderProps) => {
-  const dispatch = useAppDispatch()
+  const router = useRouter()
   const user: IUserState = useAppSelector(selectUser)
+  const dispatch = useAppDispatch()
+
   const [open, setOpen] = useState(false)
 
+  const { data: session } = useSession()
+
+  const logout = () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      dispatch(userLogout())
+      signOut({ redirect: false })
+      router.push('/')
+    }
+  }
+
   const drawList = () =>
-    user.isLogin ? (
+    session ? (
       <ul>
         <li>{user.userData?.name}님</li>
         <span></span>
@@ -41,7 +55,7 @@ const Preheader = ({ isHome }: PreheaderProps) => {
           </>
         )}
         <li>
-          <a className={styles.loginBtn} onClick={() => dispatch(userLogout())}>
+          <a className={styles.loginBtn} onClick={() => logout()}>
             로그아웃
           </a>
         </li>
