@@ -22,6 +22,10 @@ const order = () => {
     <>
       <Head>
         <title>주문/결제 | PIIC</title>
+        <script
+          src="https://cdn.bootpay.co.kr/js/bootpay-3.3.1.min.js"
+          type="application/javascript"
+        ></script>
       </Head>
       <OrderPage />
     </>
