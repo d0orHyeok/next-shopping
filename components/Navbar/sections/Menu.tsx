@@ -9,7 +9,6 @@ import { styled } from '@mui/material/styles'
 import { useAppDispatch, useAppSelector } from '@redux/hooks'
 import {
   getBestProducts,
-  IBestProduct,
   IProductState,
   selectProduct,
 } from '@redux/features/productSlice'
