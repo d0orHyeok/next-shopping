@@ -116,7 +116,7 @@ const ReviewSection = ({ style, pid, reviews }: IReviewSectionProps) => {
 
   // 리뷰 수정 state
   const [openEdit, setOpenEdit] = useState(false)
-  const [editReview, setEditReview] = useState<IReview>(reviews[0])
+  const [editReview, setEditReview] = useState<IReview | null>(null)
 
   const handleChangeInput = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -224,6 +224,7 @@ const ReviewSection = ({ style, pid, reviews }: IReviewSectionProps) => {
         review._id === newReview._id ? newReview : review
       )
     )
+    setEditReview(null)
   }
 
   const handleClickSortOption = (sort: ISort) => {
@@ -849,7 +850,7 @@ const ReviewSection = ({ style, pid, reviews }: IReviewSectionProps) => {
           </div>
         </section>
       </div>
-      {productReviews.length ? (
+      {productReviews.length && editReview !== null ? (
         <EditReviewModal
           review={editReview}
           open={openEdit}
