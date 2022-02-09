@@ -66,7 +66,7 @@ const Navbar = ({
       search: false,
       side: false,
     })
-  }, [router])
+  }, [router.asPath])
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -80,11 +80,12 @@ const Navbar = ({
       }
 
       setDraw({ ...draw, [anchor]: open })
+      setIsDark && !open && setTimeout(() => setIsDark(true), 200)
     }
 
-  const passDraw = useCallback(
+  const setMenuDraw = useCallback(
     (open: boolean) => {
-      setDraw({ ...draw, ['menu']: open })
+      setDraw({ ...draw, menu: open })
     },
     [draw]
   )
@@ -93,11 +94,19 @@ const Navbar = ({
   const handleMouseOver = (event: React.MouseEvent<HTMLElement>) => {
     if (isHome && setIsDark) {
       if (event.clientY < 91 || draw.menu || draw.search || draw.side) {
-        setIsDark(false)
+        return setIsDark(false)
       } else {
-        setIsDark(true)
+        return setIsDark(true)
       }
     }
+  }
+
+  const handleMouseLeave = () => {
+    if (draw.menu || draw.search || draw.side) {
+      return
+    }
+
+    setIsDark && setIsDark(true)
   }
 
   const pushLoginUser = (href: string) => {
@@ -110,12 +119,12 @@ const Navbar = ({
   return (
     <>
       <header
-        className={cx('header', isDark && isHome && 'isHome')}
+        className={cx('header', isDark && 'isHome')}
         onMouseMove={handleMouseOver}
-        onMouseOut={() => setIsDark && setIsDark(true)}
+        onMouseOut={handleMouseLeave}
       >
         {/* PreHeader : Account Menu */}
-        <Preheader isHome={isDark && isHome} />
+        <Preheader isHome={isDark} />
         {/* Main Header */}
         <div className={cx('container')}>
           {/* Logo for Shopping mall */}
@@ -126,7 +135,7 @@ const Navbar = ({
 
           {/* Navigation: Menu for search products */}
           <nav className={cx('menu')}>
-            <Menu passDraw={passDraw} />
+            <Menu draw={draw.menu} setDraw={setMenuDraw} />
           </nav>
 
           {/* User Menu */}
@@ -154,6 +163,9 @@ const Navbar = ({
                   <SearchBox
                     onClose={(open: boolean): void => {
                       setDraw({ ...draw, search: open })
+                      setIsDark &&
+                        !open &&
+                        setTimeout(() => setIsDark(true), 200)
                     }}
                   />
                 </StyledDrawer>
@@ -202,6 +214,9 @@ const Navbar = ({
                     <SideNavBox
                       onClose={(open: boolean): void => {
                         setDraw({ ...draw, side: open })
+                        setIsDark &&
+                          !open &&
+                          setTimeout(() => setIsDark(true), 200)
                       }}
                     />
                   </Drawer>

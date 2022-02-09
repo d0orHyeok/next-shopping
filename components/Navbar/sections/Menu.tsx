@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './Menu.module.css'
 import classnames from 'classnames/bind'
 const cx = classnames.bind(styles)
@@ -15,7 +15,8 @@ import {
 import * as getCategorys from '@libs/getCategory'
 
 interface MenuProps {
-  passDraw: (open: boolean) => void
+  draw: boolean
+  setDraw: (open: boolean) => void
 }
 
 const navCategory = ['best', ...getCategorys.getMainCategorys()]
@@ -29,21 +30,17 @@ const StyledDrawer = styled(Drawer)(() => ({
   },
 }))
 
-const Menu = ({ passDraw }: MenuProps) => {
+const Menu = ({ draw, setDraw }: MenuProps) => {
   const router = useRouter()
   const dispatch = useAppDispatch()
 
   const bestProducts: IBestProduct[] =
     useAppSelector(selectProduct).bestProducts
-  const [isChange, setIsChange] = useState(-1)
   const [defaultItem, setDefaultItem] = useState(-1)
   const [selectedItem, setSelectedItem] = useState(-1)
-  const [draw, setDraw] = useState(false)
 
   // URL 변화에 따라 드로워를 초기화하고 url에 맞는 선택표시
   useEffect(() => {
-    setDraw(false)
-
     const paths = router.asPath.split('/')
     const selected =
       paths.indexOf('product') === -1 ? -1 : navCategory.indexOf(paths[2])
@@ -53,8 +50,11 @@ const Menu = ({ passDraw }: MenuProps) => {
 
   useEffect(() => {
     !draw && setSelectedItem(defaultItem)
-    passDraw(draw)
   }, [draw])
+
+  const onCloseMenu = () => {
+    setDraw(false)
+  }
 
   useEffect(() => {
     if (!bestProducts.length) {
@@ -62,18 +62,14 @@ const Menu = ({ passDraw }: MenuProps) => {
     }
   }, [bestProducts])
 
-  const drawCategoryMenu = useCallback(() => {
-    if (selectedItem < 1 || !draw) {
-      return <></>
-    }
-    const mainCategory = navCategory[selectedItem]
+  const drawCategoryMenu = (selectedIndex: number) => {
+    const mainCategory = navCategory[selectedIndex]
     const subCategoryData = getCategorys.getSubCateogrys(mainCategory)
 
     return (
       <>
-        {isChange !== selectedItem && <span className={styles.fade}></span>}
         {/* 서브 카테고리 메뉴 */}
-        <div className={cx('draw-menu')} onMouseLeave={() => setDraw(false)}>
+        <div className={cx('draw-menu')} onMouseLeave={onCloseMenu}>
           <ul className={styles.common}>
             <li>
               <Link href={`/product/${mainCategory}/best`}>BEST</Link>
@@ -128,7 +124,7 @@ const Menu = ({ passDraw }: MenuProps) => {
         </div>
       </>
     )
-  }, [selectedItem])
+  }
 
   return (
     <>
@@ -141,10 +137,6 @@ const Menu = ({ passDraw }: MenuProps) => {
                 setSelectedItem(index)
                 setDraw(true)
               }}
-              onMouseLeave={() => {
-                index === 0 && setDraw(false)
-                setIsChange(index)
-              }}
               className={cx('item', selectedItem === index && 'selected')}
             >
               <Link href={`/product/${category}/all`}>
@@ -153,16 +145,18 @@ const Menu = ({ passDraw }: MenuProps) => {
             </li>
           ))}
         </ul>
-        <StyledDrawer
-          transitionDuration={{ appear: 0, enter: 0, exit: 0 }}
-          style={{ zIndex: 5 }}
-          anchor="top"
-          open={draw}
-          onClose={() => setDraw(false)}
-          ModalProps={{ disableScrollLock: true }}
-        >
-          {drawCategoryMenu()}
-        </StyledDrawer>
+        {draw && selectedItem !== 0 && (
+          <StyledDrawer
+            transitionDuration={{ appear: 0, enter: 0, exit: 0 }}
+            style={{ zIndex: 5 }}
+            anchor="top"
+            open={draw}
+            onClose={onCloseMenu}
+            ModalProps={{ disableScrollLock: true }}
+          >
+            {drawCategoryMenu(selectedItem)}
+          </StyledDrawer>
+        )}
       </div>
     </>
   )

@@ -50,16 +50,16 @@ export const Home = ({ bestProducts, newProducts }: HomeProps): JSX.Element => {
   // 투명하게 보일지 여부
   const [isDark, setIsDark] = useState(false)
 
-  useEffect(() => {
-    !scrollY ? setIsDark(true) : setIsDark(false)
-  }, [scrollY])
-
   return (
     <>
       <Head>
         <title>Home | PIIC</title>
       </Head>
-      <Navbar isHome={!scrollY && true} isDark={isDark} setIsDark={setIsDark} />
+      <Navbar
+        isHome={!scrollY}
+        isDark={!scrollY ? isDark : false}
+        setIsDark={setIsDark}
+      />
       <LandingPage bestProducts={bestProducts} newProducts={newProducts} />
       <Bottom />
     </>

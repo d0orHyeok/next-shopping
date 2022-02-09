@@ -52,13 +52,6 @@
   font-weight: 600;
   font-size: 0.8rem;
   padding: 3rem 0 5rem 0;
-}
-
-.fade {
-  display: none;
-}
-
-.fade ~ .draw-menu {
   animation: fadein 0.5s;
 }
 
