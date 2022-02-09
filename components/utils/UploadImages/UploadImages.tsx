@@ -34,6 +34,10 @@ const UploadImages = ({
       return alert('더 이상 업로드 할 수 없습니다.')
     }
 
+    if (files[0].size > 2 * 1024 * 1024) {
+      return alert('2MB 이하의 사진만 업로드 가능합니다.')
+    }
+
     const formData = new FormData()
     const config = {
       headers: { 'content-type': 'multipart/form-data' },
