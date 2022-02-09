@@ -1,19 +1,6 @@
 import LoginPage from '@components/LoginPage/LoginPage'
-import { authCheckServerSide } from 'hoc/authCheck'
-import { wrapper } from '@redux/store'
+import AuthCheck from 'hoc/authCheck'
 import Head from 'next/head'
-
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    const redirect = await authCheckServerSide(store, context, false)
-
-    if (redirect) {
-      return { redirect: redirect }
-    }
-
-    return { props: {} }
-  }
-)
 
 const login = () => {
   return (
@@ -26,4 +13,4 @@ const login = () => {
   )
 }
 
-export default login
+export default AuthCheck(login, false)

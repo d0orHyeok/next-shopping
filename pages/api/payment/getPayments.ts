@@ -3,21 +3,17 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import database from '@middlewares/database'
 import Payment from '@models/Payment'
 import dayjs from 'dayjs'
+import auth, { IAuthExtendedRequest } from '@middlewares/auth'
 
 const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
-handler.post(async (req, res) => {
+handler.use(auth)
+handler.post<IAuthExtendedRequest>(async (req, res) => {
   try {
     const today = dayjs(Date.now())
-    const { user_id, order_state, date_start, date_end, mode } = req.body
+    const { order_state, date_start, date_end, mode } = req.body
 
-    if (!user_id) {
-      return res
-        .status(400)
-        .json({ success: false, message: '잘못된 요청입니다.' })
-    }
-
-    let query = Payment.find({ user_id: user_id })
+    let query = Payment.find({ user_id: req.user._id })
 
     if (date_start && date_end) {
       query = query.find({

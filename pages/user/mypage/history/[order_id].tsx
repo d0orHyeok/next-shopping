@@ -1,4 +1,4 @@
-import { authCheckServerSide } from 'hoc/authCheck'
+import AuthCheck from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import Head from 'next/head'
 import { ParsedUrlQuery } from 'querystring'
@@ -16,9 +16,7 @@ interface IHistoryOrderDetailProps {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    await authCheckServerSide(store, context, true)
-
+  () => async (context) => {
     const { order_id } = context.params as IHistoryOrderDetailParams
     const response = await Axios.post('/api/payment/getPaymentByOrderID', {
       order_id,
@@ -52,4 +50,4 @@ const HistoryOrderDetail = ({ payment }: IHistoryOrderDetailProps) => {
   )
 }
 
-export default HistoryOrderDetail
+export default AuthCheck(HistoryOrderDetail, true)

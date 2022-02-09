@@ -1,4 +1,4 @@
-import { authCheckServerSide } from 'hoc/authCheck'
+import AuthCheck from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import Head from 'next/head'
 import { ParsedUrlQuery } from 'querystring'
@@ -16,13 +16,7 @@ const pageList = ['change', 'secession', 'addr', 'wishlist']
 const pageName = ['회원정보수정', '회원탈퇴', '배송주소관리', '위시리스트']
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    const redirect = await authCheckServerSide(store, context, true)
-
-    if (redirect) {
-      return { redirect: redirect }
-    }
-
+  () => async (context) => {
     const { page } = context.params as IMypageParams
 
     if (!pageList.includes(page)) {
@@ -52,4 +46,4 @@ const page = ({ page }: IMypageParams) => {
   )
 }
 
-export default page
+export default AuthCheck(page, true)

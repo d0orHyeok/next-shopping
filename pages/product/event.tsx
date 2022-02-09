@@ -1,7 +1,8 @@
 import EventProductViewPage, {
   IProductViewPageProps,
 } from '@components/ProductViewPage/EventProductViewPage'
-import { authCheckServerSide } from 'hoc/authCheck'
+import AuthCheck from 'hoc/authCheck'
+
 import { wrapper } from '@redux/store'
 import { ParsedUrlQuery } from 'querystring'
 import { IProduct } from '@models/Product'
@@ -16,10 +17,7 @@ interface IEventPageQuery extends ParsedUrlQuery {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    // 로그인 여부 확인
-    await authCheckServerSide(store, context, null)
-
+  () => async (context) => {
     const { sort, colors, fit, season } = context.query as IEventPageQuery
 
     let body = {}
@@ -74,4 +72,4 @@ const event = ({ products, filterOptions }: IProductViewPageProps) => {
   )
 }
 
-export default event
+export default AuthCheck(event, null)

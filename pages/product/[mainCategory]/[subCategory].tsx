@@ -1,7 +1,7 @@
 import ProductViewPage, {
   IProductViewPageProps,
 } from '@components/ProductViewPage/ProductViewPage'
-import { authCheckServerSide } from 'hoc/authCheck'
+import AuthCheck from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import { ParsedUrlQuery } from 'querystring'
 import { IProduct } from '@models/Product'
@@ -20,10 +20,7 @@ export interface ISubCategoryPageQuery extends ParsedUrlQuery {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    // 로그인 여부 확인
-    await authCheckServerSide(store, context, null)
-
+  () => async (context) => {
     const {
       mainCategory,
       subCategory,
@@ -141,4 +138,4 @@ const SubCategory = ({
   )
 }
 
-export default SubCategory
+export default AuthCheck(SubCategory, null)

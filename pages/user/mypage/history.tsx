@@ -1,4 +1,4 @@
-import { authCheckServerSide } from 'hoc/authCheck'
+import AuthCheck from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import Head from 'next/head'
 import MyPageLayout from '@components/MyPage/MyPageLayout'
@@ -8,7 +8,8 @@ import HistoryPage, {
 import { ParsedUrlQuery } from 'querystring'
 import dayjs from 'dayjs'
 import Axios from 'axios'
-import { IUserState } from '@redux/features/userSlice'
+import { IPayment } from '@models/Payment'
+import { useEffect, useState } from 'react'
 
 interface IHistoryPageQuery extends ParsedUrlQuery {
   mode?: 'order' | 'refund'
@@ -18,15 +19,7 @@ interface IHistoryPageQuery extends ParsedUrlQuery {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    const redirect = await authCheckServerSide(store, context, true)
-
-    if (redirect !== null) {
-      return { redirect: redirect }
-    }
-
-    const user: IUserState = await store.getState().user
-
+  () => async (context) => {
     const today = dayjs(Date.now())
 
     const { mode, order_state, date_start, date_end } =
@@ -41,26 +34,23 @@ export const getServerSideProps = wrapper.getServerSideProps(
       date_end: date_end ? date_end : today.format('YYYY-MM-DD'),
     }
 
-    const response = await Axios.post('/api/payment/getPayments', {
-      user_id: user.userData ? user.userData._id : '',
-      ...data,
-    })
-
-    const payments = response.data.payments ? response.data.payments : []
-
     return {
-      props: { payments, ...data },
+      props: { ...data },
     }
   }
 )
 
-const history = ({
-  payments,
-  mode,
-  order_state,
-  date_start,
-  date_end,
-}: IHistoryPageProps) => {
+const history = (props: IHistoryPageProps) => {
+  const [payments, setPayments] = useState<IPayment[]>([])
+
+  const { mode, order_state, date_start, date_end } = props
+
+  useEffect(() => {
+    Axios.post('/api/payment/getPayments', props).then((res) =>
+      setPayments(res.data.payments ? res.data.payments : [])
+    )
+  }, [props])
+
   return (
     <>
       <Head>
@@ -79,4 +69,4 @@ const history = ({
   )
 }
 
-export default history
+export default AuthCheck(history, true)
