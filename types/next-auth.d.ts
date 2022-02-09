@@ -1,4 +1,4 @@
-import { IDeliveryAddr, IUserCart } from '@models/User'
+import { IDeliveryAddr, IUserCart, IUserDocument } from '@models/User'
 // import NextAuth from "next-auth"
 // import { JWT } from "next-auth/jwt"
 
@@ -28,5 +28,6 @@ declare module 'next-auth' {
    */
   interface Session {
     userData: IUserData
+    user: IUserDocument
   }
 }

@@ -1,10 +1,10 @@
-import { IUserData } from 'types/next-auth.d'
+import { IUserDocument } from '@models/User'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
 import { getSession } from 'next-auth/react'
 
 export interface IAuthExtendedRequest {
-  user: IUserData
+  user: IUserDocument
 }
 
 const auth = async (
@@ -17,7 +17,7 @@ const auth = async (
     if (!session) {
       return res.status(400).json({ message: 'User not found' })
     }
-    req.user = session.userData
+    req.user = session.user
   } catch (error) {
     return next(error)
   }
