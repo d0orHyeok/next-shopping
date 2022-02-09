@@ -6,6 +6,7 @@ import '@styles/global.css'
 import '@styles/variable.css'
 import { useRouter } from 'next/router'
 import { SessionProvider } from 'next-auth/react'
+import SideBar from '@components/utils/SideBar/SideBar'
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const pathname = useRouter().pathname
@@ -33,6 +34,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
             <Component {...pageProps} />
           </Layout>
         )}
+        {pathname !== '/user/order' && <SideBar />}
       </SessionProvider>
     </>
   )
