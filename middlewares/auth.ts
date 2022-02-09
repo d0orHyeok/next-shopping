@@ -1,9 +1,10 @@
+import { IUserData } from 'types/next-auth.d'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
-import User, { IUserDocument } from '@models/User'
+import { getSession } from 'next-auth/react'
 
 export interface IAuthExtendedRequest {
-  user: IUserDocument
+  user: IUserData
 }
 
 const auth = async (
@@ -12,13 +13,11 @@ const auth = async (
   next: NextHandler
 ): Promise<void> => {
   try {
-    const token =
-      req.body && req.body.token ? req.body.token : req.cookies.w_auth
-    const user = await User.findByToken(token)
-    if (!user) {
+    const session = await getSession({ req })
+    if (!session) {
       return res.status(400).json({ message: 'User not found' })
     }
-    req.user = user
+    req.user = session.userData
   } catch (error) {
     return next(error)
   }

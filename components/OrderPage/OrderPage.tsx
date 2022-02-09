@@ -322,6 +322,10 @@ const OrderPage = () => {
       return alert('잘못된 이메일정보 입니다.')
     }
 
+    if (termsCheck[0] === false || termsCheck[1] === false) {
+      return alert('약관 동의가 필요합니다.')
+    }
+
     if (!switchTab && user.userData) {
       if (selectAddrIndex === -1) {
         setSwitchTab(true)
@@ -358,9 +362,6 @@ const OrderPage = () => {
       addrInfoRef.current?.scrollIntoView({ behavior: 'smooth' })
 
       return alert('배송정보를 입력해주세요.')
-    }
-    if (termsCheck[0] === false || termsCheck[1] === false) {
-      return alert('약관 동의가 필요합니다.')
     }
 
     const nameRegex = /[^ㄱ-ㅎ|가-힣|a-z|A-Z|\s]/g

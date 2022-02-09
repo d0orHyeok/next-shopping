@@ -46,10 +46,18 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
     // 검증 결과를 제대로 가져왔을 때
     // 원래 주문했던 금액이 일치하는가? 그리고 결제 상태가 완료 상태인가?
     if (_response.data.price !== data.price) {
+      await RestClient.cancel({
+        receiptId: _response.data.receipt_id,
+        price: _response.data.price,
+        name: req.user.name,
+        reason: 'validation fail',
+      })
+
       return res
         .status(400)
         .json({ success: false, message: '결제정보가 일치하지 않습니다.' })
     }
+
     // TODO: 이곳이 상품 지급 혹은 결제 완료 처리를 하는 로직으로 사용하면 됩니다.
     // DB에 결제내역 저장
 
