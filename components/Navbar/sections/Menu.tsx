@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@redux/hooks'
 import {
   getBestProducts,
   IBestProduct,
+  IProductState,
   selectProduct,
 } from '@redux/features/productSlice'
 import * as getCategorys from '@libs/getCategory'
@@ -34,8 +35,8 @@ const Menu = ({ draw, setDraw }: MenuProps) => {
   const router = useRouter()
   const dispatch = useAppDispatch()
 
-  const bestProducts: IBestProduct[] =
-    useAppSelector(selectProduct).bestProducts
+  const productState: IProductState = useAppSelector(selectProduct)
+  const { bestProducts } = productState
   const [defaultItem, setDefaultItem] = useState(-1)
   const [selectedItem, setSelectedItem] = useState(-1)
 
@@ -91,7 +92,7 @@ const Menu = ({ draw, setDraw }: MenuProps) => {
           </div>
           {/* 베스트 상품 이미지 */}
           <ul className={styles.imgBox}>
-            {bestProducts.length &&
+            {bestProducts.length !== 0 &&
               bestProducts
                 .filter((item) => item.mainCategory === mainCategory)[0]
                 .products.map(
