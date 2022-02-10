@@ -33,7 +33,7 @@ const Preheader = ({ isHome }: PreheaderProps) => {
   const drawList = () =>
     session ? (
       <ul>
-        <li>{user.userData?.name}님</li>
+        <li>{user.userData ? user.userData.name : ''}님</li>
         <span></span>
         {user.userData?.isAdmin ? (
           <>
