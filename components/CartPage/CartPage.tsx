@@ -175,17 +175,22 @@ const CartPage = () => {
   }
 
   useEffect(() => {
-    if (user.userData?.cart.length && !userProducts.length) {
+    if (user.userData && user.userData.cart.length && !userProducts.length) {
       Axios.post('/api/product/findProductsByOrders', {
-        orders: user.userData?.cart,
+        orders: user.userData.cart,
       })
-        .then((res) => setUserProducts(res.data.userProducts))
+        .then((res) =>
+          setUserProducts(res.data.userProducts ? res.data.userProducts : [])
+        )
         .catch((error) => {
           console.log(error)
-          alert('장바구니 정보를 불러오는데 실패했습니다.')
+          setUserProducts([])
+          return alert('장바구니 정보를 불러오는데 실패했습니다.')
         })
+    } else {
+      setUserProducts([])
     }
-  }, [user.userData?.cart])
+  }, [user.userData])
 
   useEffect(() => {
     const length = userCart.length
