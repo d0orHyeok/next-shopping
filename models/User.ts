@@ -1,8 +1,6 @@
 import { IColor } from './Product'
 import mongoose, { Schema, Document, Model, PopulatedDoc } from 'mongoose'
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import dayjs from 'dayjs'
 
 export const saltRounds = 10
 
@@ -34,8 +32,6 @@ export interface IUser {
   deliveryAddrs: IDeliveryAddr[]
   likes: string[]
   cart: IUserCart[]
-  token: string
-  tokenExp: number
   createdAt: Date
   updateAt: Date
 }
@@ -46,17 +42,12 @@ export interface IUserDocument extends Document, IUser {
     callback: (err: Error | null, isMatch?: boolean) => void
   ) => void
   asyncComparePassword: (password: string) => Promise<Error | boolean>
-  generateToken: (
-    callback: (err: Error | null, user?: IUserDocument) => void
-  ) => void
   changePassword: (
     callback: (err: Error | null, success?: boolean) => void
   ) => void
 }
 
-export interface IUserModel extends Model<IUserDocument> {
-  findByToken: (token: string) => Promise<IUserDocument>
-}
+export type IUserModel = Model<IUserDocument>
 
 const userSchema: Schema = new Schema(
   {
@@ -153,20 +144,6 @@ userSchema.methods.asyncComparePassword = async function (
   return await bcrypt.compare(plainPassword, this.password)
 }
 
-userSchema.methods.generateToken = function (
-  callback: (err: Error | null, user?: IUserDocument) => void
-) {
-  const token = jwt.sign(this._id.toHexString(), 'secret')
-  const oneHour = dayjs().add(1, 'hour').valueOf()
-
-  this.tokenExp = oneHour
-  this.token = token
-  this.save(function (err: Error | null, user: IUserDocument) {
-    if (err) return callback(err)
-    callback(null, user)
-  })
-}
-
 userSchema.methods.changePassword = function (
   newPassword: string,
   callback: (err: Error | null, isMatch?: boolean) => void
@@ -176,13 +153,6 @@ userSchema.methods.changePassword = function (
 
     if (isMatch) return callback(null, false)
   })
-}
-
-userSchema.statics.findByToken = async function (
-  token: string
-): Promise<IUserDocument> {
-  const decode = await jwt.verify(token, 'secret')
-  return await this.findOne({ _id: decode, token: token })
 }
 
 export default (mongoose.models.User as IUserModel) ||
