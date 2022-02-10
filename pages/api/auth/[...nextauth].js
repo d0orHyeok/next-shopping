@@ -38,7 +38,6 @@ export default NextAuth({
     async session({ session, token }) {
       const user = await User.findOne({ _id: token.sub })
       if (user) {
-        session.user = user
         session.userData = {
           _id: user._id,
           isAdmin: user.role === 0 ? false : true,

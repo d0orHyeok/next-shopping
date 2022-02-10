@@ -1,26 +1,20 @@
 import AuthCheck from 'hoc/authCheck'
-import { wrapper } from '@redux/store'
 import Head from 'next/head'
 import MyPageLayout from '@components/MyPage/MyPageLayout'
-import MyPage, { IMyPageIndexProps } from '@components/MyPage/pages/MyPage'
-import { IUserState } from '@redux/features/userSlice'
+import MyPage from '@components/MyPage/pages/MyPage'
+import { useEffect, useState } from 'react'
+import { IPayment } from '@models/Payment'
 import Axios from 'axios'
 
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
-    const user: IUserState = await store.getState().user
+const mypage = () => {
+  const [payments, setPayments] = useState<IPayment[]>([])
 
-    const response = await Axios.post('/api/payment/getPayments', {
-      user_id: user.userData ? user.userData._id : '',
-    })
+  useEffect(() => {
+    Axios.post('/api/payment/getPayments')
+      .then((res) => setPayments(res.data.payments ? res.data.payments : []))
+      .catch((err) => console.log(err.responese))
+  }, [])
 
-    const payments = response.data.payments ? response.data.payments : []
-
-    return { props: { payments } }
-  }
-)
-
-const mypage = ({ payments }: IMyPageIndexProps) => {
   return (
     <>
       <Head>

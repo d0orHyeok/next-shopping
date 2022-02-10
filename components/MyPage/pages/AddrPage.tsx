@@ -150,6 +150,7 @@ const AddrPage = () => {
     const updateDeliveryAddrs = deliveryAddrs.filter(
       (_, index) => !isChecked[index]
     )
+    console.log(updateDeliveryAddrs)
     dispatch(userUpdateDeliveryAddrs(updateDeliveryAddrs))
   }
 
@@ -212,7 +213,7 @@ const AddrPage = () => {
     if (user.userData) {
       setDeliveryAddrs(user.userData.deliveryAddrs)
     }
-  }, [user.userData?.deliveryAddrs])
+  }, [user.userData])
 
   useEffect(() => {
     if (deliveryAddrs.length !== isChecked.length)

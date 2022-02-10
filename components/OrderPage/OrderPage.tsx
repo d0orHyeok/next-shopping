@@ -665,6 +665,7 @@ const OrderPage = () => {
                             type="text"
                             id="phone1"
                             name="phone"
+                            maxLength={3}
                             value={addrInfo.phone.phone1}
                             onChange={handleAddrInfoChange}
                           />
@@ -673,6 +674,7 @@ const OrderPage = () => {
                             type="text"
                             id="phone2"
                             name="phone"
+                            maxLength={4}
                             value={addrInfo.phone.phone2}
                             onChange={handleAddrInfoChange}
                           />
@@ -681,6 +683,7 @@ const OrderPage = () => {
                             type="text"
                             id="phone3"
                             name="phone"
+                            maxLength={4}
                             value={addrInfo.phone.phone3}
                             onChange={handleAddrInfoChange}
                           />

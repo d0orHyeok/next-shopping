@@ -6,7 +6,6 @@ import auth, { IAuthExtendedRequest } from '@middlewares/auth'
 const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 handler.use(auth)
-
 handler.post<IAuthExtendedRequest>(async (req, res) => {
   try {
     const { update } = req.body
@@ -18,6 +17,7 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
     const { user } = req
 
     user.deliveryAddrs = update
+
     const newUser = await user.save()
 
     res
