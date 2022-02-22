@@ -16,33 +16,33 @@ NextJS를 사용한 쇼핑몰 개인프로젝트
 
 ### 메인페이지
 
-![index page](https://imgur.com/q8KX8gL.gif)
+![index page](https://i.imgur.com/q8KX8gL.gif)
 
 ### 로그인
 
-![index page](https://imgur.com/2mpeAIn.gif)
+![index page](https://i.imgur.com/2mpeAIn.gif)
 
 ### 상품조회
 
-![index page](https://imgur.com/ZwdtEdM.gif)
+![index page](https://i.imgur.com/ZwdtEdM.gif)
 
-![index page](https://imgur.com/3ZiJYpB.gif)
+![index page](https://i.imgur.com/3ZiJYpB.gif)
 
 ### 구매
 
-![index page](https://imgur.com/qFejCl3.gif)
+![index page](https://i.imgur.com/qFejCl3.gif)
 
 ### 장바구니
 
-![index page](https://imgur.com/7AWsH7P.gif)
+![index page](https://i.imgur.com/7AWsH7P.gif)
 
-![index page](https://imgur.com/05pua1c.gif)
+![index page](https://i.imgur.com/05pua1c.gif)
 
 ### 마이페이지
 
-![index page](https://imgur.com/nG3no2t.gif)
+![index page](https://i.imgur.com/nG3no2t.gif)
 
-![index page](https://imgur.com/l5lxNdI.gif)
+![index page](https://i.imgur.com/l5lxNdI.gif)
 
 </details>
 
