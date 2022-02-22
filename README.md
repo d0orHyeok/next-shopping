@@ -16,11 +16,11 @@ NextJS를 사용한 쇼핑몰 개인프로젝트
 
 ### 메인페이지
 
-![index page](https://i.imgur.com/q8KX8gL.gif)
+![index page](https://i.imgur.com/vhJApaf.gif)
 
 ### 로그인
 
-![index page](https://i.imgur.com/2mpeAIn.gif)
+![index page](https://i.imgur.com/xOGjDBV.gif)
 
 ### 상품조회
 
