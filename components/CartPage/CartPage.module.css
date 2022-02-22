@@ -2,7 +2,7 @@
   max-width: var(--header-maxWidth);
   width: 100%;
   margin: 0 auto;
-  padding: 3rem 0;
+  padding: 3rem;
   font-family: var(--product-font);
 }
 

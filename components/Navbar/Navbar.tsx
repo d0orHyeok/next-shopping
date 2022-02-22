@@ -14,9 +14,8 @@ import Menu from './sections/Menu'
 import Link from 'next/link'
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/dist/client/router'
-import { useAppSelector, useAppDispatch } from '@redux/hooks'
-import { IUserState, selectUser, auth } from '@redux/features/userSlice'
-import { useSession } from 'next-auth/react'
+import { useAppSelector } from '@redux/hooks'
+import { IUserState, selectUser } from '@redux/features/userSlice'
 
 type Anchor = 'menu' | 'search' | 'side'
 
@@ -53,9 +52,6 @@ const Navbar = ({
   setIsDark,
 }: IndexPageNavbarProps): JSX.Element => {
   const router = useRouter()
-  const dispatch = useAppDispatch()
-
-  const { data: session } = useSession()
 
   const user: IUserState = useAppSelector(selectUser)
   const [draw, setDraw] = useState({
@@ -63,14 +59,6 @@ const Navbar = ({
     search: false,
     side: false,
   })
-
-  useEffect(() => {
-    if (session !== null) {
-      if (!user.userData && session?.userData) {
-        dispatch(auth(session.userData))
-      }
-    }
-  }, [session, router.asPath])
 
   useEffect(() => {
     setDraw({

@@ -54,6 +54,10 @@ const ProductOrder = ({ product }: IProductOrderProps) => {
   )
 
   const handleCartClick = () => {
+    if (!user.isLogin) {
+      return alert('로그인 시 이용가능합니다.')
+    }
+
     if (!orders.length) {
       alert('상품을 선택해 주세요.')
     } else {

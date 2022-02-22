@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loading from '@components/utils/Loading/Loading'
 import { GetServerSidePropsContext } from 'next'
-import { useSession, getSession } from 'next-auth/react'
+import { getSession } from 'next-auth/react'
 import { useAppDispatch } from '@redux/hooks'
-import { auth } from '@redux/features/userSlice'
+import { auth, userAuth } from '@redux/features/userSlice'
 
 // CSR에서 auth check를 수행하는 HOC
 export default function AuthCheck(
@@ -17,13 +17,10 @@ export default function AuthCheck(
     const router = useRouter()
     const dispatch = useAppDispatch()
 
-    const { data: session } = useSession()
-
     useEffect(() => {
-      if (session !== undefined) {
-        dispatch(auth(!session ? null : session.userData))
-
-        if (session === null) {
+      dispatch(userAuth()).then((res) => {
+        const userData = res.payload
+        if (userData === null) {
           if (option) {
             // 로그인 필요
             router.back()
@@ -31,7 +28,7 @@ export default function AuthCheck(
             setIsLoading(false)
           }
         } else {
-          if (adminRoute && !session?.userData.isAdmin) {
+          if (adminRoute && !userData.isAdmin) {
             // admin이 아닌데 adminRoute에 접근한 경우
             router.back()
           } else {
@@ -43,8 +40,8 @@ export default function AuthCheck(
             }
           }
         }
-      }
-    }, [session])
+      })
+    }, [])
 
     return <>{isLoading ? <Loading /> : <SpecificComponent {...props} />}</>
   }

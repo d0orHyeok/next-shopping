@@ -16,6 +16,15 @@ export interface IUserState {
 }
 
 // Async Action
+export const userAuth = createAsyncThunk(`userAuth`, async () => {
+  try {
+    const response = await Axios.get('/api/users/auth')
+    return response.data
+  } catch (err) {
+    return null
+  }
+})
+
 export const userAddLike = createAsyncThunk(
   `userAddLike`,
   async (pid: string[], { rejectWithValue }) => {
@@ -141,6 +150,15 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: {
+    // userAuth
+    [userAuth.fulfilled.type]: (state, action) => {
+      state.isLogin = true
+      state.userData = action.payload
+    },
+    [userAuth.rejected.type]: (state) => {
+      state.isLogin = false
+      state.userData = null
+    },
     // userClickLike
     [userAddLike.fulfilled.type]: (state, action) => {
       if (state.userData) {

@@ -57,21 +57,24 @@ const CartPage = () => {
 
   // Modal Prop Function
   const handleSelect = (newOption: any) => {
+    console.log('select')
     setUpdate({ ...update, update: { ...update.update, option: newOption } })
   }
 
   const handleSubmit = () => {
+    console.log('submit')
     if (
-      JSON.stringify(userCart[update.index]) !== JSON.stringify(update.update)
+      JSON.stringify(userCart[update.index].option) ===
+      JSON.stringify(update.update.option)
     ) {
-      if (user.isLogin) {
-        dispatch(userUpdateCart(update))
-      }
+      return setChangeProduct(null)
     }
+
+    dispatch(userUpdateCart(update))
     setUserProducts(
-      userProducts.map((userProduct, index) => {
-        if (index === update.index) {
-          return { ...update.update, ...userProduct }
+      userProducts.map((userProduct) => {
+        if (userProduct.pid === update.update.pid) {
+          return { ...userProduct, option: update.update.option }
         } else {
           return userProduct
         }
@@ -190,7 +193,7 @@ const CartPage = () => {
     } else {
       setUserProducts([])
     }
-  }, [user.userData])
+  }, [])
 
   useEffect(() => {
     const length = userCart.length

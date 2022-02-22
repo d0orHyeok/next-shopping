@@ -11,7 +11,6 @@ interface IBody {
 const handler = nextConnect<NextApiRequest, NextApiResponse>()
 handler.use(database)
 handler.use(auth)
-
 handler.post<IAuthExtendedRequest>(async (req, res) => {
   try {
     const { pid } = req.body as IBody
@@ -22,7 +21,7 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
 
     const { user } = req
 
-    user.likes = user.likes.filter((like) => !pid.includes(like))
+    user.likes = user.likes.filter((like) => !pid.includes(like.toString()))
     const newUser = await user.save()
 
     await Product.updateMany(
@@ -30,7 +29,7 @@ handler.post<IAuthExtendedRequest>(async (req, res) => {
       { $pull: { likes: user._id } }
     )
 
-    res.status(200).json({ success: true, userLikes: newUser?.likes })
+    res.status(200).json({ success: true, userLikes: newUser.likes })
   } catch (error) {
     console.log(error)
     res.status(500).json({ success: false, error })
