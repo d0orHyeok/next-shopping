@@ -1,13 +1,17 @@
 import Head from 'next/head'
-import AuthCheck from 'hoc/authCheck'
-
+import { authCheckServerSide } from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import OrderResultPage, {
   IOrderResultPageProps,
 } from '@components/OrderPage/OrderResultPage'
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  () => async (context) => {
+  (store) => async (context) => {
+    const redirect = await authCheckServerSide(store, context, true)
+    if (redirect) {
+      return { redirect }
+    }
+
     const { order_id, result } = context.query
 
     return { props: { order_id, result } }
@@ -25,4 +29,4 @@ const result = ({ order_id, result }: IOrderResultPageProps) => {
   )
 }
 
-export default AuthCheck(result, true)
+export default result

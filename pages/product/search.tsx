@@ -1,4 +1,4 @@
-import AuthCheck from 'hoc/authCheck'
+import { authCheckServerSide } from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import { ParsedUrlQuery } from 'querystring'
 import Axios from 'axios'
@@ -16,7 +16,9 @@ export interface ISearchPageQuery extends ParsedUrlQuery {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  () => async (context) => {
+  (store) => async (context) => {
+    await authCheckServerSide(store, context, null)
+
     const { keyword, sort, colors, fit, season } =
       context.query as ISearchPageQuery
 
@@ -83,4 +85,4 @@ const search = ({ keyword, products, filterOptions }: ISearchPageProps) => {
   )
 }
 
-export default AuthCheck(search, null)
+export default search

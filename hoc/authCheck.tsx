@@ -41,7 +41,7 @@ export default function AuthCheck(
           }
         }
       })
-    }, [])
+    }, [router.asPath])
 
     return <>{isLoading ? <Loading /> : <SpecificComponent {...props} />}</>
   }

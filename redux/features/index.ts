@@ -11,7 +11,6 @@ export interface State {
 const rootReducer = (state: State, action: AnyAction) => {
   switch (action.type) {
     case HYDRATE:
-      // console.log('hydrate', action)
       return { ...state, ...action.payload }
     default: {
       const combineReducer = combineReducers({

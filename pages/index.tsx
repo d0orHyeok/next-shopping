@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import LandingPage from '@components/LandingPage/LandingPage'
-import AuthCheck from 'hoc/authCheck'
+import { authCheckServerSide } from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import { getBestProducts, IBestProduct } from '@redux/features/productSlice'
 import Navbar from '@components/Navbar/Navbar'
@@ -16,7 +16,9 @@ interface HomeProps {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
+  (store) => async (context) => {
+    await authCheckServerSide(store, context, null)
+
     await store.dispatch(getBestProducts())
 
     const bestProducts = await store
@@ -65,4 +67,4 @@ export const Home = ({ bestProducts, newProducts }: HomeProps): JSX.Element => {
   )
 }
 
-export default AuthCheck(Home, null)
+export default Home

@@ -1,4 +1,4 @@
-import AuthCheck from 'hoc/authCheck'
+import { authCheckServerSide } from 'hoc/authCheck'
 import { wrapper } from '@redux/store'
 import Head from 'next/head'
 import MyPageLayout from '@components/MyPage/MyPageLayout'
@@ -19,7 +19,12 @@ interface IHistoryPageQuery extends ParsedUrlQuery {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  () => async (context) => {
+  (store) => async (context) => {
+    const redirect = await authCheckServerSide(store, context, true)
+    if (redirect) {
+      return { redirect }
+    }
+
     const today = dayjs(Date.now())
 
     const { mode, order_state, date_start, date_end } =
@@ -69,4 +74,4 @@ const history = (props: IHistoryPageProps) => {
   )
 }
 
-export default AuthCheck(history, true)
+export default history

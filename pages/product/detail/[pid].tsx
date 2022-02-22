@@ -16,7 +16,7 @@ export interface IDetailPageProps {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
-    await authCheckServerSide(store, context, false)
+    await authCheckServerSide(store, context, null)
 
     const { pid } = context.params as IProductDetailPageQuery
     const response = await Axios.post('/api/product/getProductDetail', { pid })
