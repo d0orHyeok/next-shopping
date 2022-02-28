@@ -14,6 +14,8 @@ NextJS를 사용한 쇼핑몰 개인프로젝트
 <details markdown="1">
 <summary>Preivew</summary>
 
+[More](https://www.notion.so/PIIC-NextJS-Typescript-E-Commerce-Store-fd5d63ad2e4f4d108ece474942e51997)
+
 ### 메인페이지
 
 ![index page](https://i.imgur.com/vhJApaf.gif)
